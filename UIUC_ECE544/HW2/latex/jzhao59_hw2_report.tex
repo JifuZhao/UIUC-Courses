@@ -1,0 +1,164 @@
+\input{setting.tex}
+
+\usepackage{graphicx, amssymb, amsmath, listings, float, mathtools}
+\usepackage{color, url}
+\lstset{language = Python}
+\lstset{breaklines}
+\lstset{extendedchars=false}
+
+\oddsidemargin 0in
+\evensidemargin 0in
+\textwidth 6.5in
+\topmargin -0.6in
+\textheight 9.0in
+
+\begin{document}
+
+\solution{\large Jifu Zhao}{\large 09/29/2016}{\bf \Large ECE 544NA \hspace{0.5cm} 
+		Fall 2016 \hspace{0.5cm} Assignment 2}
+
+\section*{\Large I. Pencil-and-Paper}
+\begin{description}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Problem 1
+\item{\bf \large 1. } Derivative of Softmax \\
+Recall the softmax function:
+\begin{equation}
+	\vec{y}[k] = \frac{e^{\vec{z}[k]}}{\sum_{l=1}^C e^{\vec{z}[l]}}
+\end{equation}
+
+So, consider two cases, j = k and j != k. 
+
+When j = k:
+\begin{equation}
+	\frac{\partial \vec{y}[k]}{\partial \vec{z}[j]} 
+		= - \frac{e^{\vec{z}[k]} \cdot \sum_{l=1}^C e^{\vec{z}[l]} - e^{\vec{z}[k]} \cdot e^{\vec{z}[k]}} 
+				{(\sum_{l=1}^C e^{\vec{z}[l]})^2}
+		= \vec{y}[k] - \vec{y}[k] \cdot \vec{y}[k]
+\end{equation}
+
+When j != k:
+\begin{equation}
+	\frac{\partial \vec{y}[k]}{\partial \vec{z}[j]} 
+		= - \frac{e^{\vec{z}[k]} \cdot e^{\vec{z}[j]}} 
+				{(\sum_{l=1}^C e^{\vec{z}[l]})^2}
+		= - \vec{y}[k] \cdot \vec{y}[j]
+\end{equation}
+
+So, we can conclude that:
+\begin{equation}
+	\frac{\partial \vec{y}[k]}{\partial \vec{z}[j]} = 
+	\begin{cases}
+		- \vec{y}[k] \cdot \vec{y}[j]				& \quad \text{if } k != j \\
+		\vec{y}[k] - \vec{y}[k] \cdot \vec{y}[k]	& \quad \text{if } k = j \\
+	\end{cases}
+\end{equation}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Problem 2
+\item{\bf \large 2. } Negative Log Likelihood loss for Multi-Class. \\
+Recall the negative log likelihood: 
+\begin{equation}
+	L = - \sum_i^N \sum_k^K {\bf 1}[y_i = k] \cdot log(\hat{\vec{y}}_i[k])
+\end{equation}
+
+In this way, we have:
+\begin{equation}
+	\frac{\partial L}{\partial \hat{\vec{y}}_i[j]} 
+	= - {\bf 1}[y_i = k] \cdot \frac{\partial log(\hat{\vec{y}}_i[j])}{\partial \hat{\vec{y}}_i[j]}
+	= - \frac{{\bf 1}[y_i = j]}{\hat{\vec{y}}_i[j]}
+\end{equation}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Problem 3
+\item{\bf \large 3. } Avg-pooling (1D) \\
+Recall Avg-pooling (1D) operation with window size W: 
+\begin{equation}
+	\vec{y}[i] = \frac{1}{W} \sum_{j=0}^W \vec{x}[i + j]
+\end{equation}
+
+Then, we have:
+\begin{equation}
+	\frac{\partial \vec{y}[i]}{\partial \vec{x}[j]} = 
+		\begin{cases}
+			- \frac{1}{W}	& \quad \text{if } i \leq j \leq i + W \\
+			0				& \quad \text{otherwise} \\
+		\end{cases}
+\end{equation}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Problem 4
+\item{\bf \large 4. } Max-pooling (1D) \\
+Recall Max-pooling (1D) operation with window size W: 
+\begin{equation}
+	\vec{y}[i] = \max_{j=0}^W \vec{x}[i + j]
+\end{equation}
+
+Then, we have:
+\begin{equation}
+	\frac{\partial \vec{y}[i]}{\partial \vec{x}[j]} = 
+		\begin{cases}
+			1	& 	\quad \text{if } \max_{k=0}^W \vec{x}[i + k] = \vec{x}[j] \\
+			0	& 	\quad \text{otherwise} \\
+		\end{cases}
+\end{equation}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Problem 5
+\item{\bf \large 5. } Convolutional layer (1D)\\
+Recall Convolution (1D) operation, assume $\vec{w}$ is length 3, and zero index at the center:
+\begin{equation}
+	\vec{y}[i] = (\vec{w} \ast \vec{x})[i] = \sum_{j=-1}^1 \vec{x}[i-j] \cdot \vec{x}[j]
+\end{equation} 
+
+From above equation, we have:
+\begin{equation}
+	\frac{\vec{y}[i]}{\vec{x}[j]} =
+	\begin{cases}
+			\vec{w}[i-j]	& 	\quad \text{if } i-1 \leq j \leq i+1 \\
+			0	& 	\quad \text{otherwise} \\
+		\end{cases}
+\end{equation}
+
+\begin{equation}
+	\frac{\vec{y}[i]}{\vec{w}[j]} =
+	\begin{cases}
+			\vec{x}[i-j]	& 	\quad \text{if } j = -1 or 0 or 1 \\
+			0				& 	\quad \text{otherwise} \\
+		\end{cases}
+\end{equation}
+\end{description}
+
+\newpage
+\section*{\Large II. Code-from-Scratch}
+
+\subsection*{\large 1. Methods}
+
+\subsection*{\large 2. Results}
+
+\newpage
+\section*{\Large III. TensorFlow}
+
+\subsection*{\large 1. Methods}
+
+\subsection*{\large 2. Results}
+
+
+%\begin{figure}[H]
+%\centering
+%\includegraphics[width=1.0\textwidth]{./images/detector}
+%\caption{\label{fig:detector_system} Single detector system}
+%\end{figure}
+
+
+\clearpage
+
+%\bibliographystyle{plain}
+%\bibliographystyle{unsrt}
+%\bibliography{reference.bib}
+
+\end{document}
+

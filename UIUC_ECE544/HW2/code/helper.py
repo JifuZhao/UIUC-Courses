@@ -4,11 +4,11 @@
 """
 __author__      = "Jifu Zhao"
 __email__       = "jzhao59@illinois.edu"
-__date__        = "09/13/2016"
+__date__        = "09/21/2016"
 """
 
 import warnings
-# warnings.filterwarnings("ignore")
+warnings.filterwarnings("ignore")
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -43,11 +43,13 @@ def readFile(labelPath, featureDir='./data/'):
 
     return features, labels
 
+
 def addBias(data):
     """ function to add bias item to the data as the first column """
     n = len(data)
     data = np.append(np.array([np.ones(n)]).T, data, axis=1)
     return data
+
 
 def oneHotEncoder(label):
     """ One-Hot-Encoder for two class case """
