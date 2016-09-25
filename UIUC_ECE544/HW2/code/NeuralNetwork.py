@@ -16,6 +16,7 @@ import time
 
 class NeuralNetwork(object):
     """ self-defined Neural Network classifier """
+    
     def __init__(self, netSize, loss, maxIter=500, batchSize=100,
                  learningRate=0.1, CV=False):
         self.netSize = netSize
@@ -30,23 +31,26 @@ class NeuralNetwork(object):
         self.layer = 1 + len(netSize)
 
 
-    def train(self, X, y, X_cv=None, y_cv=None):
+    def train(self, X, y, X_cv=None, y_cv=None, showFreq=100):
         """ function to train the neural network """
 
         t0 = time.time()
         # randomly initialize the weight matrix w
         numNode = [len(X[0])] + list(self.netSize)
         for i in range(self.layer - 1):
-            randomW = (np.random.random((numNode[i + 1], numNode[i] + 1)) - 0.5) / 2
+            randomW = (np.random.random((numNode[i + 1], numNode[i] + 1)) - 0.5)
             self.w.append(randomW)
 
         # begin training process
-        for iterate in range(self.maxIter):
+        for iterate in range(1, self.maxIter + 1):
             X, y = shuffle(X, y)
             batchesX, batchesY = self.getBatches(X, y)
             for batchFeature, BatchLabel in zip(batchesX, batchesY):
                 self.w = self.updateW(batchFeature, BatchLabel, self.w)
             self.trainAcc.append(self.evaluate(X, y, self.w))
+            if (iterate % showFreq == 0):
+                print(iterate, "th Iteration is done, used time\t",
+                      np.round(time.time() - t0, 2), 's')
 
         print("Reach the maximum iteration, training is done !")
         print("Total training time: \t", np.round(time.time() - t0, 2), 's')
@@ -81,7 +85,6 @@ class NeuralNetwork(object):
         gradient = []
         b = (g[-1] - y) * self.backGradient(z[-1])
         for i in reversed(range(self.layer - 1)):
-            # print(b.shape, w[i].shape, z[i].shape, g[i].shape)
             gradient.append(np.dot(b.T, g[i]))
             b = (np.dot(b, w[i])[:, 1:]) * self.backGradient(z[i])
 
