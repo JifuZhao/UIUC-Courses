@@ -29,14 +29,22 @@ def readFile(labelPath, featureDir='./data/'):
     for line in lines:
         label, fname = line.split()
         with open(featureDir + fname) as f:
-            line = f.readline().split()
-            # skip the corrupted data
-            if 'NaN' in line or '-Inf' in line or 'Inf' in line:
-                continue
-            else:
-                line = list(map(float, line))
-                featureSet.append(line)
-                labelSet.append(int(label))
+            matrix = f.readlines()
+        # skip the data that has less than 70 frames
+        if len(matrix) < 70:
+            continue
+        tmp = []
+        indicator = True
+        for data in matrix[:70]:
+            data = data.split()
+            if 'NaN' in data or '-Inf' in data or 'Inf' in data:
+                indicator = False
+                break
+            data = list(map(float, data))
+            tmp += data
+        if indicator == True:
+            featureSet.append(tmp)
+            labelSet.append(int(label))
 
     labels = np.array([labelSet], dtype=int).T
     features = np.array(featureSet)
@@ -44,18 +52,11 @@ def readFile(labelPath, featureDir='./data/'):
     return features, labels
 
 
-def addBias(data):
-    """ function to add bias item to the data as the first column """
-    n = len(data)
-    data = np.append(np.array([np.ones(n)]).T, data, axis=1)
-    return data
-
-
-def oneHotEncoder(label):
-    """ One-Hot-Encoder for two class case """
-    tmp = np.zeros((len(label), 2))
-    tmp[:, 0] = (label[:, 0] == 0)
-    tmp[:, 1] = (label[:, 0] == 1)
+def oneHotEncoder(label, n):
+    """ One-Hot-Encoder for n class case """
+    tmp = np.zeros((len(label), n))
+    for number in range(n):
+        tmp[:, number] = (label[:, 0] == number)
     tmp = tmp.astype(int)
 
     return tmp
