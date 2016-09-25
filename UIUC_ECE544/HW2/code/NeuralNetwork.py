@@ -12,6 +12,7 @@ warnings.filterwarnings("ignore")
 import numpy as np
 from sklearn.utils import shuffle
 import matplotlib.pyplot as plt
+import time
 
 class NeuralNetwork(object):
     """ self-defined Neural Network classifier """
@@ -32,6 +33,7 @@ class NeuralNetwork(object):
     def train(self, X, y, X_cv=None, y_cv=None):
         """ function to train the neural network """
 
+        t0 = time.time()
         # randomly initialize the weight matrix w
         numNode = [len(X[0])] + list(self.netSize)
         for i in range(self.layer - 1):
@@ -44,15 +46,17 @@ class NeuralNetwork(object):
             batchesX, batchesY = self.getBatches(X, y)
             for batchFeature, BatchLabel in zip(batchesX, batchesY):
                 self.w = self.updateW(batchFeature, BatchLabel, self.w)
+            self.trainAcc.append(self.evaluate(X, y, self.w))
 
-        print("Reach the maximum iteration, training is done ! \n")
+        print("Reach the maximum iteration, training is done !")
+        print("Total training time: \t", np.round(time.time() - t0, 2), 's')
 
 
     def updateW(self, X, y, w):
         """ function to update the calculated w """
         n = len(X)
         g = [self.addBias(X)]  # g means x, h(w'x)
-        z = [self.addBias(X)]  # z means x, w'x, w'g(w'x)
+        z = [X]  # z means x, w'x, w'g(w'x)
         for i in range(self.layer - 1):
             forwardW = w[i]
             feature = g[i]
@@ -65,9 +69,8 @@ class NeuralNetwork(object):
                 g.append(Out)
 
         gradient = self.computeGradient(g, z, w, y)
-
         newW = []
-        for i in range(self.layer):
+        for i in range(self.layer - 1):
             newW.append(w[i] - self.learningRate * gradient[i] / n)
 
         return newW
@@ -78,10 +81,11 @@ class NeuralNetwork(object):
         gradient = []
         b = (g[-1] - y) * self.backGradient(z[-1])
         for i in reversed(range(self.layer - 1)):
+            # print(b.shape, w[i].shape, z[i].shape, g[i].shape)
             gradient.append(np.dot(b.T, g[i]))
-            b = np.dot(w[i].T, b) * self.backGradient(z[i])
+            b = (np.dot(b, w[i])[:, 1:]) * self.backGradient(z[i])
 
-        return reversed(gradient)
+        return gradient[::-1]
 
 
     def nonLinearity(self, z):
@@ -104,14 +108,25 @@ class NeuralNetwork(object):
             return (z > 0).astype(float)
 
 
-    def predict(self, X):
+    def predict(self, X, w):
         """ function to predict X based on trained model """
-        pass
+        feature = X
+        for i in range(self.layer - 1):
+            weight = w[i]
+            feature = self.addBias(feature)
+            feature = self.nonLinearity(np.dot(feature, weight.T))
+
+        prediction = np.argmax(feature, axis=1)
+        return prediction
 
 
-    def evaluate(self, X, y):
+    def evaluate(self, X, y, w):
         """ function to evaluate the performance of trained model """
-        pass
+        prediction = self.predict(X, w)
+        label = np.argmax(y, axis=1)
+        acc = np.sum(prediction == label) / len(prediction)
+
+        return acc
 
 
     def sigmoid(self, z):
@@ -156,14 +171,11 @@ class NeuralNetwork(object):
 
     def getParams(self):
         """ function to get the parameters """
-        return self.trainError, self.trainAcc, self.w
+        return self.trainAcc, self.w
 
 
-    def getBest(self, category):
+    def getBest(self):
         """ function to get the best parameter combinations """
-        if category == 'Accuracy':
-            index = np.argmax(self.trainAcc)
-        elif category == 'Error':
-            index = np.argmin(self.trainError)
+        index = np.argmax(self.trainAcc)
 
-        return self.trainError[index], self.trainAcc[index], self.w[index]
+        return self.trainAcc[index], self.w[index]
