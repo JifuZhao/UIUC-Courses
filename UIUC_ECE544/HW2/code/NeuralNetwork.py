@@ -38,19 +38,26 @@ class NeuralNetwork(object):
         # randomly initialize the weight matrix w
         numNode = [len(X[0])] + list(self.netSize)
         for i in range(self.layer - 1):
-            randomW = (np.random.random((numNode[i + 1], numNode[i] + 1)) - 0.5)
+            if self.loss == 'relu':
+                randomW = (np.random.random((numNode[i + 1], numNode[i] + 1)) - 0.5)
+            else:
+                randomW = (np.random.random((numNode[i + 1], numNode[i] + 1)) - 0.5)
             self.w.append(randomW)
 
         # begin training process
         for iterate in range(1, self.maxIter + 1):
             X, y = shuffle(X, y)
             batchesX, batchesY = self.getBatches(X, y)
+            
             for batchFeature, BatchLabel in zip(batchesX, batchesY):
                 self.w = self.updateW(batchFeature, BatchLabel, self.w)
+                
             self.trainAcc.append(self.evaluate(X, y, self.w))
             if (iterate % showFreq == 0):
                 print(iterate, "th Iteration is done, used time\t",
                       np.round(time.time() - t0, 2), 's')
+                
+            # print("w and acc\t", self.w[0][:3, :3], self.trainAcc[-1])
 
         print("Reach the maximum iteration, training is done !")
         print("Total training time: \t", np.round(time.time() - t0, 2), 's')
@@ -73,9 +80,12 @@ class NeuralNetwork(object):
                 g.append(Out)
 
         gradient = self.computeGradient(g, z, w, y)
+      
         newW = []
         for i in range(self.layer - 1):
             newW.append(w[i] - self.learningRate * gradient[i] / n)
+            
+            # print("gradient\t", (self.learningRate * gradient[i] / n)[:3, :3])
 
         return newW
 
@@ -114,11 +124,15 @@ class NeuralNetwork(object):
     def predict(self, X, w):
         """ function to predict X based on trained model """
         feature = X
+        # print("feature at ", 0, ' layer', feature[:3, :])
+        
         for i in range(self.layer - 1):
             weight = w[i]
             feature = self.addBias(feature)
             feature = self.nonLinearity(np.dot(feature, weight.T))
-
+            
+            # print("feature at ", i + 1, ' layer', feature[:3, :3])
+        
         prediction = np.argmax(feature, axis=1)
         return prediction
 
@@ -168,7 +182,10 @@ class NeuralNetwork(object):
     def addBias(self, data):
         """ function to add bias item to the data as the first column """
         n = len(data)
-        data = np.append(np.array([np.ones(n)]).T, data, axis=1)
+        if self.loss == 'relu':
+            data = np.append(np.array([np.ones(n)]).T / 10, data, axis=1)
+        else:
+            data = np.append(np.array([np.ones(n)]).T, data, axis=1)
         return data
 
 
