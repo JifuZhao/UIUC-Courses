@@ -21,7 +21,8 @@ class NeuralNetwork(object):
                  learningRate=0.1, CV=False):
         self.netSize = netSize
         self.loss = loss
-        self.learningRate = learningRate
+        self.originalLearningRate = learningRate
+        self.learningRate = None
         self.maxIter = maxIter
         self.batchSize = batchSize
         self.CV = CV
@@ -33,6 +34,8 @@ class NeuralNetwork(object):
 
     def train(self, X, y, X_cv=None, y_cv=None, showFreq=100):
         """ function to train the neural network """
+        print('*' * 40)
+        print("Start Training Using " + self.loss + " Loss Function")
 
         t0 = time.time()
         # randomly initialize the weight matrix w
@@ -47,6 +50,9 @@ class NeuralNetwork(object):
 
         # begin training process
         for iterate in range(1, self.maxIter + 1):
+            self.learningRate = min(self.originalLearningRate, 
+                                    self.originalLearningRate / (iterate / 100))
+
             X, y = shuffle(X, y)
             batchesX, batchesY = self.getBatches(X, y)
 
@@ -147,7 +153,7 @@ class NeuralNetwork(object):
         #     weight = w[i]
         #     feature = self.addBias(feature)
         #     feature = self.nonLinearity(np.dot(feature, weight.T))
-        
+
         for i in range(self.layer - 2):
             weight = w[i]
             feature = self.addBias(feature)
