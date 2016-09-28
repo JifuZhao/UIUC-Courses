@@ -4,11 +4,12 @@
 """
 __author__      = "Jifu Zhao"
 __email__       = "jzhao59@illinois.edu"
-__date__        = "09/21/2016"
+__date__        = "09/27/2016"
 """
 
 import warnings
 warnings.filterwarnings("ignore")
+
 import numpy as np
 from sklearn.utils import shuffle
 import matplotlib.pyplot as plt
@@ -28,30 +29,27 @@ class NeuralNetwork(object):
         self.CV = CV
         self.trainAcc = []
         self.cvAcc = []
+        self.wList = []
         self.w = []
         self.layer = 1 + len(netSize)
 
 
     def train(self, X, y, X_cv=None, y_cv=None, showFreq=100):
         """ function to train the neural network """
-        print('*' * 40)
-        print("Start Training Using " + self.loss + " Loss Function")
+        # print('*' * 40)
+        # print('Start training using ' + self.loss + ' loss function')
 
-        t0 = time.time()
         # randomly initialize the weight matrix w
         numNode = [len(X[0])] + list(self.netSize)
         for i in range(self.layer - 1):
             randomW = (np.random.random((numNode[i + 1], numNode[i] + 1)) - 0.5)
-            # if self.loss == 'relu':
-            #     randomW = (np.random.random((numNode[i + 1], numNode[i] + 1)) - 0.5)
-            # else:
-            #     randomW = (np.random.random((numNode[i + 1], numNode[i] + 1)) - 0.5)
             self.w.append(randomW)
 
+        t0 = time.time()
         # begin training process
         for iterate in range(1, self.maxIter + 1):
-            self.learningRate = min(self.originalLearningRate, 
-                                    self.originalLearningRate / (iterate / 100))
+            self.learningRate = min(self.originalLearningRate,
+                                    self.originalLearningRate / (iterate / 50))
 
             X, y = shuffle(X, y)
             batchesX, batchesY = self.getBatches(X, y)
@@ -59,13 +57,21 @@ class NeuralNetwork(object):
             for batchFeature, BatchLabel in zip(batchesX, batchesY):
                 self.w = self.updateW(batchFeature, BatchLabel, self.w)
 
-            self.trainAcc.append(self.evaluate(X, y, self.w))
-            if (iterate % showFreq == 0):
-                print(iterate, "th Iteration is done, used time\t",
-                      np.round(time.time() - t0, 2), 's')
+            if iterate == 1:
+                t = np.round(time.time() - t0, 2)
+                print('Used time for one iteration: \t', t, 's')
 
-        print("Reach the maximum iteration, training is done !")
-        print("Total training time: \t", np.round(time.time() - t0, 2), 's')
+            self.wList.append(self.w)
+            self.trainAcc.append(self.evaluate(X, y, self.w))
+            if self.CV == True:
+                self.cvAcc.append(self.evaluate(X_cv, y_cv, self.w))
+
+            if (iterate % showFreq == 0):
+                t = np.round(time.time() - t0, 2)
+                print(iterate, "th Iteration is done, used time\t", t, 's')
+
+        t = np.round(time.time() - t0, 2)
+        print("Reach the maximum iteration\t", t, 's')
 
 
     def updateW(self, X, y, w):
@@ -73,17 +79,6 @@ class NeuralNetwork(object):
         n = len(X)
         g = [self.addBias(X)]  # g means x, h(w'x)
         z = [X]  # z means x, w'x, w'g(w'x)
-
-        # for i in range(self.layer - 1):
-        #     forwardW = w[i]
-        #     feature = g[i]
-        #     In = np.dot(feature, forwardW.T)
-        #     z.append(In)
-        #     Out = self.nonLinearity(In)
-        #     if i != self.layer - 2:
-        #         g.append(self.addBias(Out))
-        #     else:
-        #         g.append(Out)
 
         for i in range(self.layer - 2):
             forwardW = w[i]
@@ -101,7 +96,6 @@ class NeuralNetwork(object):
         g.append(Out)
 
         gradient = self.computeGradient(g, z, w, y)
-
         newW = []
         for i in range(self.layer - 1):
             newW.append(w[i] - self.learningRate * gradient[i] / n)
@@ -112,7 +106,6 @@ class NeuralNetwork(object):
     def computeGradient(self, g, z, w, y):
         """ function to compute the gradient """
         gradient = []
-        # b = (g[-1] - y) * self.backSoftmax(z[-1])
         label = np.argmax(y, axis=1)
         b = g[-1]
         b[range(len(b)), label] -= 1
@@ -147,12 +140,6 @@ class NeuralNetwork(object):
     def predict(self, X, w):
         """ function to predict X based on trained model """
         feature = X
-        # print("feature at ", 0, ' layer', feature[:3, :])
-
-        # for i in range(self.layer - 1):
-        #     weight = w[i]
-        #     feature = self.addBias(feature)
-        #     feature = self.nonLinearity(np.dot(feature, weight.T))
 
         for i in range(self.layer - 2):
             weight = w[i]
@@ -229,11 +216,14 @@ class NeuralNetwork(object):
 
     def getParams(self):
         """ function to get the parameters """
-        return self.trainAcc, self.w
+        if self.CV == True:
+            return self.trainAcc, self.cvAcc, self.wList
+        else:
+            return self.trainAcc, self.wList
 
 
     def getBest(self):
         """ function to get the best parameter combinations """
         index = np.argmax(self.trainAcc)
 
-        return self.trainAcc[index], self.w[index]
+        return self.trainAcc[index], self.wList[index]
