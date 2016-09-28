@@ -53,13 +53,15 @@ class NeuralNetwork(object):
 
             X, y = shuffle(X, y)
             batchesX, batchesY = self.getBatches(X, y)
-
+            
+            i = 0
+            tStart = time.time()
             for batchFeature, BatchLabel in zip(batchesX, batchesY):
                 self.w = self.updateW(batchFeature, BatchLabel, self.w)
-
-            if iterate == 1:
-                t = np.round(time.time() - t0, 2)
-                print('Used time for one iteration: \t', t, 's')
+                if iterate == 1 and i == 0:
+                    t = np.round(time.time() - tStart, 5)
+                    print('Used time for one iteration (single batch): \t', t, 's')
+                i = 1
 
             self.wList.append(self.w)
             self.trainAcc.append(self.evaluate(X, y, self.w))
