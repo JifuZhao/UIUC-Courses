@@ -31,6 +31,12 @@ def main():
     variance, mean, component = pca(data)
     project = np.dot(data - mean, component)
     data = data - mean
+    
+    print('Mean:\t', mean)
+    print('Variance:\t', variance)
+    print('Eigenvector 1\t', component[:, 0])
+    print('Eigenvector 2\t', component[:, 1])
+    print('Eigenvector 3\t', component[:, 2])
 
 
     # 3D plot
