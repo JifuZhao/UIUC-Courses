@@ -137,7 +137,81 @@ From above equation, we have:
 
 \subsection*{\large 1. Methods}
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{./figures/ECE544hw2.pdf}\
+\caption{\label{fig:structure} Algorithm Structure}
+\end{figure}
+
+
 \subsection*{\large 2. Results}
+
+\begin{table}[H]
+	\centering
+	\caption{Comparison of training accuracy}
+	\label{table:trainAcc}	
+	\begin{tabular}{c | c | c | c }
+		\hline \hline
+		Hidden Nodes/Function	&	ReLU	& 	Sigmoid		&	 Tanh 	\\[0.1cm]
+		\hline
+		10						&	66.42\%	&	57.25\%		&	 63.16\% \\[0.1cm]
+		20						&	87.94\%	&	76.72\%		&	 59.21\% \\[0.1cm]
+		30						&	60.71\%	&	78.08\%		&	 75.35\% \\[0.1cm]
+		40						&	56.84\%	&	83.69\%		&	 77.91\% \\[0.1cm]
+		50						&	69.90\%	&	83.67\%		&	 79.72\% \\[0.1cm]
+		\hline	
+	\end{tabular}
+\end{table}
+
+\begin{table}[H]
+	\centering
+	\caption{Comparison of test accuracy}
+	\label{table:testAcc}	
+	\begin{tabular}{c | c | c | c }
+		\hline \hline
+		Hidden Nodes/Function	&	ReLU	& 	Sigmoid		&	 Tanh 	\\[0.1cm]
+		\hline
+		10						&	39.38\%	&	43.01\%		&	 41.03\% \\[0.1cm]
+		20						&	43.34\%	&	46.09\%		&	 44.44\% \\[0.1cm]
+		30						&	43.23\%	&	44.44\%		&	 44.11\% \\[0.1cm]
+		40						&	35.42\%	&	45.10\%		&	 46.09\% \\[0.1cm]
+		50						&	40.70\%	&	46.31\%		&	 43.01\% \\[0.1cm]
+		\hline	
+	\end{tabular}
+\end{table}
+
+
+\begin{table}[H]
+	\centering
+	\caption{Average time for one iteration (in seconds)}
+	\label{table:time}	
+	\begin{tabular}{c | c | c | c }
+		\hline \hline
+		Hidden Nodes/Function	&	ReLU	& 	Sigmoid		&	 Tanh 	\\[0.1cm]
+		\hline
+		10						&	0.00067	&	0.00309		&	 0.00509 \\[0.1cm]
+		20						&	0.00073	&	0.00330		&	 0.00535 \\[0.1cm]
+		30						&	0.00082	&	0.00352		&	 0.00555 \\[0.1cm]
+		40						&	0.00092	&	0.00366		&	 0.00582 \\[0.1cm]
+		50						&	0.00105	&	0.00383		&	 0.00614 \\[0.1cm]
+		\hline	
+	\end{tabular}
+\end{table}
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\textwidth]{./figures/trainMatrix.pdf}\
+\caption{\label{fig:trainMatrix} Training Set Confusion Matrix}
+\end{figure}
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\textwidth]{./figures/testMatrix.pdf}\
+\caption{\label{fig:testMatrix} Test Set Confusion Matrix}
+\end{figure}
+
 
 \newpage
 \section*{\Large III. TensorFlow}
@@ -146,11 +220,32 @@ From above equation, we have:
 
 \subsection*{\large 2. Results}
 
+%\begin{figure}[H]
+%\centering
+%\includegraphics[width=0.8\textwidth]{./figures/TDNNtrainMatrix.pdf}\
+%\caption{\label{fig:TDNNtrainMatrix} Training Set Confusion Matrix for TDNN model}
+%\end{figure}
+%
+%
+%\begin{figure}[H]
+%\centering
+%\includegraphics[width=0.8\textwidth]{./figures/TDNNtestMatrix.pdf}\
+%\caption{\label{fig:TDNNtestMatrix} Test Set Confusion Matrix for TDNN model}
+%\end{figure}
+
+
 
 %\begin{figure}[H]
 %\centering
-%\includegraphics[width=1.0\textwidth]{./images/detector}
-%\caption{\label{fig:detector_system} Single detector system}
+%\includegraphics[width=0.8\textwidth]{./figures/BESTtrainMatrix.pdf}\
+%\caption{\label{fig:BESTtrainMatrix} Training Set Confusion Matrix for best model}
+%\end{figure}
+%
+%
+%\begin{figure}[H]
+%\centering
+%\includegraphics[width=0.8\textwidth]{./figures/BESTtestMatrix.pdf}\
+%\caption{\label{fig:BESTtestMatrix} Test Set Confusion Matrix for best model}
 %\end{figure}
 
 

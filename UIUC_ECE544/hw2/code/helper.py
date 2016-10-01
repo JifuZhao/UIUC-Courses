@@ -60,3 +60,40 @@ def oneHotEncoder(label, n):
     tmp = tmp.astype(int)
 
     return tmp
+
+
+def getBatches(X, y, batchSize):
+    """ function to get the batches """
+    left = len(X) % batchSize
+    data = np.concatenate((X, X[:left, :]), axis=0)
+    label = np.concatenate((y, y[:left, :]), axis=0)
+    batchX = []
+    batchY = []
+    n = len(data) // batchSize
+    for i in range(n):
+        batchX.append(data[i * batchSize: (i + 1) * batchSize, :])
+        batchY.append(label[i * batchSize: (i + 1) * batchSize, :])
+
+    return batchX, batchY
+
+
+def showConfusionMarix(matrix, title, label):
+    """ function to show the confusion matrix"""
+    
+    fig = plt.figure()
+    plt.imshow(matrix, interpolation='nearest', cmap=plt.cm.Blues)
+    plt.title(title)
+    plt.colorbar()
+    
+    n = len(label)
+    plt.xticks(np.arange(n), label)
+    plt.yticks(np.arange(n), label)
+
+    for i, j in [(row, col) for row in range(n) for col in range(n)]:
+        plt.text(j, i, matrix[i, j], horizontalalignment="center")
+
+    #plt.tight_layout()
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+       
+    return fig

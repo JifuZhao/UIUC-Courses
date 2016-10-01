@@ -32,12 +32,11 @@ class NeuralNetwork(object):
         self.wList = []
         self.w = []
         self.layer = 1 + len(netSize)
+        self.time = []
 
 
     def train(self, X, y, X_cv=None, y_cv=None, showFreq=100):
         """ function to train the neural network """
-        # print('*' * 40)
-        # print('Start training using ' + self.loss + ' loss function')
 
         # randomly initialize the weight matrix w
         numNode = [len(X[0])] + list(self.netSize)
@@ -53,15 +52,10 @@ class NeuralNetwork(object):
 
             X, y = shuffle(X, y)
             batchesX, batchesY = self.getBatches(X, y)
-            
-            i = 0
-            tStart = time.time()
             for batchFeature, BatchLabel in zip(batchesX, batchesY):
+                tStart = time.time()
                 self.w = self.updateW(batchFeature, BatchLabel, self.w)
-                if iterate == 1 and i == 0:
-                    t = np.round(time.time() - tStart, 5)
-                    print('Used time for one iteration (single batch): \t', t, 's')
-                i = 1
+                self.time.append(time.time() - tStart)
 
             self.wList.append(self.w)
             self.trainAcc.append(self.evaluate(X, y, self.w))
@@ -74,6 +68,8 @@ class NeuralNetwork(object):
 
         t = np.round(time.time() - t0, 2)
         print("Reach the maximum iteration\t", t, 's')
+        t = np.round(np.mean(self.time), 5)
+        print('Used time for one iteration (single batch): \t', t, 's')
 
 
     def updateW(self, X, y, w):
