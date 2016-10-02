@@ -289,14 +289,16 @@ $$ \# \  weights = 16 \times 3 \times 8 + 8 \times 5 \times 3 + 64 \times 3 \tim
 \noindent {\bf Note: } Here, we didn't consider bias as the additional weights, if bias is considered, then:
 $$ \# \  weights = 16 \times 3 \times 8 + 8 + 8 \times 5 \times 3 + 3 + 64 \times 3 \times 9 + 9 = 2252 $$
 
-(4). For the original TDNN model, at the first hidden layer, the activation dimensions are:
-$$ 3 \times 16 + 1 = 49 $$
+(4). For the original TDNN model, at the input layer, the activation dimensions are:
+$$ 16 \times 70 = 1120 $$
+
+At the first hidden layer, the activation dimensions are:
+$$ 8 \times 68 = 544 $$
 
 At the second hidden layer, the activation dimensions are:
-$$ 5 \times 8 + 1 = 41 $$
+$$ 3 \times 64 = 192 $$
 
-At the final output layer, since we use the fully connected neural network, the activation dimensions are:
-$$ 64 \times 3 + 1 = 193 $$
+At the final output layer, since we use the fully connected neural network, the activation dimensions are $9$.\\
 
 (5). The used TensorFlow function includes: tf.reshape(), tf.nn.relu(), tf.nn.softmax(), tf.nn.conv2d() and so on. Specifically, for tf.nn.conv2d(), we choose "VALID" mode, as shown in line 54 of TensorFlow.py. In addition, we initialize the weight variable through tf.truncated{\_}normal() and initialize the b variable to be constant 0.1.
 
