@@ -3,7 +3,7 @@
 """
 __author__      = "Jifu Zhao"
 __email__       = "jzhao59@illinois.edu"
-__date__        = "09/24/2016"
+__date__        = "09/29/2016"
 """
 
 import warnings
@@ -15,6 +15,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
+
 def pca(data):
     """ function to perform PCA """
     data = copy.deepcopy(data)
@@ -25,13 +26,14 @@ def pca(data):
     U, S, V = np.linalg.svd(covariance)
     return S, mean, U
 
+
 def main():
     # PCA analysis
     data = pd.read_csv('./PCAdata.csv', header=None).values.T
     variance, mean, component = pca(data)
     project = np.dot(data - mean, component)
     data = data - mean
-    
+
     print('Mean:\t', mean)
     print('Variance:\t', variance)
     print('Eigenvector 1\t', component[:, 0])
@@ -53,7 +55,7 @@ def main():
     ax.view_init(40)
     fig.savefig('./result/3d.pdf')
     plt.show()
-    
+
 
     # PCA projection
     fig, ax = plt.subplots()
@@ -64,6 +66,7 @@ def main():
     ax.grid('on')
     fig.savefig('./result/projection.pdf')
     plt.show()
+
 
 if __name__ == '__main__':
     main()
