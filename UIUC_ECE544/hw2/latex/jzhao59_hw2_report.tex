@@ -83,7 +83,7 @@ Then, we have:
 \begin{equation}
 	\frac{\partial \vec{y}[i]}{\partial \vec{x}[j]} = 
 		\begin{cases}
-			- \frac{1}{W}	& \quad \text{if } i \leq j \leq i + W \\
+			\frac{1}{W}	& \quad \text{if } i \leq j \leq i + W \\
 			0				& \quad \text{otherwise} \\
 		\end{cases}
 \end{equation}
@@ -111,12 +111,12 @@ Then, we have:
 \item{\bf \large 5. } Convolutional layer (1D)\\
 Recall Convolution (1D) operation, assume $\vec{w}$ is length 3, and zero index at the center:
 \begin{equation}
-	\vec{y}[i] = (\vec{w} \ast \vec{x})[i] = \sum_{j=-1}^1 \vec{x}[i-j] \cdot \vec{x}[j]
+	\vec{y}[i] = (\vec{w} \ast \vec{x})[i] = \sum_{j=-1}^1 \vec{x}[i-j] \cdot \vec{w}[j]
 \end{equation} 
 
 From above equation, we have:
 \begin{equation}
-	\frac{\vec{y}[i]}{\vec{x}[j]} =
+	\frac{\partial \vec{y}[i]}{\partial \vec{x}[j]} =
 	\begin{cases}
 			\vec{w}[i-j]	& 	\quad \text{if } i-1 \leq j \leq i+1 \\
 			0	& 	\quad \text{otherwise} \\
@@ -124,9 +124,9 @@ From above equation, we have:
 \end{equation}
 
 \begin{equation}
-	\frac{\vec{y}[i]}{\vec{w}[j]} =
+	\frac{\partial \vec{y}[i]}{\partial \vec{w}[j]} =
 	\begin{cases}
-			\vec{x}[i-j]	& 	\quad \text{if } j = -1 or 0 or 1 \\
+			\vec{x}[i-j]	& 	\quad \text{if } j = -1 \  or \  0 \  or \  1 \\
 			0				& 	\quad \text{otherwise} \\
 		\end{cases}
 \end{equation}
