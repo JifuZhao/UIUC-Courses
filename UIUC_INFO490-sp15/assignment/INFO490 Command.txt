@@ -1,0 +1,136 @@
+♂♂♂♂♂♂command -options arguments
+
+$ docker start samba-server
+
+$ docker run --rm -it --volumes-from my-data lcdm/info490 /bin/bash
+
+$ docker run -d -p 8888:8888 -e "PASSWORD=123"  --volumes-from my-data lcdm/info490
+
+http://192.168.59.103:8888
+
+%%bash
+cp /data/spring2015/week03/hello.ipynb /notebooks/.
+
+$ docker run -d -p 8888:8888 -e "PASSWORD=123" -v /c/Users/Jifu/i2ds:/notebooks/i2ds lcdm/info490
+
+$ docker exec -it insane_newton /bin/bash
+
+git clone https://github.com/INFO490/spring2015
+
+
+♂♂♂♂♂♂2 Navigation
+♂ pwd - Print name of current working directory
+♂ cd - Change directory
+♂ ls - List directory contents
+
+♂♂♂♂♂♂3 Exploring the System
+♂ file 每 Determine file type
+♂ less 每 View file contents
+
+♂♂♂♂♂♂4 Manipulating Files and Directories
+♂ cp 每 Copy files and directories
+♂ mv 每 Move/rename files and directories
+♂ mkdir 每 Create directories
+♂ rm 每 Remove files and directories
+♂ ln 每 Create hard and symbolic links
+
+♂♂♂♂♂♂5 Working with Commands
+♂ type 每 Indicate how a command name is interpreted
+♂ which 每 Display which executable program will be executed
+♂ help 每 Get help for shell builtins
+♂ man 每 Display a command's manual page
+♂ apropos 每 Display a list of appropriate commands
+♂ info 每 Display a command's info entry
+♂ whatis 每 Display a very brief description of a command
+♂ alias 每 Create an alias for a command
+
+♂♂♂♂♂♂6 Redirection
+♂ cat - Concatenate files
+♂ sort - Sort lines of text
+♂ uniq - Report or omit repeated lines
+♂ grep - Print lines matching a pattern
+♂ wc - Print newline, word, and byte counts for each file
+♂ head - Output the first part of a file
+♂ tail - Output the last part of a file
+♂ tee - Read from standard input and write to standard output and files
+
+♂♂♂♂♂♂7 Seeing the World as the Shell Sees It
+♂ echo 每 Display a line of text
+
+♂♂♂♂♂♂8 Advanced Keyboard Tricks
+♂ clear 每 Clear the screen
+♂ history 每 Display the contents of the history list
+
+♂♂♂♂♂♂9 Permissions
+♂ id 每 Display user identity
+♂ chmod 每 Change a file's mode
+♂ umask 每 Set the default file permissions
+♂ su 每 Run a shell as another user
+♂ sudo 每 Execute a command as another user
+♂ chown 每 Change a file's owner
+♂ chgrp 每 Change a file's group ownership
+♂ passwd 每 Change a user's password
+
+♂♂♂♂♂♂10 Processes
+♂ ps 每 Report a snapshot of current processes
+♂ top 每 Display tasks
+♂ jobs 每 List active jobs
+♂ bg 每 Place a job in the background
+♂ fg 每 Place a job in the foreground
+♂ kill 每 Send a signal to a process
+♂ killall 每 Kill processes by name
+♂ shutdown 每 Shutdown or reboot the system
+
+♂♂♂♂♂♂11 the Environment
+♂ printenv 每 Print part or all of the environment
+♂ set 每 Set shell options
+♂ export 每 Export environment to subsequently executed programs
+♂ alias 每 Create an alias for a command
+
+♂♂♂♂♂♂12
+
+♂♂♂♂♂♂13
+
+♂♂♂♂♂♂14
+
+♂♂♂♂♂♂15
+
+♂♂♂♂♂♂16 Networking
+♂ ping - Send an ICMP ECHO_REQUEST to network hosts
+♂ traceroute - Print the route packets trace to a network host
+♂ netstat - Print network connections, routing tables, interface statistics, masquerade connections, and multicast memberships
+♂ ftp - Internet file transfer program
+♂ wget - Non-interactive network downloader
+♂ ssh - OpenSSH SSH client (remote login program)
+
+♂♂♂♂♂♂17 Searching for Files
+♂ locate 每 Find files by name
+♂ find 每 Search for files in a directory hierarchy
+♂ xargs 每 Build and execute command lines from standard input:
+♂ touch 每 Change file times
+♂ stat 每 Display file or file system status
+
+♂♂♂♂♂♂18 Archiving and Backup
+♂ gzip 每 Compress or expand files
+♂ bzip2 每 A block sorting file compressor
+♂ tar 每 Tape archiving utility
+♂ zip 每 Package and compress files
+♂ rsync 每 Remote file and directory synchronization
+
+♂♂♂♂♂♂19 
+
+♂♂♂♂♂♂20 Text Processing
+♂ cat 每 Concatenate files and print on the standard output
+♂ sort 每 Sort lines of text files
+♂ uniq 每 Report or omit repeated lines
+♂ cut 每 Remove sections from each line of files
+♂ paste 每 Merge lines of files
+♂ join 每 Join lines of two files on a common field
+♂ comm 每 Compare two sorted files line by line
+♂ diff 每 Compare files line by line
+♂ patch 每 Apply a diff file to an original
+♂ tr 每 Translate or delete characters
+♂ sed 每 Stream editor for filtering and transforming text
+♂ aspell 每 Interactive spell checker
+
+♂♂♂♂♂♂21

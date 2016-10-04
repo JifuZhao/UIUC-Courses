@@ -1,0 +1,127 @@
+Script started on Mon Apr 27 03:13:35 2015
+# $HADOOP_PREFIX/bin/hdfs dfs -mkdir -p wc/in
+# $HADOOP_PREFIX/bin/hdfs dfs -put 2001.csv wc/in/2001.csv
+put: `wc/in/2001.csv': File exists
+# $HADOOP_PREFIX/bin/hadoop jar hs.jar -files Jifu_Zhao_mapper.py,Jifu_Zhao_reducer.py -input wc/in -output wc/out -mapper Jifu_Zhao_mapper.py -reducer Jifu_Zhao_reducer.py -cmdenv PYTHONIOENCODING=latin-1
+packageJobJar: [/tmp/hadoop-unjar6256740809168602531/] [] /tmp/streamjob7089851196177431396.jar tmpDir=null
+15/04/27 03:20:01 INFO client.RMProxy: Connecting to ResourceManager at /0.0.0.0:8032
+15/04/27 03:20:02 INFO client.RMProxy: Connecting to ResourceManager at /0.0.0.0:8032
+15/04/27 03:20:05 INFO mapred.FileInputFormat: Total input paths to process : 1
+15/04/27 03:20:05 INFO mapreduce.JobSubmitter: number of splits:5
+15/04/27 03:20:06 INFO mapreduce.JobSubmitter: Submitting tokens for job: job_1430103851372_0001
+15/04/27 03:20:07 INFO impl.YarnClientImpl: Submitted application application_1430103851372_0001
+15/04/27 03:20:08 INFO mapreduce.Job: The url to track the job: http://446d862642fa:8088/proxy/application_1430103851372_0001/
+15/04/27 03:20:08 INFO mapreduce.Job: Running job: job_1430103851372_0001
+15/04/27 03:20:31 INFO mapreduce.Job: Job job_1430103851372_0001 running in uber mode : false
+15/04/27 03:20:31 INFO mapreduce.Job:  map 0% reduce 0%
+15/04/27 03:21:03 INFO mapreduce.Job:  map 4% reduce 0%
+15/04/27 03:21:06 INFO mapreduce.Job:  map 10% reduce 0%
+15/04/27 03:21:09 INFO mapreduce.Job:  map 16% reduce 0%
+15/04/27 03:21:12 INFO mapreduce.Job:  map 23% reduce 0%
+15/04/27 03:21:15 INFO mapreduce.Job:  map 28% reduce 0%
+15/04/27 03:21:18 INFO mapreduce.Job:  map 35% reduce 0%
+15/04/27 03:21:21 INFO mapreduce.Job:  map 40% reduce 0%
+15/04/27 03:21:25 INFO mapreduce.Job:  map 50% reduce 0%
+15/04/27 03:21:28 INFO mapreduce.Job:  map 55% reduce 0%
+15/04/27 03:21:31 INFO mapreduce.Job:  map 59% reduce 0%
+15/04/27 03:21:34 INFO mapreduce.Job:  map 62% reduce 0%
+15/04/27 03:21:36 INFO mapreduce.Job:  map 63% reduce 0%
+15/04/27 03:21:37 INFO mapreduce.Job:  map 65% reduce 0%
+15/04/27 03:21:39 INFO mapreduce.Job:  map 66% reduce 0%
+15/04/27 03:21:40 INFO mapreduce.Job:  map 68% reduce 0%
+15/04/27 03:21:42 INFO mapreduce.Job:  map 69% reduce 0%
+15/04/27 03:21:43 INFO mapreduce.Job:  map 71% reduce 0%
+15/04/27 03:21:45 INFO mapreduce.Job:  map 72% reduce 0%
+15/04/27 03:21:46 INFO mapreduce.Job:  map 73% reduce 0%
+15/04/27 03:21:55 INFO mapreduce.Job:  map 93% reduce 0%
+15/04/27 03:21:56 INFO mapreduce.Job:  map 100% reduce 0%
+15/04/27 03:21:57 INFO mapreduce.Job:  map 100% reduce 27%
+15/04/27 03:22:00 INFO mapreduce.Job:  map 100% reduce 37%
+15/04/27 03:22:02 INFO mapreduce.Job:  map 100% reduce 45%
+15/04/27 03:22:05 INFO mapreduce.Job:  map 100% reduce 54%
+15/04/27 03:22:08 INFO mapreduce.Job:  map 100% reduce 63%
+15/04/27 03:22:11 INFO mapreduce.Job:  map 100% reduce 67%
+15/04/27 03:22:14 INFO mapreduce.Job:  map 100% reduce 71%
+15/04/27 03:22:17 INFO mapreduce.Job:  map 100% reduce 75%
+15/04/27 03:22:20 INFO mapreduce.Job:  map 100% reduce 79%
+15/04/27 03:22:23 INFO mapreduce.Job:  map 100% reduce 82%
+15/04/27 03:22:27 INFO mapreduce.Job:  map 100% reduce 87%
+15/04/27 03:22:30 INFO mapreduce.Job:  map 100% reduce 91%
+15/04/27 03:22:33 INFO mapreduce.Job:  map 100% reduce 94%
+15/04/27 03:22:36 INFO mapreduce.Job:  map 100% reduce 98%
+15/04/27 03:22:38 INFO mapreduce.Job:  map 100% reduce 100%
+15/04/27 03:22:39 INFO mapreduce.Job: Job job_1430103851372_0001 completed successfully
+15/04/27 03:22:40 INFO mapreduce.Job: Counters: 50
+	File System Counters
+		FILE: Number of bytes read=47742214
+		FILE: Number of bytes written=96142537
+		FILE: Number of read operations=0
+		FILE: Number of large read operations=0
+		FILE: Number of write operations=0
+		HDFS: Number of bytes read=600428351
+		HDFS: Number of bytes written=2139
+		HDFS: Number of read operations=18
+		HDFS: Number of large read operations=0
+		HDFS: Number of write operations=2
+	Job Counters 
+		Killed map tasks=1
+		Launched map tasks=6
+		Launched reduce tasks=1
+		Data-local map tasks=6
+		Total time spent by all maps in occupied slots (ms)=408053
+		Total time spent by all reduces in occupied slots (ms)=69216
+		Total time spent by all map tasks (ms)=408053
+		Total time spent by all reduce tasks (ms)=69216
+		Total vcore-seconds taken by all map tasks=408053
+		Total vcore-seconds taken by all reduce tasks=69216
+		Total megabyte-seconds taken by all map tasks=417846272
+		Total megabyte-seconds taken by all reduce tasks=70877184
+	Map-Reduce Framework
+		Map input records=5967781
+		Map output records=5967776
+		Map output bytes=35806656
+		Map output materialized bytes=47742238
+		Input split bytes=505
+		Combine input records=0
+		Combine output records=0
+		Reduce input groups=231
+		Reduce shuffle bytes=47742238
+		Reduce input records=5967776
+		Reduce output records=231
+		Spilled Records=11935552
+		Shuffled Maps =5
+		Failed Shuffles=0
+		Merged Map outputs=5
+		GC time elapsed (ms)=5076
+		CPU time spent (ms)=401070
+		Physical memory (bytes) snapshot=1653649408
+		Virtual memory (bytes) snapshot=4586999808
+		Total committed heap usage (bytes)=1178599424
+	Shuffle Errors
+		BAD_ID=0
+		CONNECTION=0
+		IO_ERROR=0
+		WRONG_LENGTH=0
+		WRONG_MAP=0
+		WRONG_REDUCE=0
+	File Input Format Counters 
+		Bytes Read=600427846
+	File Output Format Counters 
+		Bytes Written=2139
+15/04/27 03:22:40 INFO streaming.StreamJob: Output directory: wc/out
+# $HADOOP_PREFIX/bin/hdfs dfs -cat wc/out/part-00000 | sort -n -k 2 | tail -10
+BOS	133013
+LAS	136106
+MSP	142507
+DTW	148767
+STL	162187
+PHX	184323
+LAX	224984
+ATL	251671
+DFW	312035
+ORD	341284
+# $HADOOP_PREFIX/bin/hdfs dfs -rm -r -f -skipTrash wc/out
+Deleted wc/out
+# exit
+
+Script done on Mon Apr 27 03:24:43 2015
