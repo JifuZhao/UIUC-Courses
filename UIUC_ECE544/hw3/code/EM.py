@@ -26,7 +26,7 @@ class EM(object):
         self.mu = None
         self.sigma = None
         self.gaussianProb = None
-        self.E = []
+        self.logLikelihood = []
 
 
     def train(self, x):
@@ -38,8 +38,9 @@ class EM(object):
         for i in range(1, self.maxIter+1):
             self.estep(x)
             self.mstep(x)
-            if abs(self.E[-1] - self.E[-2]) < self.threshold:
+            if abs(self.logLikelihood[-1] - self.logLikelihood[-2]) / abs(self.logLikelihood[-2]) < self.threshold:
                 print('Reach the threshold at', i, 'th iteration !')
+                return
 
         print('Reach the maximum iteration !')
 
@@ -55,29 +56,22 @@ class EM(object):
 
         maximum = np.amax(x)
         minimum = np.amin(x)
-        diag = np.cov(x.T).diagonal()
+        diagonal = np.cov(x.T).diagonal()
         for k in range(self.m):
             self.mu[k, :] = np.random.uniform(minimum, maximum, dim)
-            diaginal = np.random.uniform()
-            self.sigma[k, :, :] = np.diag(diag)
-            self.gaussianProb[:, k] = self.gaussian(x, self.mu[k, :], self.sigma[k, :, :])
+            self.sigma[k, :, :] = np.diag(diagonal) + np.diag(np.random.random(dim) / 5)
+            self.sigma[k, :, :] = np.diag(diagonal)
 
-        weightedSum = np.sum(self.w * self.gaussianProb, axis=1)
-        for k in range(self.m):
-            self.gamma[:, k] = self.w[k] * self.gaussianProb[:, k] / weightedSum
+        # update gamma
+        self.gamma = self.gammaprob(x, self.w, self.mu, self.sigma)
 
         # calculate the expectation of log-likelihood
-        self.E.append(self.calculateE())
+        self.logLikelihood.append(self.likelihood())
 
 
     def estep(self, x):
         """ function to conduct E-Step for EM algorithm """
-        for k in range(self.m):
-            self.gaussianProb[:, k] = self.gaussian(x, self.mu[k, :], self.sigma[k, :, :])
-
-        weightedSum = np.sum(self.w * self.gaussianProb, axis=1)
-        for k in range(self.m):
-            self.gamma[:, k] = self.w[k] * self.gaussianProb[:, k] / weightedSum
+        self.gamma = self.gammaprob(x, self.w, self.mu, self.sigma)
 
 
     def mstep(self, x):
@@ -91,12 +85,20 @@ class EM(object):
             self.sigma[k, :, :] = np.dot(weightedDiff, diff) / sumGamma[k]
 
         # calculate the expectation of log-likelihood
-        self.E.append(self.calculateE())
+        self.logLikelihood.append(self.likelihood())
 
 
-    def gammaprob(self, x):
+    def gammaprob(self, x, w, mu, sigma):
         """ function to calculate the gamma probability """
-        pass
+        for k in range(self.m):
+            self.gaussianProb[:, k] = self.gaussian(x, mu[k, :], sigma[k, :, :])
+
+        gamma = np.zeros((len(x), self.m))
+        weightedSum = np.sum(w * self.gaussianProb, axis=1)
+        for k in range(self.m):
+            gamma[:, k] = w[k] * self.gaussianProb[:, k] / weightedSum
+
+        return gamma
 
 
     def gaussian(self, x, mu, sigma):
@@ -106,19 +108,21 @@ class EM(object):
         return pdf
 
 
-    def calculateE(self):
-        """ function to calculate the expection of log likelihood """
-        log = np.log(self.w * self.gaussianProb)
-        E = np.sum(log * self.gamma)
+    def likelihood(self):
+        """ function to calculate the log likelihood """
+        log = np.log(np.sum(self.w * self.gaussianProb, axis=1))
+        logLikelihood = np.sum(log)
 
-        return E
+        return logLikelihood
 
 
-    def predict(self, x):
+    def get_label(self):
         """ function to predict the classes using calculated parameters """
-        pass
+        label = np.argmax(self.w * self.gaussianProb, axis=1) + 1
+
+        return label
 
 
     def get_params(self):
         """ function to return the calculated parameters """
-        return self.gamma, self.mu, self.sigma, self.E
+        return self.w, self.mu, self.sigma, self.logLikelihood
