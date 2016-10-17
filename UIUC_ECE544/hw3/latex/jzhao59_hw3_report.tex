@@ -1,0 +1,145 @@
+\input{setting.tex}
+
+\usepackage{graphicx, amssymb, amsmath, listings, float, mathtools}
+\usepackage{color, url}
+\lstset{language = Python}
+\lstset{breaklines}
+\lstset{extendedchars=false}
+
+\oddsidemargin 0in
+\evensidemargin 0in
+\textwidth 6.5in
+\topmargin -0.6in
+\textheight 9.0in
+
+\begin{document}
+
+\solution{\large Jifu Zhao}{\large 10/20/2016}{\bf \Large ECE 544NA \hspace{0.5cm} 
+		Fall 2016 \hspace{0.5cm} Assignment 3}
+
+\section*{\Large I. Pencil-and-Paper}
+\begin{description}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Problem 1
+\item{\bf \large 1. E-Step}
+
+Since that $p_{X|\Theta(x_i|\theta)}$ is described as:
+\begin{equation}
+	p_{X|\Theta(x_i|\theta)} = \sum_{h=1}^{m} w_h p_{V|H, \Theta}(x_i, h, \theta)
+\end{equation}
+
+Now, suppose the hidden variable is $y$, where $y$ could be 1, 2, $\cdots$, m. Then, we can calculate the expectation of the log-likelihood $E[log\mathcal{L}(\Theta)]$ as:
+\begin{equation}
+\begin{split}
+E[log\mathcal{L}(\Theta)] = \sum_{k=1}^m [\sum_{i=1}^n log(\sum_{h=1}^m w_h p_{V|H, \Theta}(x_i, h, \theta | y=k))] \cdot \gamma_i(k)
+\end{split} 
+\end{equation}
+where $\gamma_i(k)$ is the posterior probability for $y = k$, and $\gamma_i(k)$ is defined as:
+\begin{equation}
+	\gamma_i(k) = \frac{w_k \mathcal{N}(x_i; \mu_k, \Sigma_k)}{\sum_l w_l \mathcal{N}(x_i; \mu_l, \Sigma_l)}
+\end{equation}
+
+Also, notice that 
+\begin{equation}
+p_{V|H, \Theta}(x_i, h, \theta | y=k)) = 
+	\begin{cases}
+		\mathcal{N}(x_i; \mu_k, \Sigma_k)  & \quad \text{if } h = k \\
+		0 & \quad \text{if } h \neq k
+	\end{cases}
+\end{equation}
+
+So, 
+\begin{equation}
+\begin{split}
+E[log\mathcal{L}(\Theta)] & = \sum_{i=1}^n \sum_{k=1}^m log(w_k p_{V|H, \Theta}(x_i, h=k, \theta)) \cdot \gamma_i(k) \\
+						  & =  \sum_{i=1}^n \sum_{k=1}^m log(w_k \mathcal{N}(x_i; \mu_k, \Sigma_k))\cdot \frac{w_k \mathcal{N}(x_i; \mu_k, \Sigma_k)}{\sum_l w_l \mathcal{N}(x_i; \mu_l, \Sigma_l)} \\
+						  & = \sum_{i=1}^n \sum_{k=1}^m log(w_k \mathcal{N}(x_i; \mu_k, \Sigma_k))\cdot \gamma_i(k)
+\end{split} 
+\end{equation}
+
+So, in E-Step, the most important thing is to calculate $\gamma_i(k)$ for each i and k, where 
+\begin{equation}
+\gamma_i(k) = \frac{w_k \mathcal{N}(x_i; \mu_k, \Sigma_k)}{\sum_l w_l \mathcal{N}(x_i; \mu_l, \Sigma_l)}
+\end{equation}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Problem 2
+\item{\bf \large 2. M-Step}
+
+From above equation (5), our goal is the maximize the expectation of log-likelihood $E[log\mathcal{L}(\Theta)]$.
+
+First, consider $w_k$. With the constraint of $\sum_k w_k = 1$, we have:
+\begin{equation}
+\frac{\partial}{\partial w_k} [\sum_{i=1}^n \sum_{k=1}^m log(w_k \mathcal{N}(x_i; \mu_k, \Sigma_k))\cdot \gamma_i(k) + \lambda(\sum_k w_k - 1)] = 0
+\end{equation}
+
+So, we have: 
+\begin{equation}
+\sum_{i=1}^n \frac{\gamma_i(k)}{w_k} + \lambda = 0
+\end{equation}
+
+Summing it over k from 1 to m and with the equation that $\sum_k \gamma_i(k) = 1$, we can have:
+\begin{equation}
+\lambda = n
+\end{equation}
+
+So, we have:
+\begin{equation}
+	w_k^{new} = \frac{1}{n} \sum_{i=1}^n \gamma_i(k)
+\end{equation}
+
+Now, let's consider $\mu_k$ and $\Sigma_k$. Following the steps in {\it A gentle tutorial of the EM algorithm and its application to parameter estimation for Gaussian mixture and hidden Markov models}, we can simply get the following result:
+\begin{equation}
+	\mu_k^{new} = \frac{\sum_{i=1}^n x_i \gamma_i(k)}{\sum_{i=1}^n \gamma_i(k)}
+\end{equation}
+
+
+\begin{equation}
+	\Sigma_k^{new} = \frac{\sum_{i=1}^n (x_i - \mu_k^{new}) \cdot (x_i - \mu_k^{new})^T \cdot \gamma_i(k)}{\sum_{i=1}^n \gamma_i(k)}
+\end{equation}
+
+So, Equation (10), (11) and (12) are the main steps for M-Step.
+
+Following Equation (6), (10), (11) and (12), we can iterate through E-Step and M-Step until reaching some stop criteria.
+
+\end{description}
+
+\newpage
+\section*{\Large II. Code-from-Scratch}
+
+\subsection*{\large 1. Methods}
+
+\subsection*{\large 2. Results}
+
+\newpage
+\section*{\Large III. TensorFlow}
+
+\subsection*{\large 1. Methods}
+
+\subsection*{\large 2. Results}
+
+
+%\begin{equation}
+%\begin{split}
+%	\frac{dE}{dw_j} & = \frac{d(\sum_i{((t_i - y_i)^2)})}{dw_j} \\
+%					& = \sum_i{\frac{d(t_i - g(w' x_i + b))^2}{dw_j}}
+%\end{split}
+%\end{equation}
+
+
+%\begin{figure}[H]
+%\centering
+%\includegraphics[width=1.0\textwidth]{./images/detector}
+%\caption{\label{fig:detector_system} Single detector system}
+%\end{figure}
+
+
+\clearpage
+
+%\bibliographystyle{plain}
+%\bibliographystyle{unsrt}
+%\bibliography{reference.bib}
+
+\end{document}
+
