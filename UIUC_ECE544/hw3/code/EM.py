@@ -39,10 +39,10 @@ class EM(object):
             self.estep(x)
             self.mstep(x)
             if abs(self.logLikelihood[-1] - self.logLikelihood[-2]) / abs(self.logLikelihood[-2]) < self.threshold:
-                print('Reach the threshold at', i, 'th iteration !')
+                print('Break, reach the threshold at', i, 'th iteration !')
                 return
 
-        print('Reach the maximum iteration !')
+        print('Stopped, reach the maximum iteration !')
 
 
     def initialize(self, x):
@@ -57,10 +57,11 @@ class EM(object):
         maximum = np.amax(x)
         minimum = np.amin(x)
         diagonal = np.cov(x.T).diagonal()
+        mean = np.mean(x, axis=0)
         for k in range(self.m):
-            self.mu[k, :] = np.random.uniform(minimum, maximum, dim)
-            self.sigma[k, :, :] = np.diag(diagonal) + np.diag(np.random.random(dim) / 5)
-            self.sigma[k, :, :] = np.diag(diagonal)
+            self.mu[k, :] = mean + np.random.uniform(0, 1, dim) / 10
+            self.sigma[k, :, :] = np.diag(diagonal) + np.diag(np.random.uniform(0, 1, dim) / 10)
+            # self.sigma[k, :, :] = np.diag(diagonal) + np.diag(np.random.random(dim) / 10)
 
         # update gamma
         self.gamma = self.gammaprob(x, self.w, self.mu, self.sigma)
@@ -76,13 +77,17 @@ class EM(object):
 
     def mstep(self, x):
         """ function to conduct M-Step for EM algorithm """
+        n, dim = x.shape
         sumGamma = np.sum(self.gamma, axis=0)
-        self.w = np.mean(self.gamma, axis=0)
+        self.w = sumGamma / n
+
         for k in range(self.m):
             self.mu[k, :] = np.sum(x.T * self.gamma[:, k], axis=1) / sumGamma[k]
             diff = x - self.mu[k, :]
             weightedDiff = diff.T * self.gamma[:, k]
             self.sigma[k, :, :] = np.dot(weightedDiff, diff) / sumGamma[k]
+            if np.linalg.matrix_rank(self.sigma[k, :, :]) != 3:
+                self.sigma[k, :, :] = self.sigma[k, :, :] + np.diag(np.random.random(dim) / 10000)
 
         # calculate the expectation of log-likelihood
         self.logLikelihood.append(self.likelihood())
@@ -93,17 +98,26 @@ class EM(object):
         for k in range(self.m):
             self.gaussianProb[:, k] = self.gaussian(x, mu[k, :], sigma[k, :, :])
 
-        gamma = np.zeros((len(x), self.m))
         weightedSum = np.sum(w * self.gaussianProb, axis=1)
-        for k in range(self.m):
-            gamma[:, k] = w[k] * self.gaussianProb[:, k] / weightedSum
+        gamma = ((w * self.gaussianProb).T / weightedSum).T
+
+        # gamma = np.zeros((len(x), self.m))
+        # for k in range(self.m):
+        #     gamma[:, k] = w[k] * self.gaussianProb[:, k] / weightedSum
 
         return gamma
 
 
     def gaussian(self, x, mu, sigma):
         """ function to calculate the multivariate gaussian probability """
-        pdf = multivariate_normal(mu, sigma).pdf(x)
+        # pdf = multivariate_normal(mu, sigma).pdf(x)
+
+        # inversion = np.linalg.inv(sigma)
+        inversion = np.linalg.pinv(sigma)
+        part1 = (-0.5 * np.sum(np.dot(x - mu, inversion) * (x - mu), axis=1))
+        part2 = 1 / ((2 * np.pi) ** (len(mu) / 2) * (np.linalg.det(sigma) ** 0.5))
+
+        pdf = part2 * np.exp(part1)
 
         return pdf
 
