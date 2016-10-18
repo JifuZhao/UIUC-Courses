@@ -23,8 +23,8 @@ class EM(object):
         self.maxIter = maxIter
         self.w = None
         self.gamma = None
-        self.mu = None
-        self.sigma = None
+        self.mu = [None] * m
+        self.sigma = [None] * m
         self.gaussianProb = None
         self.logLikelihood = []
 
@@ -50,24 +50,27 @@ class EM(object):
         n, dim = x.shape  # find the dimensions
         self.w = np.ones(self.m) * (1 / self.m)
         self.gamma = np.zeros((n, self.m))
-        self.mu = np.zeros((self.m, dim))
-        self.sigma = np.zeros((self.m, dim, dim))
         self.gaussianProb = np.zeros((n, self.m))
+        # self.mu = np.zeros((self.m, dim))
+        # self.sigma = np.zeros((self.m, dim, dim))
 
         maximum = np.amax(x)
         minimum = np.amin(x)
+        cov = np.cov(x.T)
         diagonal = np.cov(x.T).diagonal()
         mean = np.mean(x, axis=0)
         for k in range(self.m):
-            self.mu[k, :] = mean + np.random.uniform(0, 1, dim) / 10
-            self.sigma[k, :, :] = np.diag(diagonal) + np.diag(np.random.uniform(0, 1, dim) / 10)
-            # self.sigma[k, :, :] = np.diag(diagonal) + np.diag(np.random.random(dim) / 10)
+            self.mu[k] = mean + np.random.uniform(0, 1, dim) / 10
+            # self.sigma[k] = cov
+            self.sigma[k] = np.diag(diagonal) + np.diag(np.random.random(dim) / 10)
 
         # update gamma
         self.gamma = self.gammaprob(x, self.w, self.mu, self.sigma)
 
         # calculate the expectation of log-likelihood
         self.logLikelihood.append(self.likelihood())
+
+        # print(self.w, self.mu, self.sigma, self.logLikelihood[0])
 
 
     def estep(self, x):
@@ -82,12 +85,12 @@ class EM(object):
         self.w = sumGamma / n
 
         for k in range(self.m):
-            self.mu[k, :] = np.sum(x.T * self.gamma[:, k], axis=1) / sumGamma[k]
-            diff = x - self.mu[k, :]
+            self.mu[k] = np.sum(x.T * self.gamma[:, k], axis=1) / sumGamma[k]
+            diff = x - self.mu[k]
             weightedDiff = diff.T * self.gamma[:, k]
-            self.sigma[k, :, :] = np.dot(weightedDiff, diff) / sumGamma[k]
-            if np.linalg.matrix_rank(self.sigma[k, :, :]) != 3:
-                self.sigma[k, :, :] = self.sigma[k, :, :] + np.diag(np.random.random(dim) / 10000)
+            self.sigma[k] = np.dot(weightedDiff, diff) / sumGamma[k]
+            # if np.linalg.matrix_rank(self.sigma[k, :, :]) != 3:
+            #     self.sigma[k, :, :] = self.sigma[k, :, :] + np.diag(np.random.random(dim) / 10000)
 
         # calculate the expectation of log-likelihood
         self.logLikelihood.append(self.likelihood())
@@ -96,7 +99,7 @@ class EM(object):
     def gammaprob(self, x, w, mu, sigma):
         """ function to calculate the gamma probability """
         for k in range(self.m):
-            self.gaussianProb[:, k] = self.gaussian(x, mu[k, :], sigma[k, :, :])
+            self.gaussianProb[:, k] = self.gaussian(x, mu[k], sigma[k])
 
         weightedSum = np.sum(w * self.gaussianProb, axis=1)
         gamma = ((w * self.gaussianProb).T / weightedSum).T
@@ -112,8 +115,8 @@ class EM(object):
         """ function to calculate the multivariate gaussian probability """
         # pdf = multivariate_normal(mu, sigma).pdf(x)
 
-        # inversion = np.linalg.inv(sigma)
-        inversion = np.linalg.pinv(sigma)
+        inversion = np.linalg.inv(sigma)
+        # inversion = np.linalg.pinv(sigma)
         part1 = (-0.5 * np.sum(np.dot(x - mu, inversion) * (x - mu), axis=1))
         part2 = 1 / ((2 * np.pi) ** (len(mu) / 2) * (np.linalg.det(sigma) ** 0.5))
 
