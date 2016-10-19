@@ -90,7 +90,7 @@ for i in degree_list:
 fig, ax = plt.subplots()
 ax.plot(degree_list, error_list, 'go-')
 ax.set_xlabel('Polynomial Degree')
-ax.set_ylabel('Sum of Squares of Resuduals')
+ax.set_ylabel('Sum of Squared Resuduals')
 ax.set_title('RSS vs. Degree')
 ax.grid('on')
 fig.savefig('./result/rss.pdf')
