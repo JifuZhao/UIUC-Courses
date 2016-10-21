@@ -23,10 +23,10 @@ class EM(object):
         self.maxIter = maxIter
         self.w = None
         self.gamma = None
-        self.mu = [None] * m
-        self.sigma = [None] * m
+        self.mu = None
+        self.sigma = None
         self.gaussianProb = None
-        self.logLikelihood = []
+        self.logLikelihood = None
 
 
     def train(self, x):
@@ -51,8 +51,9 @@ class EM(object):
         self.w = np.ones(self.m) * (1 / self.m)
         self.gamma = np.zeros((n, self.m))
         self.gaussianProb = np.zeros((n, self.m))
-        # self.mu = np.zeros((self.m, dim))
-        # self.sigma = np.zeros((self.m, dim, dim))
+        self.mu = [None] * self.m
+        self.sigma = [None] * self.m
+        self.logLikelihood = []
 
         maximum = np.amax(x)
         minimum = np.amin(x)
@@ -69,7 +70,6 @@ class EM(object):
 
         # calculate the expectation of log-likelihood
         self.logLikelihood.append(self.likelihood())
-
         # print(self.w, self.mu, self.sigma, self.logLikelihood[0])
 
 
