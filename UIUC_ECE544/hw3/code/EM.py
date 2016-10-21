@@ -60,9 +60,9 @@ class EM(object):
         diagonal = np.cov(x.T).diagonal()
         mean = np.mean(x, axis=0)
         for k in range(self.m):
-            self.mu[k] = mean + np.random.uniform(0, 1, dim) / 10
-            # self.sigma[k] = cov
-            self.sigma[k] = np.diag(diagonal) + np.diag(np.random.random(dim) / 10)
+            self.mu[k] = mean + np.random.uniform(-0.5, 0.5, dim)
+            self.sigma[k] = cov
+            # self.sigma[k] = np.diag(diagonal) + np.diag(np.random.random(dim) / 10)
 
         # update gamma
         self.gamma = self.gammaprob(x, self.w, self.mu, self.sigma)
@@ -89,8 +89,8 @@ class EM(object):
             diff = x - self.mu[k]
             weightedDiff = diff.T * self.gamma[:, k]
             self.sigma[k] = np.dot(weightedDiff, diff) / sumGamma[k]
-            # if np.linalg.matrix_rank(self.sigma[k, :, :]) != 3:
-            #     self.sigma[k, :, :] = self.sigma[k, :, :] + np.diag(np.random.random(dim) / 10000)
+            if np.linalg.matrix_rank(self.sigma[k]) != 3:
+                self.sigma[k] = self.sigma[k] + np.diag(np.random.random(dim)/10000)
 
         # calculate the expectation of log-likelihood
         self.logLikelihood.append(self.likelihood())
@@ -103,10 +103,6 @@ class EM(object):
 
         weightedSum = np.sum(w * self.gaussianProb, axis=1)
         gamma = ((w * self.gaussianProb).T / weightedSum).T
-
-        # gamma = np.zeros((len(x), self.m))
-        # for k in range(self.m):
-        #     gamma[:, k] = w[k] * self.gaussianProb[:, k] / weightedSum
 
         return gamma
 
