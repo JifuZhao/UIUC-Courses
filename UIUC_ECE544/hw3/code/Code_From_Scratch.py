@@ -3,7 +3,7 @@
 """
 __author__      = "Jifu Zhao"
 __email__       = "jzhao59@illinois.edu"
-__date__        = "10/22/2016"
+__date__        = "10/16/2016"
 """
 
 import warnings
@@ -17,9 +17,11 @@ import copy
 
 from EM import EM
 
+
 # # Corgi image
 # read the image
 img = plt.imread('./corgi.png')[:, :, :3]
+
 # reshape the input vector
 x = np.reshape(img, (-1, 3))
 x = x / np.max(x)
@@ -39,7 +41,7 @@ label = em.get_label()
 
 # reconstruct the image
 test = copy.deepcopy(x)
-for i in range(1, 4):
+for i in range(1, m+1):
     test[label == i] = mu[i - 1]
 
 fig = plt.figure()
@@ -56,7 +58,7 @@ print('\nsigma:\n', np.round(sigma, 5))
 
 
 # ## 5 mixtures
-np.random.seed(16)  # 1, 3, 6, 10, 16, 111, 200, 2015, 2016
+np.random.seed(200)  # 6, 16, 200, 2000
 # train the EM model
 m = 5
 em = EM(m=m, threshold=0.0001, maxIter=50)
@@ -69,7 +71,7 @@ label = em.get_label()
 
 # reconstruct the image
 test = copy.deepcopy(x)
-for i in range(1, 4):
+for i in range(1, m+1):
     test[label == i] = mu[i - 1]
 
 fig = plt.figure()
@@ -82,7 +84,7 @@ plt.show()
 
 
 # ## 10 mixtures
-np.random.seed(2000)  # 1, 2, 2000
+np.random.seed(5)  # 1, 2, 2000
 # train the EM model
 m = 10
 em = EM(m=m, threshold=0.001, maxIter=30)
@@ -95,7 +97,7 @@ label = em.get_label()
 
 # reconstruct the image
 test = copy.deepcopy(x)
-for i in range(1, 4):
+for i in range(1, m+1):
     test[label == i] = mu[i - 1]
 
 fig = plt.figure()
@@ -110,6 +112,7 @@ plt.show()
 # # Self figure
 # read the image
 img = plt.imread('./self.jpg')
+
 # reshape the input vector
 x = np.reshape(img, (-1, 3))
 x = x / np.max(x)
@@ -129,7 +132,7 @@ label = em.get_label()
 
 # reconstruct the image
 test = copy.deepcopy(x)
-for i in range(1, 4):
+for i in range(1, m+1):
     test[label == i] = mu[i - 1]
 
 fig = plt.figure()
@@ -160,7 +163,7 @@ label = em.get_label()
 
 # reconstruct the image
 test = copy.deepcopy(x)
-for i in range(1, 4):
+for i in range(1, m+1):
     test[label == i] = mu[i - 1]
 
 fig = plt.figure()
@@ -173,10 +176,10 @@ plt.show()
 
 
 # ## 10 Mixtures
-np.random.seed(7)  # 5, 7, 9, 10,
+np.random.seed(1)  # 1, 5, 7, 9
 # train the EM model
 m = 10
-em = EM(m=m, threshold=0.0001, maxIter=30)
+em = EM(m=m, threshold=0.001, maxIter=30)
 em.train(x)
 
 # get all parameters
@@ -186,7 +189,7 @@ label = em.get_label()
 
 # reconstruct the image
 test = copy.deepcopy(x)
-for i in range(1, 4):
+for i in range(1, m+1):
     test[label == i] = mu[i - 1]
 
 fig = plt.figure()

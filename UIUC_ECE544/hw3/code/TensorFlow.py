@@ -3,7 +3,7 @@
 """
 __author__      = "Jifu Zhao"
 __email__       = "jzhao59@illinois.edu"
-__date__        = "10/22/2016"
+__date__        = "10/16/2016"
 """
 
 import warnings
@@ -18,12 +18,15 @@ import tensorflow as tf
 from tensorflow.contrib.factorization.python.ops.gmm import GMM
 from tensorflow.contrib.factorization.python.ops.kmeans import KMeansClustering as KMeans
 
+
 # # Original Figure
 # read the image
 img = plt.imread('./corgi.png')[:, :, :3]
+
 # reshape the input vector
 x = np.reshape(img, (-1, 3))
 x = x / np.max(x)
+
 
 # ## 3 clusters
 random_seed = 3
@@ -36,7 +39,7 @@ label = gmm.predict(x)[0, :] + 1
 
 # reconstruct the image
 test = copy.deepcopy(x)
-for i in range(1, 4):
+for i in range(1, m+1):
     test[label == i] = gmm.clusters()[i - 1, :]
 
 fig = plt.figure()
@@ -63,7 +66,7 @@ label = gmm.predict(x)[0, :] + 1
 
 # reconstruct the image
 test = copy.deepcopy(x)
-for i in range(1, 4):
+for i in range(1, m+1):
     test[label == i] = gmm.clusters()[i - 1, :]
 
 fig = plt.figure()
@@ -86,7 +89,7 @@ label = gmm.predict(x)[0, :] + 1
 
 # reconstruct the image
 test = copy.deepcopy(x)
-for i in range(1, 4):
+for i in range(1, m+1):
     test[label == i] = gmm.clusters()[i - 1, :]
 
 fig = plt.figure()
@@ -105,6 +108,7 @@ img = plt.imread('./self.jpg') / 255
 x = np.reshape(img, (-1, 3))
 x = x / np.max(x)
 
+
 # ## 3 Mixtures
 random_seed = 5
 # train the GMM model
@@ -116,7 +120,7 @@ label = gmm.predict(x)[0, :] + 1
 
 # reconstruct the image
 test = copy.deepcopy(x)
-for i in range(1, 4):
+for i in range(1, m+1):
     test[label == i] = gmm.clusters()[i - 1, :]
 
 fig = plt.figure()
@@ -143,7 +147,7 @@ label = gmm.predict(x)[0, :] + 1
 
 # reconstruct the image
 test = copy.deepcopy(x)
-for i in range(1, 4):
+for i in range(1, m+1):
     test[label == i] = gmm.clusters()[i - 1, :]
 
 fig = plt.figure()
@@ -156,7 +160,7 @@ plt.show()
 
 
 # ## 10 Mixtures
-random_seed = 1
+random_seed = 10
 # train the GMM model
 m = 10
 gmm = GMM(num_clusters=m, random_seed=random_seed, initial_clusters='random',
@@ -166,7 +170,7 @@ label = gmm.predict(x)[0, :] + 1
 
 # reconstruct the image
 test = copy.deepcopy(x)
-for i in range(1, 4):
+for i in range(1, m+1):
     test[label == i] = gmm.clusters()[i - 1, :]
 
 fig = plt.figure()
