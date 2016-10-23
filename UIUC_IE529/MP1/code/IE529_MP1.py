@@ -1,4 +1,3 @@
-
 # coding: utf-8
 
 # # IE 529 Computational Assignment 1
@@ -9,7 +8,6 @@ import numpy as np
 import scipy as sp
 import pandas as pd
 import matplotlib.pyplot as plt
-
 
 # ## Part 1. Regression Analysis
 # load the data set
@@ -33,7 +31,6 @@ def polynomial_regression(x, y, degree, x_range):
         prediction: predicted values
         error: least squares error
     """
-    
     n = len(x)
     # map x into multiple columns
     X = np.zeros((n, degree + 1))
@@ -60,7 +57,6 @@ def polynomial_regression(x, y, degree, x_range):
 
 def visualize_fitting(x, y, x_range, prediction, degree, error):
     """ function to visualize the fitted result """
-    
     fig, ax = plt.subplots()
     ax.plot(x, y, 'g.', label='Original y')
     ax.plot(x_range, prediction, 'r-', label='Predicted y')
@@ -103,7 +99,6 @@ fig = visualize_fitting(x, y, x_range, predict_list[degree-1],
                         degree=degree, error=error_list[degree-1])
 fig.savefig('./result/poly_1.pdf')
 fig.savefig('./result/poly_1.png', dpi=300)
-
 print(w_list[degree-1])
 
 # Polynomial regression with degree 2
@@ -112,7 +107,6 @@ fig = visualize_fitting(x, y, x_range, predict_list[degree-1],
                         degree=degree, error=error_list[degree-1])
 fig.savefig('./result/poly_2.pdf')
 fig.savefig('./result/poly_2.png', dpi=300)
-
 print(w_list[degree-1])
 
 # Polynomial regression with degree 3
@@ -121,12 +115,10 @@ fig = visualize_fitting(x, y, x_range, predict_list[degree-1],
                         degree=degree, error=error_list[degree-1])
 fig.savefig('./result/poly_3.pdf')
 fig.savefig('./result/poly_3.png', dpi=300)
-
 print(w_list[degree-1])
 
 
 # # Part 2. Principal Component Analysis
-
 # load the data set
 data2 = pd.read_csv('./data/flowers.csv', header=None).values
 
@@ -158,7 +150,6 @@ def PCA(x, whiten=False):
 
 
 # ## Non-Standarized Version
-
 u, s, ratio, projection = PCA(data2, whiten=False)
 print('Eigenvectors: \n', u)
 print('\nVariance\n', s)
@@ -172,12 +163,10 @@ ax.set_ylabel('Second PC')
 ax.set_title('PCA Projection (non-standarized)')
 fig.savefig('./result/projection1.pdf')
 fig.savefig('./result/projection1.png', dpi=300)
-
 plt.show()
 
 
 # ## Standarized Version
-
 u, s, ratio, projection = PCA(data2, whiten=True)
 print('Eigenvectors: \n', u)
 print('\nVariance\n', s)
@@ -191,6 +180,5 @@ ax.set_ylabel('Second PC')
 ax.set_title('PCA Projection (standarized)')
 fig.savefig('./result/projection2.pdf')
 fig.savefig('./result/projection2.png', dpi=300)
-
 plt.show()
 
