@@ -1,0 +1,145 @@
+\input{setting.tex}
+
+\usepackage{graphicx, amssymb, amsmath, listings, float, mathtools}
+\usepackage{color, url}
+\lstset{language = Python}
+\lstset{breaklines}
+\lstset{extendedchars=false}
+\usepackage{xcolor}
+
+\oddsidemargin 0in
+\evensidemargin 0in
+\textwidth 6.5in
+\topmargin -0.6in
+\textheight 9.0in
+
+\newsavebox\MBox
+\newcommand\Cline[2][red]{{\sbox\MBox{$#2$}%
+  \rlap{\usebox\MBox}\color{#1}\rule[-2\dp\MBox]{\wd\MBox}{2pt}}}
+
+\begin{document}
+
+\solution{\large Jifu Zhao}{\large 10/30/2016}{\bf \Large ECE 544NA \hspace{0.5cm} 
+		Fall 2016 \hspace{0.5cm} Assignment 4}
+
+\section*{\Large I. Pencil-and-Paper}
+Suppose $(V, H)$ denote the visible and hidden random variable which takes values ($v \in \{0, 1\}^m$, $h \in \{0, 1\}^n$). And the joint probability is $p(v, h; \theta) = \frac{1}{Z}e^{-E(v, h; \theta)}$, where E is the energy function:
+\begin{equation}
+\begin{split}
+E(v, h; \theta) & = -\sum_{i=1}^n \sum_{j=1}^m w_{ij} h_i v_j - \sum_{j=1}^m b_j v_j - \sum_{i=1}^n c_i h_i \\
+				& = -(\mathbf{v^T W h + v^T b + h^T c})
+\end{split}
+\end{equation}
+where $Z = \sum_v \sum_h e^{-E(v, h, \theta)}$ and $\theta = (W, b, c)$.
+
+
+\begin{description}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Problem 1
+\item{\bf \large 1. } Find $p(v|h, \theta)$ and $\mathbb{E}(v|h, \theta)$.
+
+From the structure of RBM, it means that the hidden variables are independent given the state of the visible variables and the visible variables are independent given the state of the hidden variables. In this way,
+\begin{equation}
+\Cline[red]{p(v| h, \theta) = \prod_{i=1}^n p(v_i|h, \theta)}
+\end{equation}
+So, we also have:
+\begin{equation}
+\mathbb{E}(v|h, \theta) =  sigmoid(W^T h + b)
+\end{equation}
+
+For $p(v_j|h)$, 
+\begin{equation}
+p(v_j|h) = \frac{p(v_j, h)}{p(h)} = \frac{p(v_j, h)}{p(v_j=0, h) + p(v_j=1, h)}
+\end{equation}
+
+Since that $p(v_j=0, h) = \frac{1}{Z}e^{-E(v_j=0, h; \theta)}$ and $p(v_j=1, h) = \frac{1}{Z}e^{-E(v_j=1, h; \theta)}$.
+From equation (1), we can think $E(v, h; \theta) = v_j \alpha_j + \beta$, where $\beta$ doesn't contain $v_j$. In this way, we have:
+\begin{equation}
+\begin{split}
+p(v_j|h) & = \frac{p(v_j, h)}{p(v_j=0, h) + p(v_j=1, h)} \\
+		 & = \frac{exp(-v_j \alpha_j +- \beta)}{exp(-\beta) + exp(-\alpha_j - \beta)} \\
+		 & = \frac{exp(-v_j \alpha_j)}{1 + exp(-\alpha_j)}
+\end{split} 
+\end{equation}
+
+So, we have
+\begin{equation}
+p(v_j = 1|h) = \frac{exp(-\alpha_j)}{1 + exp(-\alpha_j)} = \frac{1}{1 + exp(\alpha_j)}
+\end{equation}
+and 
+\begin{equation}
+p(v_j = 0|h) = \frac{1}{1 + exp(-\alpha_j)} = 1 - \frac{1}{1 + exp(\alpha_j)}
+\end{equation}
+
+From equation (1), we can see that $\alpha_j = -\sum_{i=1}^n w_{ij}h_i - b_j$, so we can see that:
+\begin{equation}
+\Cline[red]{p(v_j = 1|h) = sigmoid(-\alpha_j) = sigmoid(\sum_{i=1}^n w_{ij}h_i + b_j)}
+\end{equation}
+and 
+\begin{equation}
+\Cline[red]{p(v_j = 0|h) = 1 - sigmoid(-\alpha_j) = 1 - sigmoid(\sum_{i=1}^n w_{ij}h_i + b_j)}
+\end{equation}
+
+From equation (8), we can see that:
+\begin{equation}
+\mathbb{E}(v_j|h, \theta) = 1 \cdot p(v_j = 1|h, \theta) + 0 \cdot p(v_j = 0|h, \theta) = sigmoid(\sum_{i=1}^n w_{ij}h_i + b_j)
+\end{equation}
+In the vector format:
+\begin{equation}
+\Cline[red]{\mathbb{E}(v|h, \theta) = sigmoid(W^T h + b)}
+\end{equation}\\
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Problem 2
+\item{\bf \large 2. } Find $p(h|v, \theta)$ and $\mathbb{E}(h|v, \theta)$.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Problem 3
+\item{\bf \large 3. } Compute $\frac{\partial \mathcal{L}(D|\theta)}{\partial W_{ij}}$, $\frac{\partial \mathcal{L}(D|\theta)}{\partial b_{j}}$ and $\frac{\partial \mathcal{L}(D|\theta)}{\partial c_{i}}$
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Problem 4
+\item{\bf \large 4. } Contrastive divergence
+
+
+\end{description}
+
+\newpage
+\section*{\Large II. Code-from-Scratch}
+
+\subsection*{\large 1. Methods}
+
+\subsection*{\large 2. Results}
+
+\newpage
+\section*{\Large III. TensorFlow}
+
+\subsection*{\large 1. Methods}
+
+\subsection*{\large 2. Results}
+
+%\begin{equation}
+%\begin{split}
+%	\frac{dE}{dw_j} & = \frac{d(\sum_i{((t_i - y_i)^2)})}{dw_j} \\
+%					& = \sum_i{\frac{d(t_i - g(w' x_i + b))^2}{dw_j}}
+%\end{split}
+%\end{equation}
+
+
+%\begin{figure}[H]
+%\centering
+%\includegraphics[width=1.0\textwidth]{./images/detector}
+%\caption{\label{fig:detector_system} Single detector system}
+%\end{figure}
+
+
+\clearpage
+
+%\bibliographystyle{plain}
+%\bibliographystyle{unsrt}
+%\bibliography{reference.bib}
+
+\end{document}
+
