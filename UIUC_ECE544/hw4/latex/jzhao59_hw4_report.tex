@@ -57,7 +57,7 @@ From equation (1), we can think $E(v, h; \theta) = v_j \alpha_j + \beta$, where 
 \begin{equation}
 \begin{split}
 p(v_j|h) & = \frac{p(v_j, h)}{p(v_j=0, h) + p(v_j=1, h)} \\
-		 & = \frac{exp(-v_j \alpha_j +- \beta)}{exp(-\beta) + exp(-\alpha_j - \beta)} \\
+		 & = \frac{exp(-v_j \alpha_j - \beta)}{exp(-\beta) + exp(-\alpha_j - \beta)} \\
 		 & = \frac{exp(-v_j \alpha_j)}{1 + exp(-\alpha_j)}
 \end{split} 
 \end{equation}
@@ -80,7 +80,7 @@ and
 \Cline[red]{p(v_j = 0|h) = 1 - sigmoid(-\alpha_j) = 1 - sigmoid(\sum_{i=1}^n w_{ij}h_i + b_j)}
 \end{equation}
 
-From equation (8), we can see that:
+From equation (8) and (9), we can see that:
 \begin{equation}
 \mathbb{E}(v_j|h, \theta) = 1 \cdot p(v_j = 1|h, \theta) + 0 \cdot p(v_j = 0|h, \theta) = sigmoid(\sum_{i=1}^n w_{ij}h_i + b_j)
 \end{equation}
@@ -93,16 +93,131 @@ In the vector format:
 % Problem 2
 \item{\bf \large 2. } Find $p(h|v, \theta)$ and $\mathbb{E}(h|v, \theta)$.
 
+Similar to the procedures in 1, since that the hidden variables are independent given the state of the visible variables. In this way,
+\begin{equation}
+\Cline[red]{p(h|v, \theta) = \prod_{j=1}^m p(h_j|v, \theta)}
+\end{equation}
+So, we also have:
+\begin{equation}
+\mathbb{E}(h|v, \theta) =  sigmoid(W v + c)
+\end{equation}
+
+For $p(h_i|v)$, 
+\begin{equation}
+p(h_i|v) = \frac{p(h_i, v)}{p(v)} = \frac{p(h_i, v)}{p(h_i=0, v) + p(h_i=1, v)}
+\end{equation}
+
+Since that $p(h_i=0, v) = \frac{1}{Z}e^{-E(v, h_i=0; \theta)}$ and $p(h_i=1, v) = \frac{1}{Z}e^{-E(v, h_i=1; \theta)}$.
+From equation (1), we can think $E(v, h; \theta) = h_i \gamma_i + \beta'$, where $\beta'$ doesn't contain $h_i$. In this way, we have:
+\begin{equation}
+\begin{split}
+p(h_i|v) & = \frac{p(h_i, v)}{p(h_i=0, v) + p(h_i=1, v)} \\
+		 & = \frac{exp(-h_i \gamma_i - \beta')}{exp(-\beta') + exp(-\gamma_i - \beta')} \\
+		 & = \frac{exp(-h_i \gamma_i)}{1 + exp(-\gamma_i)}
+\end{split} 
+\end{equation}
+
+So, we have
+\begin{equation}
+p(h_i=1|v) = \frac{exp(-\gamma_i)}{1 + exp(-\gamma_i)} = \frac{1}{1 + exp(\gamma_i)}
+\end{equation}
+and 
+\begin{equation}
+p(h_i=0|v) = \frac{1}{1 + exp(-\gamma_i)} = 1 - \frac{1}{1 + exp(\gamma_i)}
+\end{equation}
+
+From equation (1), we can see that $\gamma_i = -\sum_{j=1}^m w_{ij}v_j - c_i$, so we can see that:
+\begin{equation}
+\Cline[red]{p(h_i=1|v) = sigmoid(-\gamma_i) = sigmoid(\sum_{j=1}^m w_{ij}v_j + c_i)}
+\end{equation}
+and 
+\begin{equation}
+\Cline[red]{p(h_i=0|v) = 1 - sigmoid(-\gamma_i) = 1 - sigmoid(\sum_{j=1}^m w_{ij}v_j + c_i)}
+\end{equation}
+
+From equation (18) and (19), we can see that:
+\begin{equation}
+\mathbb{E}(h_i|v, \theta) = 1 \cdot p(h_i=1|v, \theta) + 0 \cdot p(h_i=0|v, \theta) = sigmoid(\sum_{j=1}^m w_{ij}v_j + c_i)
+\end{equation}
+In the vector format:
+\begin{equation}
+\Cline[red]{\mathbb{E}(h|v, \theta) = sigmoid(W v + c)}
+\end{equation}\\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Problem 3
 \item{\bf \large 3. } Compute $\frac{\partial \mathcal{L}(D|\theta)}{\partial W_{ij}}$, $\frac{\partial \mathcal{L}(D|\theta)}{\partial b_{j}}$ and $\frac{\partial \mathcal{L}(D|\theta)}{\partial c_{i}}$
 
+Now, suppose the given dataset is $D=\{v_1, v_2, \cdots, v_N\}$, then the log-likelihood can be calculated as:
+\begin{equation}
+\mathcal{L}(D|\theta) = \sum_{t=1}^N log(p(v_t|\theta))
+\end{equation}
+
+Since that 
+\begin{equation}
+p(v_t|\theta) = \sum_{h_t} p(v_t, h_t|\theta) = \frac{1}{Z}\sum_{h_t} exp(-E(v_t, h_t; \theta))
+\end{equation}
+where $Z = \sum_{v_t}\sum_{h_t}exp(-E(v_t, h_t; \theta))$
+
+we can get:
+\begin{equation}
+\begin{split}
+log(p(v_t|\theta)) & = log(\frac{1}{Z}\sum_{h_t} exp(-E(v_t, h_t; \theta))) \\
+				   & = log(\sum_{h_t}exp(-E(v_t, h_t; \theta))) - log(\sum_{v_t}\sum_{h_t}exp(-E(v_t, h_t; \theta))) 
+\end{split}
+\end{equation}
+
+So, to calculate the derivation, we can get:
+\begin{equation}
+\begin{split}
+\frac{\partial log(p(v_t|\theta))}{\partial \theta} 
+	& = \frac{\partial}{\partial \theta} log(\sum_{h_t}exp(-E(v_t, h_t; \theta))) - \frac{\partial}{\partial \theta} log(\sum_{v_t}\sum_{h_t}exp(-E(v_t, h_t; \theta)))  \\
+	& = -\frac{1}{\sum_{h_t} e^{-E}} \sum_{h_t} e^{-E} \cdot \frac{\partial E}{\partial \theta} + 
+		 \frac{1}{\sum_{v_t}\sum_{h_t} e^{-E}} \sum_{v_t}\sum_{h_t} e^{-E} \cdot \frac{\partial E}{\partial \theta} \\
+	& = -\frac{\sum_{h_t} e^{-E} \cdot \frac{\partial E}{\partial \theta}}{Z \cdot p(v_t|\theta)}
+	    + \sum_{v_t}\sum_{h_t} \frac{e^{-E}}{Z} \cdot \frac{\partial E}{\partial \theta} \\
+	& = -\sum_{h_t} p(h_t|v_t, \theta) \cdot \frac{\partial E}{\partial \theta}
+	    +\sum_{v_t}\sum_{h_t} p(v_t, h_t|\theta) \cdot \frac{\partial E}{\partial \theta} \\
+	& = \Cline[red]{-\sum_{h} p(h|v) \cdot \frac{\partial E(v, h)}{\partial \theta}
+	    +\sum_{v}\sum_{h} p(v, h) \cdot \frac{\partial E(v, h)}{\partial \theta}}
+\end{split}
+\end{equation}
+
+From equation (25), we can get:
+\begin{equation}
+\begin{split}
+\frac{\partial \mathcal{L}(D|\theta)}{\partial W_{ij}} 
+	& = -\sum_{h} p(h|v) \cdot \frac{\partial E(v, h)}{\partial w_{ij}}
+	    +\sum_{v}\sum_{h} p(v, h) \cdot \frac{\partial E(v, h)}{\partial w_{ij}} \\
+	& = \sum_{h} h_i v_j \cdot p(h|v) - \sum_h \sum_v h_i v_j \cdot p(v, h) \\
+	& = \Cline[red]{p(h_i=1|v) \cdot v_j - \sum_v p(v) \cdot p(h_i=1|v) \cdot v_j}
+\end{split}
+\end{equation}
+
+In the similar way, we can have:
+\begin{equation}
+\begin{split}
+\frac{\partial \mathcal{L}(D|\theta)}{\partial b_{j}} 
+	& = \sum_{h} v_j \cdot p(h|v) - \sum_h \sum_v v_j \cdot p(v, h) \\
+	& = \Cline[red]{v_j - \sum_v p(v) \cdot v_j}
+\end{split}
+\end{equation}
+
+\begin{equation}
+\begin{split}
+\frac{\partial \mathcal{L}(D|\theta)}{\partial c_{i}} 
+	& = \sum_{h} h_i \cdot p(h|v) - \sum_h \sum_v h_i \cdot p(v, h) \\
+	& = \Cline[red]{p(h_i=1|v) - \sum_v p(v) \cdot p(h_i=1|v)}
+\end{split}
+\end{equation}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Problem 4
 \item{\bf \large 4. } Contrastive divergence
 
+From equation (26), (27) and (28), we can find that $p(v, h)$ is actually a computationally intractable term. To solve this problem, we should consider k-step contrastive divergence to solve this problem.
+
+First, choose one visible data from the given training set, sample hidden nodes $h^{t}$ according to $p(h|v^t)$. Then, calculate the probability $p(v|h^t)$ using the sampled hidden nodes, and then reconstruct the visible nodes $v^{t+1}$ according to $p(v|h^t)$. (The above method is for 1-step CD sampling, if needed, this procedure can be repeated k times).
 
 \end{description}
 
