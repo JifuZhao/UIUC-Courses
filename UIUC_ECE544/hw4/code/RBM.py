@@ -18,19 +18,20 @@ import time
 class RBM(object):
     """ self-defined class for Restricted Boltzmann Machine (RBM)"""
 
-    def __init__(self, hidden_nodes, learning_rate, n_iter):
+    def __init__(self, hidden_nodes, learning_rate, n_iter, verbose):
         """ initialize the RBM """
         self.n = hidden_nodes
         self.m = None
         self.learning_rate = learning_rate
         self.n_iter = n_iter
+        self.verbose = verbose
         self.W = None
         self.b = None
         self.c = None
 
     def _initialize(self, X):
         """ function to initialize W, b and c """
-        generator = truncnorm(a=0, b=1, scale=1)
+        generator = truncnorm(a=-0.5, b=0.5, scale=1)
         self.W = generator.rvs((self.n, self.m))
         self.b = generator.rvs((self.m, 1))
         self.c = generator.rvs((self.n, 1))
@@ -52,11 +53,12 @@ class RBM(object):
                 self.b += self.learning_rate * db
                 self.c += self.learning_rate * dc
 
-            if self.n_iter > 1:
-                print('Finish the ' + str(iteration) + ' th iteration !')
+            if self.verbose == 1 and self.n_iter > 1:
+                dt = np.round(time.time() - t0, 2)
+                print('Finish the ' + str(iteration) + ' th iteration, used time ' + str(dt) + 's !')
 
         t = np.round(time.time() - t0, 2)
-        print('Reach the ' + str(iteration) + ' th iteration, used time ' + str(t) + 's !')
+        print('Reach the ' + str(iteration) + ' th iteration, total time ' + str(t) + 's !')
 
 
     def update_h(self, v):
