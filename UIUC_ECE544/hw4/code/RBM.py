@@ -33,7 +33,7 @@ class RBM(object):
 
     def _initialize(self, X):
         """ function to initialize W, b and c """
-        generator = truncnorm(a=-0.5, b=0.5, scale=1)
+        generator = truncnorm(a=-0.5, b=0.5, scale=0.01)
         self.W = generator.rvs((self.n, self.m))
         self.b = generator.rvs((self.m, 1))
         self.c = generator.rvs((self.n, 1))
