@@ -40,20 +40,27 @@ where $Z = \sum_v \sum_h e^{-E(v, h, \theta)}$ and $\theta = (W, b, c)$.
 
 From the structure of RBM, it means that the hidden variables are independent given the state of the visible variables and the visible variables are independent given the state of the hidden variables. In this way,
 \begin{equation}
-\Cline[red]{p(v| h, \theta) = \prod_{i=1}^n p(v_i|h, \theta)}
+\begin{split}
+\Cline[red]{p(v| h, \theta)} 
+	& = \frac{p(v, h | \theta)}{p(h| \theta)} \\
+	& = \frac{\prod_i^n \prod_j^m p(v_j, h_i|\theta)}{\sum_{v} \prod_i^n \prod_j^m p(v_j, h_i|\theta)}
+\end{split}
 \end{equation}
+
 So, we also have:
 \begin{equation}
 \mathbb{E}(v|h, \theta) =  sigmoid(W^T h + b)
 \end{equation}
+(The prof will be shown later)
 
 For $p(v_j|h)$, 
 \begin{equation}
 p(v_j|h) = \frac{p(v_j, h)}{p(h)} = \frac{p(v_j, h)}{p(v_j=0, h) + p(v_j=1, h)}
 \end{equation}
 
-Since that $p(v_j=0, h) = \frac{1}{Z}e^{-E(v_j=0, h; \theta)}$ and $p(v_j=1, h) = \frac{1}{Z}e^{-E(v_j=1, h; \theta)}$.
-From equation (1), we can think $E(v, h; \theta) = v_j \alpha_j + \beta$, where $\beta$ doesn't contain $v_j$. In this way, we have:
+Since that $p(v_j=0, h) = \frac{1}{Z}e^{-E(v_j=0, h; \theta)}$ and $p(v_j=1, h) = \frac{1}{Z}e^{-E(v_j=1, h; \theta)}$. From equation (1), we can think $E(v, h; \theta) = v_j \alpha_j + \beta$, where $\beta$ doesn't contain $v_j$. 
+
+In this way, we have:
 \begin{equation}
 \begin{split}
 p(v_j|h) & = \frac{p(v_j, h)}{p(v_j=0, h) + p(v_j=1, h)} \\
@@ -95,8 +102,13 @@ In the vector format:
 
 Similar to the procedures in 1, since that the hidden variables are independent given the state of the visible variables. In this way,
 \begin{equation}
-\Cline[red]{p(h|v, \theta) = \prod_{j=1}^m p(h_j|v, \theta)}
+\begin{split}
+\Cline[red]{p(h| v, \theta)} 
+	& = \frac{p(v, h | \theta)}{p(v| \theta)} \\
+	& = \frac{\prod_i^n \prod_j^m p(v_j, h_i|\theta)}{\sum_{h} \prod_i^n \prod_j^m p(v_j, h_i|\theta)}
+\end{split}
 \end{equation}
+
 So, we also have:
 \begin{equation}
 \mathbb{E}(h|v, \theta) =  sigmoid(W v + c)
@@ -190,7 +202,8 @@ From equation (25), we can get:
 	& = -\sum_{h} p(h|v) \cdot \frac{\partial E(v, h)}{\partial w_{ij}}
 	    +\sum_{v}\sum_{h} p(v, h) \cdot \frac{\partial E(v, h)}{\partial w_{ij}} \\
 	& = \sum_{h} h_i v_j \cdot p(h|v) - \sum_h \sum_v h_i v_j \cdot p(v, h) \\
-	& = \Cline[red]{p(h_i=1|v) \cdot v_j - \sum_v p(v) \cdot p(h_i=1|v) \cdot v_j}
+	& = \Cline[red]{p(h_i=1|v) \cdot v_j - \sum_v p(v) \cdot p(h_i=1|v) \cdot v_j} \\
+	& = \Cline[red]{p(h_i=1|v) \cdot v_j - \mathbf{E}[v_j h_i]} 
 \end{split}
 \end{equation}
 
@@ -199,7 +212,8 @@ In the similar way, we can have:
 \begin{split}
 \frac{\partial \mathcal{L}(D|\theta)}{\partial b_{j}} 
 	& = \sum_{h} v_j \cdot p(h|v) - \sum_h \sum_v v_j \cdot p(v, h) \\
-	& = \Cline[red]{v_j - \sum_v p(v) \cdot v_j}
+	& = \Cline[red]{v_j - \sum_v p(v) \cdot v_j} \\
+	& = \Cline[red]{v_j - \mathbf{E}[v_j]}
 \end{split}
 \end{equation}
 
@@ -207,7 +221,8 @@ In the similar way, we can have:
 \begin{split}
 \frac{\partial \mathcal{L}(D|\theta)}{\partial c_{i}} 
 	& = \sum_{h} h_i \cdot p(h|v) - \sum_h \sum_v h_i \cdot p(v, h) \\
-	& = \Cline[red]{p(h_i=1|v) - \sum_v p(v) \cdot p(h_i=1|v)}
+	& = \Cline[red]{p(h_i=1|v) - \sum_v p(v) \cdot p(h_i=1|v)} \\
+	& = \Cline[red]{p(h_i=1|v) - \mathbf{E}[h_i]}
 \end{split}
 \end{equation}
 
@@ -215,9 +230,23 @@ In the similar way, we can have:
 % Problem 4
 \item{\bf \large 4. } Contrastive divergence
 
-From equation (26), (27) and (28), we can find that $p(v, h)$ is actually a computationally intractable term. To solve this problem, we should consider k-step contrastive divergence to solve this problem.
+From equation (26), (27) and (28), we can find that $p(v, h)$ is actually a computationally intractable term. To solve this problem, we should consider 1-step contrastive divergence to solve this problem.
 
-First, choose one visible data from the given training set, sample hidden nodes $h^{t}$ according to $p(h|v^t)$. Then, calculate the probability $p(v|h^t)$ using the sampled hidden nodes, and then reconstruct the visible nodes $v^{t+1}$ according to $p(v|h^t)$. (The above method is for 1-step CD sampling, if needed, this procedure can be repeated k times).
+Considering Hinton approximation:
+\begin{equation}
+\mathbf{E}[v_j h_i] \simeq \mathbf{E}[v_j|h] \mathbf{E}[h_i|v]
+\end{equation}
+
+And the k-step contrastive divergence is:
+\begin{equation}
+CD_k(\theta, v^{(0)}) = -\sum_h p(h|v^{(0)})\frac{\partial E(^{(0)}, h)}{\partial \theta}
+					+\sum_h p(h|v^{(k)})\frac{\partial E(v^{(k)}, h)}{\partial \theta}
+\end{equation}
+
+
+First, choose one visible data $v^{(0)}$ from the given training set, sample hidden nodes $h^{(0)}$ according to $p(h|v^{(0)})$. Then, calculate the probability $p(v|h^{(0)})$ using the sampled hidden nodes, and then reconstruct the visible nodes $v^{(1)}$ according to $p(v|h^{(0)})$. Finally, calculate the probability of $p(h^{(1)}|v^{(1)})$. Using these result to approximate and calculate the update rules for $W$, $b$ and $c$.
+
+{\bf Note:} The above method is for 1-step CD sampling, if needed, this procedure can be repeated k times.
 
 \end{description}
 
