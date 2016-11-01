@@ -12,17 +12,19 @@ warnings.simplefilter('ignore')
 import numpy as np
 import scipy as sp
 from scipy.stats import truncnorm
+import matplotlib.pyplot as plt
 import time
 
 
 class RBM(object):
     """ self-defined class for Restricted Boltzmann Machine (RBM)"""
 
-    def __init__(self, hidden_nodes, learning_rate, n_iter, verbose):
+    def __init__(self, hidden_nodes, learning_rate, batch_size, n_iter, verbose):
         """ initialize the RBM """
         self.n = hidden_nodes
         self.m = None
         self.learning_rate = learning_rate
+        self.batch_size = batch_size
         self.n_iter = n_iter
         self.verbose = verbose
         self.W = None
@@ -42,10 +44,14 @@ class RBM(object):
         t0 = time.time()
         N_sample, self.m = X.shape
         self._initialize(X)  # initialize W, b, c
+        if N_sample % self.batch_size == 0:
+            N_batch = N_sample // self.batch_size
+        else:
+            N_batch = N_sample // self.batch_size + 1
 
         for iteration in range(1, self.n_iter + 1):
-            for v in X:
-                v0 = np.array([v]).T
+            for i in range(N_batch):
+                v0 = X[i*self.batch_size: (i+1)*self.batch_size, :].T
                 h_prob, h = self.update_h(v0)
                 v1 = self.update_v(h)
                 dW, db, dc = self.gradient(v0, h, v1, h_prob)
@@ -71,7 +77,7 @@ class RBM(object):
 
 
     def update_v(self, h):
-        """ function to sample the visible nodes """
+        """ function to cdsample the visible nodes """
         tmp = np.dot(self.W.T, h) + self.b
         prob = self.sigmoid(tmp)
         v = np.random.binomial(1, prob)
@@ -85,8 +91,9 @@ class RBM(object):
         h_prob_v1 = self.sigmoid(tmp_h_v1)
 
         dW = np.dot(h_prob_v0, v0.T) - np.dot(h_prob_v1, v1.T)
-        db = v0 - v1
-        dc = h_prob_v0 - h_prob_v1
+        db = np.array([np.mean(v0 - v1, axis=1)]).T
+        dc = np.array([np.mean(h_prob_v0 - h_prob_v1, axis=1)]).T
+        dW /= self.batch_size
 
         return dW, db, dc
 
@@ -99,3 +106,35 @@ class RBM(object):
     def get_params(self):
         """ funtion to get the trained parameters """
         return self.W, self.b, self.c
+
+
+def showConfusionMatrix(matrix, title, label):
+    """ function to show the confusion matrix"""
+
+    fig = plt.figure()
+    img = plt.imshow(matrix, interpolation='nearest', cmap=plt.cm.Blues)
+    plt.title(title)
+    plt.colorbar(img)
+
+    n = len(label)
+    plt.xticks(np.arange(n), label)
+    plt.yticks(np.arange(n), label)
+
+    for i, j in [(row, col) for row in range(n) for col in range(n)]:
+        plt.text(j, i, matrix[i, j], horizontalalignment="center")
+
+    #plt.tight_layout()
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+
+    return fig
+
+
+def oneHotEncoder(label, n):
+    """ One-Hot-Encoder for n class case """
+    tmp = np.zeros((len(label), n))
+    for number in range(n):
+        tmp[:, number] = (label[:, 0] == number)
+    tmp = tmp.astype(int)
+
+    return tmp
