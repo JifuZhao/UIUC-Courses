@@ -257,6 +257,19 @@ First, choose one visible data $v^{(0)}$ from the given training set, sample hid
 
 \subsection*{\large 2. Results}
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{./figures/filter.pdf}\
+\caption{\label{fig:single_filter} Learned Filter}
+\end{figure}
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{./figures/filter_batch.pdf}\
+\caption{\label{fig:batch_filter} Learned Filter}
+\end{figure}
+
 \newpage
 \section*{\Large III. TensorFlow}
 
@@ -264,23 +277,76 @@ First, choose one visible data $v^{(0)}$ from the given training set, sample hid
 
 \subsection*{\large 2. Results}
 
-%\begin{equation}
-%\begin{split}
-%	\frac{dE}{dw_j} & = \frac{d(\sum_i{((t_i - y_i)^2)})}{dw_j} \\
-%					& = \sum_i{\frac{d(t_i - g(w' x_i + b))^2}{dw_j}}
-%\end{split}
-%\end{equation}
+
+\begin{table}[H]
+	\centering
+	\caption{Training and testing accuracy for different models}
+	\label{table:BESTacc}	
+	\begin{tabular}{c | c | c}
+		\hline \hline
+		Methods  	&	Training Accuracy 	&	Testing Accuracy \\[0.1cm]
+		\hline
+		Raw Image	&	92.99\%				& 	92.59\%			 \\[0.1cm]
+		RBM			&	95.15\%				& 	95.27\%			 \\[0.1cm]
+		PCA			& 	92.34\%				& 	92.04\%			 \\[0.1cm]
+		Stacked RBM & 	96.35\%				& 	96.24\%			 \\[0.1cm]
+		\hline	
+	\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{./figures/train_raw.pdf}\
+\caption{\label{fig:train_raw} Training Set Confusion Matrix Using Raw Image}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{./figures/test_raw.pdf}\
+\caption{\label{fig:test_raw} Test Set Confusion Matrix Using Raw Image}
+\end{figure}
 
 
-%\begin{figure}[H]
-%\centering
-%\includegraphics[width=1.0\textwidth]{./images/detector}
-%\caption{\label{fig:detector_system} Single detector system}
-%\end{figure}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{./figures/train_rbm.pdf}\
+\caption{\label{fig:train_rbm} Training Set Confusion Matrix Using RBM}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{./figures/test_rbm.pdf}\
+\caption{\label{fig:test_rbm} Test Set Confusion Matrix Using RBM}
+\end{figure}
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{./figures/train_pca.pdf}\
+\caption{\label{fig:train_pca} Training Set Confusion Matrix Using PCA}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{./figures/test_pca.pdf}\
+\caption{\label{fig:test_pca} Test Set Confusion Matrix Using PCA}
+\end{figure}
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{./figures/train_stacking.pdf}\
+\caption{\label{fig:train_stack} Training Set Confusion Matrix Using Stacked RBM}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{./figures/test_stacking.pdf}\
+\caption{\label{fig:test_stack} Test Set Confusion Matrix Using Stacked RBM}
+\end{figure}
 
 
 \clearpage
-
 %\bibliographystyle{plain}
 %\bibliographystyle{unsrt}
 %\bibliography{reference.bib}
