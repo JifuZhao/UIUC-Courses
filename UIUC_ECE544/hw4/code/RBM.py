@@ -30,8 +30,6 @@ class RBM(object):
         self.W = None
         self.b = None
         self.c = None
-        # self.train_error = []
-        # self.test_error = []
 
 
     def _initialize(self, X):
@@ -42,7 +40,7 @@ class RBM(object):
         self.c = generator.rvs((self.n, 1))
 
 
-    def train(self, X, train_mse=False, test_data=None, frequency=1000):
+    def train(self, X):
         """ function to train the RBM """
         t0 = time.time()
         N_sample, self.m = X.shape
@@ -53,9 +51,7 @@ class RBM(object):
             N_batch = N_sample // self.batch_size + 1
 
         for iteration in range(1, self.n_iter + 1):
-            # count = 0
             for i in range(N_batch):
-                # count += 1
                 v0 = X[i*self.batch_size: (i+1)*self.batch_size, :].T
                 h_prob, h = self.update_h(v0)
                 v1 = self.update_v(h)
@@ -63,12 +59,6 @@ class RBM(object):
                 self.W += self.learning_rate * dW
                 self.b += self.learning_rate * db
                 self.c += self.learning_rate * dc
-
-                # # calculate the training and testing MSE
-                # if (train_mse == True) and (count % frequency == 0):
-                #     self.train_error.append(self.mean_mse(X))
-                # if (test_data is not None) and (count % frequency == 0):
-                #     self.test_error.append(self.mean_mse(test_data))
 
             if self.verbose == 1 and self.n_iter > 1:
                 dt = np.round(time.time() - t0, 2)
@@ -129,7 +119,7 @@ class RBM(object):
             dW = np.dot(h_prob_v0, v0.T) - np.dot(h_prob_v1, v1.T)
             db = np.array([np.mean(v0 - v1, axis=1)]).T
             dc = np.array([np.mean(h_prob_v0 - h_prob_v1, axis=1)]).T
-            # dW /= self.batch_size
+            dW /= self.batch_size
         else:
             dW = np.dot(h_prob_v0, v0.T) - np.dot(h_prob_v1, v1.T)
             db = v0 - v1
