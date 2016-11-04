@@ -30,6 +30,9 @@ class RBM(object):
         self.W = None
         self.b = None
         self.c = None
+        # self.train_error = []
+        # self.test_error = []
+
 
     def _initialize(self, X):
         """ function to initialize W, b and c """
@@ -39,7 +42,7 @@ class RBM(object):
         self.c = generator.rvs((self.n, 1))
 
 
-    def train(self, X):
+    def train(self, X, train_mse=False, test_data=None, frequency=1000):
         """ function to train the RBM """
         t0 = time.time()
         N_sample, self.m = X.shape
@@ -50,7 +53,9 @@ class RBM(object):
             N_batch = N_sample // self.batch_size + 1
 
         for iteration in range(1, self.n_iter + 1):
+            # count = 0
             for i in range(N_batch):
+                # count += 1
                 v0 = X[i*self.batch_size: (i+1)*self.batch_size, :].T
                 h_prob, h = self.update_h(v0)
                 v1 = self.update_v(h)
@@ -59,12 +64,42 @@ class RBM(object):
                 self.b += self.learning_rate * db
                 self.c += self.learning_rate * dc
 
+                # # calculate the training and testing MSE
+                # if (train_mse == True) and (count % frequency == 0):
+                #     self.train_error.append(self.mean_mse(X))
+                # if (test_data is not None) and (count % frequency == 0):
+                #     self.test_error.append(self.mean_mse(test_data))
+
             if self.verbose == 1 and self.n_iter > 1:
                 dt = np.round(time.time() - t0, 2)
                 print('Finish the ' + str(iteration) + ' th iteration, used time ' + str(dt) + 's !')
 
         t = np.round(time.time() - t0, 2)
         print('Reach the ' + str(iteration) + ' th iteration, total time ' + str(t) + 's !')
+
+
+    def predict(self, X):
+        """ function to calculate the hidden nodes and
+            reconstructed visible nodes probability
+        """
+        h_tmp = np.dot(self.W, X.T) + self.c
+        h_prob = self.sigmoid(h_tmp)
+        h = np.random.binomial(1, h_prob)
+
+        v_tmp = np.dot(self.W.T, h) + self.b
+        v_prob = self.sigmoid(v_tmp)
+
+        return h_prob.T, v_prob.T
+
+
+    def mean_mse(self, X):
+        """ function to calculate the average MSE """
+        n = len(X)
+        h_prob, v_prob = self.predict(X)
+        square = (v_prob - X) ** 2
+        mean_error = np.sum(square) / n
+
+        return mean_error
 
 
     def update_h(self, v):
@@ -90,10 +125,15 @@ class RBM(object):
         tmp_h_v1 = np.dot(self.W, v1) + self.c
         h_prob_v1 = self.sigmoid(tmp_h_v1)
 
-        dW = np.dot(h_prob_v0, v0.T) - np.dot(h_prob_v1, v1.T)
-        db = np.array([np.mean(v0 - v1, axis=1)]).T
-        dc = np.array([np.mean(h_prob_v0 - h_prob_v1, axis=1)]).T
-        dW /= self.batch_size
+        if self.batch_size != 1:
+            dW = np.dot(h_prob_v0, v0.T) - np.dot(h_prob_v1, v1.T)
+            db = np.array([np.mean(v0 - v1, axis=1)]).T
+            dc = np.array([np.mean(h_prob_v0 - h_prob_v1, axis=1)]).T
+            # dW /= self.batch_size
+        else:
+            dW = np.dot(h_prob_v0, v0.T) - np.dot(h_prob_v1, v1.T)
+            db = v0 - v1
+            dc = h_prob_v0 - h_prob_v1
 
         return dW, db, dc
 
@@ -106,35 +146,3 @@ class RBM(object):
     def get_params(self):
         """ funtion to get the trained parameters """
         return self.W, self.b, self.c
-
-
-def showConfusionMatrix(matrix, title, label):
-    """ function to show the confusion matrix"""
-
-    fig = plt.figure()
-    img = plt.imshow(matrix, interpolation='nearest', cmap=plt.cm.Blues)
-    plt.title(title)
-    plt.colorbar(img)
-
-    n = len(label)
-    plt.xticks(np.arange(n), label)
-    plt.yticks(np.arange(n), label)
-
-    for i, j in [(row, col) for row in range(n) for col in range(n)]:
-        plt.text(j, i, matrix[i, j], horizontalalignment="center")
-
-    #plt.tight_layout()
-    plt.ylabel('True label')
-    plt.xlabel('Predicted label')
-
-    return fig
-
-
-def oneHotEncoder(label, n):
-    """ One-Hot-Encoder for n class case """
-    tmp = np.zeros((len(label), n))
-    for number in range(n):
-        tmp[:, number] = (label[:, 0] == number)
-    tmp = tmp.astype(int)
-
-    return tmp
