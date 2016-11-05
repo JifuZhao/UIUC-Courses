@@ -255,18 +255,33 @@ First, choose one visible data $v^{(0)}$ from the given training set, sample hid
 
 \subsection*{\large 1. Methods}
 
-\subsection*{\large 2. Results}
+The algorithm for RBM is relatively simple: First initialize all the parameters including $W$, $b$ and $c$. Then given any visible sample $v_0$,  first sample $h_0$ according to $p(h_0|v_0)$. Then, reconstruct $v_1$ according to $p(v_1|h_0)$. Finally, re-sample $h_1$ according to $p(h_1|v_1)$. Finally, update all the parameters including $W$, $b$ and $c$. Repeat this procedure enough times, then you can get the desired result. The detailed structure of the code is shown in Figure \ref{fig:structure}. 
+
+In the class RBM(), there are several functions such as train(), \_initialize(), update\_h(), update\_v(), gradient() and sigmoid(). Function \_initialize() is used to initialize all parameters. Then function train() is used to train the RBM model, it will call the functions update\_h(), update\_v(), gradient() and sigmoid() to update all parameters. In this code, RBM can be trained through single input data, or through mini-batch learning.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{./figures/filter.pdf}\
+\includegraphics[width=0.8\textwidth]{./figures/ECE544hw4.png}\
+\caption{\label{fig:structure} Overall Structure for RBM}
+\end{figure}
+
+\subsection*{\large 2. Results}
+
+In this part, using the code illustrated in Figure \ref{fig:structure} and updating RBM model using single input image, the first 64 of the 200 learned filters are shown in Figure \ref{fig:single_filter}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\textwidth]{./figures/filter.pdf}\
 \caption{\label{fig:single_filter} Learned Filter}
 \end{figure}
 
+In Figure \ref{fig:single_filter}, all the learned filters shown some interesting phenomenon, most of them shown some clear digits. 
+
+As a comparison, we also tried using 10-mini-batch learning method, the first 64 learned filters are shown in Figure \ref{fig:batch_filter}. As you can see, using mini-batch, the learned filter is not as clear as shown in Figure \ref{fig:single_filter}.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{./figures/filter_batch.pdf}\
+\includegraphics[width=1.0\textwidth]{./figures/filter_batch.pdf}\
 \caption{\label{fig:batch_filter} Learned Filter}
 \end{figure}
 
@@ -275,8 +290,42 @@ First, choose one visible data $v^{(0)}$ from the given training set, sample hid
 
 \subsection*{\large 1. Methods}
 
+(1) In this part, the RBM model is re-written in TensorFlow. The overall structure is very similar. However, considering the characteristic of TensorFlow, there aren't so many functions as shown in Figure \ref{fig:structure}. Instead, the overall structure is shown in Figure \ref{fig:tf_structure}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{./figures/ECE544hw4(2).png}
+\caption{\label{fig:tf_structure} Overall Structure for TensorFlow RBM}
+\end{figure}
+
+In RBM part, we use function \_initialize() to initialize all parameters and create Variables and placeholders. Then, using function train() to train the model. In this process, function sample\_prob() is used to sample the Bernoulli distribution. 
+
+More specifically, tf.nn.sigmoid() is used to compute sigmoid probability, tf.truncated\_normal() is used to initialize parameters and assign\_add() is used to update parameters. In addition, tf.nn.relu() and tf.random\_uniform() is used to create function sample\_prob(). \\
+
+\noindent (2) For the 10-way multi-class logistic regression part, we build a fully-connected neural network. The input can have 784 or 200 nodes, the output out has 10 nodes using a softmax() function. More specifically, in the part, we use tflearn.input\_data(), tflearn.fully\_connected(), tflearn.regression() and tflearn.DNN() to train the model. \\
+
+\noindent (3) For the stacked RBM, in the first RBM, there is 784 visible nodes and 500 hidden nodes, so the total number of weights is:
+\begin{equation}
+784 \times 500 + 784 + 500 = 393284
+\end{equation}
+
+In the second RBM, there are 500 visible nodes and 200 hidden nodes, the total number of weights is:
+\begin{equation}
+500 \times 200 + 500 + 200 = 100700
+\end{equation}
+
+So the total weights for the whole stacked RBM is:
+\begin{equation}
+393284 + 100700 = 493984
+\end{equation}\
+
+\noindent {\bf Note: } in the above calculation, the bias term b and c for each RBM are also thought to be part of the weights.
+
+
+\newpage
 \subsection*{\large 2. Results}
 
+(1) In this part, using the raw image, image processed by single RBM, image processed by PCA and image processed by stacked RBM, we train a 1 layer neural network and calculate the training accuracy and testing accuracy. The result is shown in Table \ref{table:BESTacc}. 
 
 \begin{table}[H]
 	\centering
@@ -294,54 +343,63 @@ First, choose one visible data $v^{(0)}$ from the given training set, sample hid
 	\end{tabular}
 \end{table}
 
+From Table \ref{table:BESTacc}, we can see that, the result from PCA is similar to the result from raw image. But using RBM and stacked RBM, the training accuracy and testing accuracy both get improved.\\
+
+\noindent (2) Training and testing classification confusion matrix.\\
+
+(a). For the raw image, the training and testing classification confusion matrix are shown in Figure \ref{fig:train_raw} and Figure \ref{fig:test_raw}.
+
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{./figures/train_raw.pdf}\
+\includegraphics[width=0.85\textwidth]{./figures/train_raw.pdf}\
 \caption{\label{fig:train_raw} Training Set Confusion Matrix Using Raw Image}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{./figures/test_raw.pdf}\
+\includegraphics[width=0.85\textwidth]{./figures/test_raw.pdf}\
 \caption{\label{fig:test_raw} Test Set Confusion Matrix Using Raw Image}
 \end{figure}
 
+(b). For the image processed by RBM, the training and testing classification confusion matrix are shown in Figure \ref{fig:train_rbm} and Figure \ref{fig:test_rbm}.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{./figures/train_rbm.pdf}\
+\includegraphics[width=0.85\textwidth]{./figures/train_rbm.pdf}\
 \caption{\label{fig:train_rbm} Training Set Confusion Matrix Using RBM}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{./figures/test_rbm.pdf}\
+\includegraphics[width=0.85\textwidth]{./figures/test_rbm.pdf}\
 \caption{\label{fig:test_rbm} Test Set Confusion Matrix Using RBM}
 \end{figure}
 
+(c). For the image processed by PCA, the training and testing classification confusion matrix are shown in Figure \ref{fig:train_pca} and Figure \ref{fig:test_pca}. (The PCA part is implemented using scikit-learn PCA)
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{./figures/train_pca.pdf}\
+\includegraphics[width=0.85\textwidth]{./figures/train_pca.pdf}\
 \caption{\label{fig:train_pca} Training Set Confusion Matrix Using PCA}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{./figures/test_pca.pdf}\
+\includegraphics[width=0.85\textwidth]{./figures/test_pca.pdf}\
 \caption{\label{fig:test_pca} Test Set Confusion Matrix Using PCA}
 \end{figure}
 
+(d). For the image processed by stacked RBM, the training and testing classification confusion matrix are shown in Figure \ref{fig:train_stack} and Figure \ref{fig:test_stack}.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{./figures/train_stacking.pdf}\
+\includegraphics[width=0.85\textwidth]{./figures/train_stacking.pdf}\
 \caption{\label{fig:train_stack} Training Set Confusion Matrix Using Stacked RBM}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{./figures/test_stacking.pdf}\
+\includegraphics[width=0.85\textwidth]{./figures/test_stacking.pdf}\
 \caption{\label{fig:test_stack} Test Set Confusion Matrix Using Stacked RBM}
 \end{figure}
 
