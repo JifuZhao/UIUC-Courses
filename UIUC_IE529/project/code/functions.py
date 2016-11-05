@@ -15,7 +15,7 @@ from scipy.linalg import eigh
 from sklearn.metrics.pairwise import polynomial_kernel
 from sklearn.metrics.pairwise import rbf_kernel
 
-def PCA(X, n_component, standardize=False):
+def PCA(X, standardize=False):
     """ self-defined PCA function """
 
     # de-mean (and standardize) the input X
@@ -31,12 +31,12 @@ def PCA(X, n_component, standardize=False):
     U, S, V = np.linalg.svd(cov)
 
     # compute the projection
-    projection = np.dot(X, U[:, :n_component])
+    projection = np.dot(X, U)
 
-    return S, U[:, :n_component], projection
+    return S, U, projection
 
 
-def kernelPCA(X, n_component, kernel='polynomial', degree=2, gamma=1):
+def kernelPCA(X, kernel='polynomial', degree=2, gamma=1):
     """ self-defined Kernel PCA function
         can implement polynomial and rbf kernel
     """
@@ -56,8 +56,8 @@ def kernelPCA(X, n_component, kernel='polynomial', degree=2, gamma=1):
 
     # calculate the eigenvalues and eigenvectors
     eigvals, eigvecs = eigh(K)
-    eigvals = eigvals[::-1][:n_component]
-    eigvecs = eigvecs[:, ::-1][:, :n_component]
+    eigvals = eigvals[::-1]
+    eigvecs = eigvecs[:, ::-1]
 
     # normalize the eigenvectors
     eigvecs = eigvecs / np.sqrt(eigvals)
@@ -67,3 +67,36 @@ def kernelPCA(X, n_component, kernel='polynomial', degree=2, gamma=1):
 
 
     return eigvals, eigvecs, projection
+    
+    
+## Helper function for better visualization
+def showConfusionMatrix(matrix, title, label, fontsize=10):
+    """ function to show the confusion matrix"""
+
+    fig = plt.figure()
+    img = plt.imshow(matrix, interpolation='nearest', cmap=plt.cm.Blues)
+    plt.title(title)
+    plt.colorbar(img)
+
+    n = len(label)
+    plt.xticks(np.arange(n), label)
+    plt.yticks(np.arange(n), label)
+
+    for i, j in [(row, col) for row in range(n) for col in range(n)]:
+        plt.text(j, i, matrix[i, j], horizontalalignment="center", fontsize=fontsize)
+
+    #plt.tight_layout()
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+
+    return fig
+
+
+def oneHotEncoder(label, n):
+    """ One-Hot-Encoder for n class case """
+    tmp = np.zeros((len(label), n))
+    for number in range(n):
+        tmp[:, number] = (label == number)
+    tmp = tmp.astype(int)
+
+    return tmp
