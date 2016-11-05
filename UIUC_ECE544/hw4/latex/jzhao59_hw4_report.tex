@@ -267,6 +267,8 @@ In the class RBM(), there are several functions such as train(), \_initialize(),
 
 \subsection*{\large 2. Results}
 
+\noindent {\bf Note: } In the following result section, due to different initialization, the final result may be different for each running.
+
 In this part, using the code illustrated in Figure \ref{fig:structure} and updating RBM model using single input image, the first 64 of the 200 learned filters are shown in Figure \ref{fig:single_filter}.
 
 \begin{figure}[H]
@@ -319,10 +321,9 @@ So the total weights for the whole stacked RBM is:
 393284 + 100700 = 493984
 \end{equation}\
 
-\noindent {\bf Note: } in the above calculation, the bias term b and c for each RBM are also thought to be part of the weights.
+\noindent {\bf Note: } in the above calculation, the bias term b and c for each RBM are also thought to be part of the weights.\\
 
 
-\newpage
 \subsection*{\large 2. Results}
 
 (1) In this part, using the raw image, image processed by single RBM, image processed by PCA and image processed by stacked RBM, we train a 1 layer neural network and calculate the training accuracy and testing accuracy. The result is shown in Table \ref{table:BESTacc}. 
@@ -336,8 +337,8 @@ So the total weights for the whole stacked RBM is:
 		Methods  	&	Training Accuracy 	&	Testing Accuracy \\[0.1cm]
 		\hline
 		Raw Image	&	92.99\%				& 	92.59\%			 \\[0.1cm]
-		RBM			&	95.15\%				& 	95.27\%			 \\[0.1cm]
-		PCA			& 	92.34\%				& 	92.04\%			 \\[0.1cm]
+		RBM			&	94.99\%				& 	94.93\%			 \\[0.1cm]
+		PCA			& 	92.32\%				& 	92.07\%			 \\[0.1cm]
 		Stacked RBM & 	96.35\%				& 	96.24\%			 \\[0.1cm]
 		\hline	
 	\end{tabular}
@@ -345,8 +346,8 @@ So the total weights for the whole stacked RBM is:
 
 From Table \ref{table:BESTacc}, we can see that, the result from PCA is similar to the result from raw image. But using RBM and stacked RBM, the training accuracy and testing accuracy both get improved.\\
 
-\noindent (2) Training and testing classification confusion matrix.\\
-
+\noindent (2) Training and testing classification confusion matrix. (See next page)
+\newpage
 (a). For the raw image, the training and testing classification confusion matrix are shown in Figure \ref{fig:train_raw} and Figure \ref{fig:test_raw}.
 
 \begin{figure}[H]
