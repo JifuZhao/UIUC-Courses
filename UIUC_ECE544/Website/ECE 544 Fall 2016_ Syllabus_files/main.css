@@ -1,0 +1,9 @@
+#banner{background:white;padding:10px;height:100px;color:#000080;text-align:center}
+#banner img{float:left}
+#columns{background:white}
+#columns #main{margin-left:7em;padding:1em 1em}
+#columns #side{float:left;width:5em;height:500px}
+#columns #side ul{padding:0}
+#columns #side ul li{list-style:none}
+#columns #main ul{padding:1em}
+
