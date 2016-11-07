@@ -136,9 +136,8 @@ plt.show()
 
 # # Classification using PCA
 # build the PCA model
-data = np.append(train_img, test_img, axis=0)
 pca = PCA(n_components=200, whiten=False)
-pca.fit(data)
+pca.fit(train_img)
 
 train_pca = pca.transform(train_img)
 test_pca = pca.transform(test_img)
