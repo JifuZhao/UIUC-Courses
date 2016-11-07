@@ -1,0 +1,193 @@
+\input{setting.tex}
+
+\renewcommand{\normalsize}{\fontsize{12pt}{\baselineskip}\selectfont}
+\renewcommand{\baselinestretch}{1.4} 
+
+\usepackage{graphicx, amssymb, amsmath, listings, float, mathtools}
+\usepackage{color, url}
+\usepackage{romannum}
+\lstset{language = Python}
+\lstset{breaklines}
+\lstset{extendedchars=false}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{pifont}
+
+\makeatletter
+\def\BState{\State\hskip-\ALG@thistlm}
+\makeatother
+ 
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+ 
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+ 
+\lstset{style=mystyle}
+
+\oddsidemargin 0in
+\evensidemargin 0in
+\textwidth 6.5in
+\topmargin -0.6in
+\textheight 9.0in
+
+\title{\bf Group Project Summary Report for:\\ Nonlinear Component Analysis as a Kernel Eigenvalue Problem}
+
+\author{Huan Yan, Jifu Zhao, Pavan Kumar Nadiminti, and Vikram Idiga}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+In this paper, the authors proposed a new approach to a traditional problem of identifying major modes/components of a given dataset. Traditionally, Principal Component Analysis (PCA) is used to detect major structure within data. Essentially it is an eigenvalue problem in which we transform the coordinate axes in such a way that the variances of the data set we have, lie mainly along those axes. These directions are called as principal components. The PCA approach basically determines the components extracted from the data in the same space, i.e. the input space. However, in some cases it is useful to look at the components in a space of the original variables/features of the experiment, instead of the derived input space. Here the input space refers to the data we have in the current form, which might usually have been derived from a nonlinear transformation of variables in feature space. The dimensionality of the feature space might also be different from that of the input space. This paper develops a frame work to handle this task of performing a form of nonlinear PCA by using kernel function approach. The kernel functions are essentially the dot products in the feature space transformed by the non-linearity relating the input space to the feature space. The key feature of the Kernel PCA method is that we do not need to carry out the mapping of the data points into the feature space. All calculations can be done using the kernel function in the input space. \\
+
+\section{Feature Space PCA}
+
+The entire analysis is done on centered data. Here we perform PCA analysis and explore ways to represent the PCA equations in terms of dot products. Basic PCA involves computing the covariance matrix:
+\begin{equation}
+C = \frac{1}{n} \sum_{j=1}^n \pmb{x}_j \pmb{x}_j^T
+\end{equation}
+
+And solving the eigenvalue problem:
+\begin{equation}
+\lambda \pmb{v} = C \pmb{v}
+\end{equation}
+
+Following the above procedure, the detailed PCA algorithms is shown below:\\
+
+\begin{algorithm}[H]
+\caption{PCA in Feature Spaces}
+\label{PCA}
+\begin{algorithmic}[1]
+\Procedure{PCA}{X}
+	\State $\text{given input:} \  X_{n \times m} \leftarrow \begin{bmatrix} \mathbf{x}_1; \mathbf{x}_2; \cdots; \mathbf{x}_n \end{bmatrix}^T$
+	\State $\text{de-mean (or standardize): } \  x_{ij} \leftarrow x_{ij} - \bar{x}_j \  or \  x_{ij} \leftarrow \frac{x_{ij} - \bar{x}_j}{s_j}$
+	\State $\text{calculate covariance matrix:} \  Cov \leftarrow \frac{1}{n} X^T X$
+	\State $\text{singular value decomposition (SVD):} \  [U, S, V] \leftarrow svd(Cov)$
+	\State $\text{choose the first k eigenvectors:} \  E_{m \times k} \leftarrow \begin{bmatrix} \mathbf{u}_1; \mathbf{u}_2; \cdots; \mathbf{u}_k \end{bmatrix}$
+	\State $\text{project the test data} \  \mathbf{x}: \  \mathbf{p} \leftarrow E^T \mathbf{x}$
+\BState \bf finish
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+
+\section{Kernel PCA}
+
+Now, suppose the non-linearity between input space and feature space is represented as a function $\phi()$. We then perform the PCA in the new space with the use of these transformations.
+
+The covariance matrix in the feature space and the eigenvalue problem we solve in the feature space is:
+\begin{equation}
+\bar{C} = \frac{1}{n} \sum_{j=1}^n \phi(\pmb{x}_j) \phi(\pmb{x}_j)^T
+\end{equation}
+
+\begin{equation}
+\lambda \pmb{V} = \bar{C} \pmb{V}
+\end{equation}
+
+The eigenvalue problem $\lambda \pmb{V} = \bar{C} \pmb{V}$ can also be expressed in terms of a dot product as follows: 
+
+\begin{equation}
+\lambda(\phi(\pmb{x}_k) \cdot \pmb{V}) = (\phi(\pmb{x}_k) \cdot\bar{C} \pmb{V})
+\end{equation}
+for all k = 1, ..., n
+
+We then obtain the normalized principal components in the new space. Mercer’s Theorem states that if $k(\pmb{x}, \pmb{y})$ is a continuous kernel of a positive integral operator, there exists a mapping into a space where k acts as a dot product. Dot product in new space is represented as a kernel so that the notation is simplified: 
+
+\begin{equation}
+k(\pmb{x}, \pmb{y}) = (\phi(\pmb{x}) \cdot \phi(\pmb{y}))
+\end{equation}
+
+In kernel PCA, a non-trivial arbitrary function $\phi()$ is chosen, but is never calculated explicitly, allowing the possibility to use a very high dimensional $\phi()$. Hence, we never actually compute the eigenvectors and eigenvalues of the covariance matrix in the high dimensional feature space. Elements in the $K$ matrix represent the dot product of one point of the transformed data with respect to all the transformed points.
+
+\begin{equation}
+(\pmb{V}^i \cdot \phi(\pmb{x})) = \sum_{j=1}^n \alpha_{ij} k(\mathbf{x}, \mathbf{x}_j)
+\end{equation}
+
+Where $\pmb{\alpha}_i$ is the eigenvector of $K$, and $\lambda_1$, $\lambda_2$, ...,  $\lambda_m$, are the eigenvalues of $K$ obtained by solving the equation:
+\begin{equation}
+n \lambda \pmb{\alpha} = K \pmb{\alpha}
+\end{equation}
+
+The algorithm is summarized below:
+
+\begin{algorithm}[H]
+\caption{Kernel PCA}
+\label{PCA}
+\begin{algorithmic}[1]
+\Procedure{K-PCA}{X}
+	\State $\text{given input:} \  X_{n \times m} \leftarrow \begin{bmatrix} \mathbf{x}_1; \mathbf{x}_2; \cdots; \mathbf{x}_n \end{bmatrix}^T$
+	\State $\text{calculate kernel matrix} \  K_{n \times n}: \  k_{ij} \leftarrow k(\mathbf{x}_i, \mathbf{x}_j)$
+	\State $\text{centralize} \  K:  K' \leftarrow K - \mathbb{I}_nK/n - K\mathbb{I}_n/n + \mathbb{I}_nK\mathbb{I}_n/n^2$
+	\State $\text{calculate eigenvector} \ \pmb{\alpha}_1, \pmb{\alpha}_2, \cdots, \pmb{\alpha}_d \   \text{according to:} \  n \lambda \pmb{\alpha} = K' \pmb{\alpha}$
+	\State $\text{normalize eigenvector according to:} \  n \lambda_i \pmb{\alpha}_i^T \pmb{\alpha}_i = 1$
+	\State $\text{project the test data} \  \mathbf{x}:  \  p_i(\mathbf{x}) \leftarrow \sum_{j=1}^n \alpha_{ij} k(\mathbf{x}, \mathbf{x}_j) $
+\BState \bf finish
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+\noindent {\bf Note:} $\mathbb{I}_n$ stands for $n \times n$ matrix with all values equal to $1$.
+
+\section{Properties of Kernel PCA}
+
+The salient feature of the Kernel PCA is that when we are extracting the major modes/components from the data, we are not limited to extracting only up-to the dimensionality of our data set, but we can extract further components from the data. The usual properties of PCA continue to hold here, such as: The first $q$ principal components (the projections of eigenvectors) carry more variance than any other $q$ orthogonal directions. The mean squared error approximation is representing the observations by first $q$ principal components is minimal. The principal components explain most of the variation in the data. 
+
+\section{Computational Complexity of the Kernel PCA}
+
+Kernel PCA is not computationally intensive when the given dataset is not very big, because we are not transforming the data into feature space but we are computing the dot-products using the kernel function in the input space itself. Thus this procedure is equally computationally intensive as linear PCA. When there are large number of observations we estimate the Kernel Matrix using a subset of the input data to reduce the complexity of calculations. 
+
+
+\section{Experiments by the Authors}
+To explore the effectiveness of the Kernel PCA the authors explore two examples cases.
+
+\subsection{Toy example}
+The authors generate an artificial 2-d data set using kernel of varying degrees. Linear PCA produces only two modes for only two non-zero eigenvalues as the data is in 2 dimensions. In contrast the nonlinear PCA allows more components to be discerned. Also the first component from non-linear PCA fits the data better than the linear one. This method also better explained how different principle components extracted using Gaussian kernels separate the clusters in the input data.
+
+\subsection{Character Recognition Example}
+A data set of hand written data from USPS is used to perform K-PCA and then the components’ utility is assessed to classify the images using character recognition classifier. The performance of nonlinear PCA is found to be better than that of linear PCA. The main reason for this is that there are many higher order features in an image than there are pixels in it. Nonlinear PCA addresses this issue better.
+
+\section{Advantages of Kernel PCA}
+
+\begin{itemize}
+  \item In the use of pattern recognition, the components from nonlinear PCA recognized the features better than the linear PCA
+  \item We do not perform any nonlinear optimization in this procedure, just solve an eigenvalue problem
+  \item We do not need to specify the number of principal components in advance to perform this method
+\end{itemize}
+
+
+\section{Experiments in This Project}
+
+In our project, we will carry out two experiments on two different datasets.
+
+\subsection{Iris Flower Dataset}
+The first dataset we used is the iris flower dataset, which contains four features of three different iris flower species: Iris setosa, Iris virginica and Iris versicolor. The One of the species (Iris setosa) is linearly separable with others, while the other two species are not linearly separable. Kernel PCA can handle linearly non-separable data in higher dimensional feature space, and can be easily applied on this very small dataset with only $150$ samples.
+
+\subsection{USPS Dataset}
+For the second experiment we will use the same dataset used in this paper. This dataset includes more than $9000$ of 16 x 16 grey-scale images, which came from scanning of handwritten digits on the USPS envelops. We will first use kernel PCA to extract feature from images and then apply a neural network with one hidden layer to perform classification. Then the accuracy will be compared with the same neural net trained with features extracted by linear PCA.
+\clearpage
+
+%\bibliographystyle{plain}
+%\bibliographystyle{unsrt}
+%\bibliography{reference.bib}
+
+\end{document}
+
