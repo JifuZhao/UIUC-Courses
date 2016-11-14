@@ -15,24 +15,26 @@ import warnings
 warnings.simplefilter('ignore')
 
 import numpy as np
+import time
 import tensorflow as tf
 
 class RNN(object):
     """ One-layer RNN """
 
-    def __init__(self, category, learning_rate, max_iters, batch_size, n_input, n_steps, n_hidden, n_classes):
+    def __init__(self, category, learning_rate, max_iters, batch_size, n_input, n_steps, n_hidden, n_classes, regression='logistic'):
         """ initialize all parameters """
         # define parameters
         self.category = category  # basicRNN or LSTM
         self.learning_rate = learning_rate
         self.max_iters = max_iters
         self.batch_size = batch_size
-
         self.n_input = n_input
         self.n_steps = n_steps
         self.n_hidden = n_hidden
         self.n_classes = n_classes
+        self.regression = regression  # logistic or linear type
 
+        # keep recording the training and testing accuracy
         self.train_acc = []
         self.test_acc = []
 
@@ -40,8 +42,7 @@ class RNN(object):
         self.X = tf.placeholder("float", [None, self.n_steps, self.n_input])
         self.Y = tf.placeholder("float", [None, self.n_classes])
 
-        # define W and b for final classification
-        # prediction = softmax(W * h + b)
+        # define W and b for final classification f(W * h + b)
         self.W = tf.Variable(tf.truncated_normal([n_hidden, n_classes]))
         self.b = tf.Variable(tf.truncated_normal([n_classes]))
     # end __init__()
@@ -63,8 +64,11 @@ class RNN(object):
         cell = tf.nn.rnn_cell.BasicRNNCell(self.n_hidden)
         outputs, states = tf.nn.rnn(cell, X, dtype=tf.float32)
 
-        # Linear activation, using rnn inner loop last output
-        return tf.nn.softmax(tf.matmul(outputs[-1], self.W) + self.b)
+        # logistic or linear activation
+        if self.regression == 'logistic':
+            return tf.nn.softmax(tf.matmul(outputs[-1], self.W) + self.b)
+        elif self.regression == 'linear':
+            return tf.matmul(outputs[-1], self.W) + self.b
     # end basicRNN()
 
 
@@ -81,7 +85,7 @@ class RNN(object):
         X = tf.split(0, self.n_steps, X)
 
         # create the basic RNN cell
-        cell = tf.nn.rnn_cell.BasicLSTMCell(self.n_hidden)
+        cell = tf.nn.rnn_cell.BasicLSTMCell(self.n_hidden, state_is_tuple=True)
         outputs, states = tf.nn.rnn(cell, X, dtype=tf.float32)
 
         # using the last frame for calssification
@@ -89,8 +93,9 @@ class RNN(object):
     # end LSTM()
 
 
-    def train(self, mnist, order='C', frequence=10, size=300):
+    def train(self, mnist, order='C', frequence=10, size=300, show_frequence=None):
         """ function to train the model, restricted to MNIST dataset """
+        t0 = time.time()
 
         # get the prediction
         if self.category == 'basicRNN':
@@ -120,20 +125,20 @@ class RNN(object):
             train_label = mnist.train.labels
             test_imgs = mnist.test.images
             test_label = mnist.test.labels
-            
+
         # reshape
-        train_imgs = train_imgs.reshape((len(train_imgs), self.n_steps, self.n_input), order='C')
-        test_imgs = test_imgs.reshape((len(test_imgs), self.n_steps, self.n_input), order='C')
+        train_imgs = train_imgs.reshape((len(train_imgs), self.n_steps, self.n_input), order=order)
+        test_imgs = test_imgs.reshape((len(test_imgs), self.n_steps, self.n_input), order=order)
 
         # Launch the graph
         with tf.Session() as sess:
             sess.run(initiator)
             # Keep training until reach max iterations
-            for i in range(1, self.max_iters):
+            for i in range(1, self.max_iters + 1):
                 batch_x, batch_y = mnist.train.next_batch(self.batch_size)
 
                 # reshape the given data into (batch_size, n_steps, n_input)
-                batch_x = batch_x.reshape((self.batch_size, self.n_steps, self.n_input), order='C')
+                batch_x = batch_x.reshape((self.batch_size, self.n_steps, self.n_input), order=order)
 
                 # begin training
                 sess.run(optimizer, feed_dict={self.X: batch_x, self.Y: batch_y})
@@ -146,12 +151,17 @@ class RNN(object):
                                                                  self.Y: test_label})
                     self.train_acc.append(tmp_train_acc)
                     self.test_acc.append(tmp_test_acc)
+                    if (show_frequence is not None) and (i % show_frequence == 0):
+                        print("Iter " + str(i) + ", Training Accuracy= " + \
+                              "{:.5f}".format(tmp_train_acc))
 
         # reset the graph to avoid potential problems
         tf.reset_default_graph()
-        print("Training is finished !")
-        print('Final Training accuracy:\t', np.round(self.train_acc[-1], 5))
-        print('Final Testing accuracy:\t', np.round(self.test_acc[-1], 5))
+
+        t = np.round(time.time() - t0)
+        print('Training is finished in', t, 's !')
+        print('Final Training Accuracy:\t', np.round(self.train_acc[-1], 5))
+        print('Final Testing Accuracy:\t', np.round(self.test_acc[-1], 5))
     # end train()
 
 
