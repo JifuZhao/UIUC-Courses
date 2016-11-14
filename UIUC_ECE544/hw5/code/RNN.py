@@ -37,7 +37,7 @@ class RNN(object):
 
         # keep recording the training and testing accuracy
         self.train_acc = []
-        self.test_acc = []
+        self.cv_acc = []
 
         # define input and outputs
         self.X = tf.placeholder("float", [None, self.n_steps, self.n_input])
@@ -89,12 +89,15 @@ class RNN(object):
         cell = tf.nn.rnn_cell.BasicLSTMCell(self.n_hidden, state_is_tuple=True)
         outputs, states = tf.nn.rnn(cell, X, dtype=tf.float32)
 
-        # using the last frame for calssification
-        return tf.nn.softmax(tf.matmul(outputs[-1], self.W) + self.b)
+        # logistic or linear activation
+        if self.regression == 'logistic':
+            return tf.nn.softmax(tf.matmul(outputs[-1], self.W) + self.b)
+        elif self.regression == 'linear':
+            return tf.matmul(outputs[-1], self.W) + self.b
     # end LSTM()
 
 
-    def train(self, mnist, order='C', frequence=10, size=300, show_frequence=None):
+    def train(self, mnist, order='C', frequence=10, size=None, show_frequence=None):
         """ function to train the model, restricted to MNIST dataset """
         t0 = time.time()
 
@@ -115,22 +118,6 @@ class RNN(object):
         # Initializing the variables
         initiator = tf.initialize_all_variables()
 
-        # get all training and testing data
-        if size is not None:
-            train_imgs = mnist.train.images[:size]
-            train_label = mnist.train.labels[:size]
-            test_imgs = mnist.test.images[:size]
-            test_label = mnist.test.labels[:size]
-        else:
-            train_imgs = mnist.train.images
-            train_label = mnist.train.labels
-            test_imgs = mnist.test.images
-            test_label = mnist.test.labels
-
-        # reshape
-        train_imgs = train_imgs.reshape((len(train_imgs), self.n_steps, self.n_input), order=order)
-        test_imgs = test_imgs.reshape((len(test_imgs), self.n_steps, self.n_input), order=order)
-
         # Launch the graph
         with tf.Session() as sess:
             sess.run(initiator)
@@ -146,29 +133,61 @@ class RNN(object):
 
                 # keep recording the current accuracy
                 if i % frequence == 0:
+                    # get all training and testing data
+                    if size is not None:
+                        train_imgs, train_label = mnist.train.next_batch(size)
+                        cv_imgs, cv_label = mnist.validation.next_batch(size)
+                        # reshape
+                        train_imgs = train_imgs.reshape((len(train_imgs), self.n_steps, self.n_input), order=order)
+                        cv_imgs = cv_imgs.reshape((len(cv_imgs), self.n_steps, self.n_input), order=order)
+                    else:
+                        train_imgs = batch_x
+                        train_label = batch_y
+                        cv_imgs, cv_label = mnist.validation.next_batch(self.batch_size)
+                        cv_imgs = cv_imgs.reshape((self.batch_size, self.n_steps, self.n_input), order=order)
+
                     tmp_train_acc = sess.run(accuracy, feed_dict={self.X: train_imgs,
                                                                   self.Y: train_label})
-                    tmp_test_acc = sess.run(accuracy, feed_dict={self.X: test_imgs,
-                                                                 self.Y: test_label})
+                    tmp_cv_acc = sess.run(accuracy, feed_dict={self.X: cv_imgs,
+                                                               self.Y: cv_label})
                     self.train_acc.append(tmp_train_acc)
-                    self.test_acc.append(tmp_test_acc)
+                    self.cv_acc.append(tmp_cv_acc)
+
                     if (show_frequence is not None) and (i % show_frequence == 0):
-                        print("Iter " + str(i) + ", Training Accuracy= " + \
-                              "{:.5f}".format(tmp_train_acc))
+                        print("Iteration " + str(i) + \
+                              ", Training Accuracy= " + "{:.5f}".format(tmp_train_acc) +\
+                              ", Validation Accuracy= " + "{:.5f}".format(tmp_cv_acc))
+
+            # evaluate the performance on the whole dataset
+            all_train_imgs = mnist.train.images
+            all_train_label = mnist.train.labels
+            all_test_imgs = mnist.test.images
+            all_test_label = mnist.test.labels
+
+            # reshape
+            all_train_imgs = all_train_imgs.reshape((len(all_train_imgs), self.n_steps, self.n_input), order=order)
+            all_test_imgs = all_test_imgs.reshape((len(all_test_imgs), self.n_steps, self.n_input), order=order)
+
+            # calculate the accuracy
+            final_train_acc = sess.run(accuracy, feed_dict={self.X: all_train_imgs,
+                                                            self.Y: all_train_label})
+            final_test_acc = sess.run(accuracy, feed_dict={self.X: all_test_imgs,
+                                                            self.Y: all_test_label})
 
         # reset the graph to avoid potential problems
         tf.reset_default_graph()
 
         t = np.round(time.time() - t0)
+        print('\n')
         print('Training is finished in', t, 's !')
-        print('Final Training Accuracy:\t', np.round(self.train_acc[-1], 5))
-        print('Final Testing Accuracy:\t', np.round(self.test_acc[-1], 5))
+        print('Final Training Accuracy: ' + '{:.5f}'.format(final_train_acc))
+        print('Final Testing Accuracy:  ' + '{:.5f}'.format(final_test_acc))
     # end train()
 
 
     def get_params(self):
         """ function to get all parameters """
-        return self.train_acc, self.test_acc
+        return self.train_acc, self.cv_acc
     # end get_params()
 
 # end class RNN()

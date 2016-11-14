@@ -87,7 +87,7 @@ Since the goal of this work is to study different pre-training methods, the fina
 \section{Resource Feasibility}
 \label{sec:feasibility}
 
-With a modern computer (i.e., Intel i$7$ processor, $16$ RAM), most of the work described above can be implemented without any problem. However, for kernel PCA part, the kernel matrix $K$ has the dimensionality of $n \times n$, where n is the number of given samples. In this work, for the MNIST dataset, there will be $60000$ training examples. The dimensionality of $K$ will be $60000 \times 60000$. To store this matrix in memory, it will need more than $25$ GB, which is not possible for our current computer. For this part, we will implement the algorithm on Amazon Web Service (AWS).
+With a modern computer (i.e., Intel i$7$ processor, $16$ RAM), most of the work described above can be implemented without any problem. However, for kernel PCA part, the kernel matrix $K$ has the dimensionality of $n \times n$, where n is the number of given samples. In this work, for the MNIST dataset, there will be $60000$ training examples. The dimensionality of $K$ will be $60000 \times 60000$. To store this matrix in memory, it will need more than $25$ GB (using numpy.float64 data type), which is not possible for our current computer. For this part, we will implement the algorithm on Amazon Web Service (AWS).
 
 \section{Timeline}
 \label{sec:timeline}
