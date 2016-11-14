@@ -16,6 +16,12 @@ To run the code (in Ubuntu 16.04 with Anaconda Python)
     
     2. $: python TensorFlow.py
     
-**Note**
+** Note **
     The result will print out on the terminal and/or save to local folder named ./result/
 
+
+** Note **
+    this implementation followed some online tutorials:
+    [1] https://www.tensorflow.org/versions/r0.11/tutorials/recurrent/index.html
+    [2] https://tensorhub.com/aymericdamien/tensorflow-rnn
+    [3] https://github.com/tflearn/tflearn/blob/master/examples/images/rnn_pixels.py

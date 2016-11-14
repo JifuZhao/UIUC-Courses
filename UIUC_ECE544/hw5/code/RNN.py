@@ -3,12 +3,12 @@
 """
 __author__      = "Jifu Zhao"
 __email__       = "jzhao59@illinois.edu"
-__date__        = "mm/dd/2016"
+__date__        = "11/15/2016"
 
-Note: this implementation followed the online tutorial:
+Note: this implementation followed some online tutorials:
+https://www.tensorflow.org/versions/r0.11/tutorials/recurrent/index.html
 https://tensorhub.com/aymericdamien/tensorflow-rnn
 https://github.com/tflearn/tflearn/blob/master/examples/images/rnn_pixels.py
-https://www.tensorflow.org/versions/r0.11/tutorials/recurrent/index.html
 """
 
 import warnings
@@ -21,7 +21,8 @@ import tensorflow as tf
 class RNN(object):
     """ One-layer RNN """
 
-    def __init__(self, category, learning_rate, max_iters, batch_size, n_input, n_steps, n_hidden, n_classes, regression='logistic'):
+    def __init__(self, category, learning_rate, max_iters, batch_size, n_input,
+                 n_steps, n_hidden, n_classes, regression='logistic'):
         """ initialize all parameters """
         # define parameters
         self.category = category  # basicRNN or LSTM
