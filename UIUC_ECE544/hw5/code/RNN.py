@@ -40,8 +40,8 @@ class RNN(object):
         self.cv_acc = []
 
         # define input and outputs
-        self.X = tf.placeholder("float", [None, self.n_steps, self.n_input])
-        self.Y = tf.placeholder("float", [None, self.n_classes])
+        self.X = tf.placeholder(tf.float32, [None, self.n_steps, self.n_input])
+        self.Y = tf.placeholder(tf.float32, [None, self.n_classes])
 
         # define W and b for final classification f(W * h + b)
         self.W = tf.Variable(tf.truncated_normal([n_hidden, n_classes]))
@@ -138,8 +138,8 @@ class RNN(object):
                         train_imgs, train_label = mnist.train.next_batch(size)
                         cv_imgs, cv_label = mnist.validation.next_batch(size)
                         # reshape
-                        train_imgs = train_imgs.reshape((len(train_imgs), self.n_steps, self.n_input), order=order)
-                        cv_imgs = cv_imgs.reshape((len(cv_imgs), self.n_steps, self.n_input), order=order)
+                        train_imgs = train_imgs.reshape((size, self.n_steps, self.n_input), order=order)
+                        cv_imgs = cv_imgs.reshape((size, self.n_steps, self.n_input), order=order)
                     else:
                         train_imgs = batch_x
                         train_label = batch_y
