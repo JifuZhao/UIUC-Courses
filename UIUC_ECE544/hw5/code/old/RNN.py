@@ -38,50 +38,81 @@ class RNN(object):
         # keep recording the training and testing accuracy
         self.train_acc = []
         self.cv_acc = []
+
+        # define input and outputs
+        self.X = tf.placeholder(tf.float32, [None, self.n_steps, self.n_input])
+        self.Y = tf.placeholder(tf.float32, [None, self.n_classes])
+
+        # define W and b for final classification f(W * h + b)
+        self.W = tf.Variable(tf.truncated_normal([n_hidden, n_classes]))
+        self.b = tf.Variable(tf.truncated_normal([n_classes]))
     # end __init__()
+
+
+    def basicRNN(self, X):
+        """ function to build the basic RNN model """
+
+        # reshape the input to fit the requrement of RNN
+        # according to https://github.com/tensorflow/tensorflow/blob/master/
+        # tensorflow/g3doc/api_docs/python/functions_and_classes/shard0/tf.nn.rnn.md
+        X = tf.transpose(X, [1, 0, 2])
+        # reshaping to (n_steps * batch_size, n_input)
+        X = tf.reshape(X, [-1, self.n_input])
+        # Split to get a list of 'n_steps' tensors of shape (batch_size, n_input)
+        X = tf.split(0, self.n_steps, X)
+
+        # create the basic RNN cell
+        cell = tf.nn.rnn_cell.BasicRNNCell(self.n_hidden)
+        outputs, states = tf.nn.rnn(cell, X, dtype=tf.float32)
+
+        # logistic or linear activation
+        if self.regression == 'logistic':
+            return tf.nn.softmax(tf.matmul(outputs[-1], self.W) + self.b)
+        elif self.regression == 'linear':
+            return tf.matmul(outputs[-1], self.W) + self.b
+    # end basicRNN()
+
+
+    def LSTM(self, X):
+        """ function to build the LSTM model """
+
+        # reshape the input to fit the requrement of RNN
+        # according to https://github.com/tensorflow/tensorflow/blob/master/
+        # tensorflow/g3doc/api_docs/python/functions_and_classes/shard0/tf.nn.rnn.md
+        X = tf.transpose(X, [1, 0, 2])
+        # reshaping to (n_steps * batch_size, n_input)
+        X = tf.reshape(X, [-1, self.n_input])
+        # Split to get a list of 'n_steps' tensors of shape (batch_size, n_input)
+        X = tf.split(0, self.n_steps, X)
+
+        # create the basic RNN cell
+        cell = tf.nn.rnn_cell.BasicLSTMCell(self.n_hidden, state_is_tuple=True)
+        outputs, states = tf.nn.rnn(cell, X, dtype=tf.float32)
+
+        # logistic or linear activation
+        if self.regression == 'logistic':
+            return tf.nn.softmax(tf.matmul(outputs[-1], self.W) + self.b)
+        elif self.regression == 'linear':
+            return tf.matmul(outputs[-1], self.W) + self.b
+    # end LSTM()
 
 
     def train(self, mnist, order='C', frequence=10, size=None, show_frequence=None):
         """ function to train the model, restricted to MNIST dataset """
         t0 = time.time()
 
-        # define input and outputs
-        X = tf.placeholder(tf.float32, [None, self.n_steps, self.n_input])
-        Y = tf.placeholder(tf.float32, [None, self.n_classes])
-
-        # define W and b for final classification f(W * h + b)
-        W = tf.Variable(tf.truncated_normal([self.n_hidden, self.n_classes]))
-        b = tf.Variable(tf.truncated_normal([self.n_classes]))
-
-        # reshape the input to fit the requrement of RNN
-        # according to https://github.com/tensorflow/tensorflow/blob/master/
-        # tensorflow/g3doc/api_docs/python/functions_and_classes/shard0/tf.nn.rnn.md
-        new_X = tf.transpose(X, [1, 0, 2])
-        # reshaping to (n_steps * batch_size, n_input)
-        new_X = tf.reshape(new_X, [-1, self.n_input])
-        # Split to get a list of 'n_steps' tensors of shape (batch_size, n_input)
-        new_X = tf.split(0, self.n_steps, new_X)
-
-        # create the basic RNN cell
+        # get the prediction
         if self.category == 'basicRNN':
-            cell = tf.nn.rnn_cell.BasicRNNCell(self.n_hidden)
+            prediction = self.basicRNN(self.X)
         elif self.category == 'LSTM':
-            cell = tf.nn.rnn_cell.BasicLSTMCell(self.n_hidden, state_is_tuple=True)
-
-        outputs, states = tf.nn.rnn(cell, new_X, dtype=tf.float32)
-
-        # logistic or linear activation
-        if self.regression == 'logistic':
-            prediction = tf.nn.softmax(tf.matmul(outputs[-1], W) + b)
-        elif self.regression == 'linear':
-            prediction = tf.matmul(outputs[-1], W) + b
+            prediction = self.LSTM(self.X)
 
         # optimize the cross_entropy
-        cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(prediction, Y))
+        cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(prediction, self.Y))
         optimizer = tf.train.AdamOptimizer(learning_rate=self.learning_rate).minimize(cross_entropy)
 
         # calculate the predicted label and accuracy
-        correct_prediction = tf.equal(tf.argmax(prediction, 1), tf.argmax(Y, 1))
+        correct_prediction = tf.equal(tf.argmax(prediction, 1), tf.argmax(self.Y, 1))
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
         # Initializing the variables
@@ -98,7 +129,7 @@ class RNN(object):
                 batch_x = batch_x.reshape((self.batch_size, self.n_steps, self.n_input), order=order)
 
                 # begin training
-                sess.run(optimizer, feed_dict={X: batch_x, Y: batch_y})
+                sess.run(optimizer, feed_dict={self.X: batch_x, self.Y: batch_y})
 
                 # keep recording the current accuracy
                 if i % frequence == 0:
@@ -115,10 +146,10 @@ class RNN(object):
                         cv_imgs, cv_label = mnist.validation.next_batch(self.batch_size)
                         cv_imgs = cv_imgs.reshape((self.batch_size, self.n_steps, self.n_input), order=order)
 
-                    tmp_train_acc = sess.run(accuracy, feed_dict={X: train_imgs,
-                                                                  Y: train_label})
-                    tmp_cv_acc = sess.run(accuracy, feed_dict={X: cv_imgs,
-                                                               Y: cv_label})
+                    tmp_train_acc = sess.run(accuracy, feed_dict={self.X: train_imgs,
+                                                                  self.Y: train_label})
+                    tmp_cv_acc = sess.run(accuracy, feed_dict={self.X: cv_imgs,
+                                                               self.Y: cv_label})
                     self.train_acc.append(tmp_train_acc)
                     self.cv_acc.append(tmp_cv_acc)
 
@@ -138,10 +169,10 @@ class RNN(object):
             all_test_imgs = all_test_imgs.reshape((len(all_test_imgs), self.n_steps, self.n_input), order=order)
 
             # calculate the accuracy
-            final_train_acc = sess.run(accuracy, feed_dict={X: all_train_imgs,
-                                                            Y: all_train_label})
-            final_test_acc = sess.run(accuracy, feed_dict={X: all_test_imgs,
-                                                            Y: all_test_label})
+            final_train_acc = sess.run(accuracy, feed_dict={self.X: all_train_imgs,
+                                                            self.Y: all_train_label})
+            final_test_acc = sess.run(accuracy, feed_dict={self.X: all_test_imgs,
+                                                            self.Y: all_test_label})
 
         # reset the graph to avoid potential problems
         tf.reset_default_graph()
