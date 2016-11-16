@@ -50,8 +50,8 @@ class RNN(object):
         Y = tf.placeholder(tf.float32, [None, self.n_classes])
 
         # define W and b for final classification f(W * h + b)
-        W = tf.Variable(tf.truncated_normal([self.n_hidden, self.n_classes]))
-        b = tf.Variable(tf.truncated_normal([self.n_classes]))
+        W = tf.Variable(tf.random_normal([self.n_hidden, self.n_classes]))
+        b = tf.Variable(tf.random_normal([self.n_classes]))
 
         # reshape the input to fit the requrement of RNN
         # according to https://github.com/tensorflow/tensorflow/blob/master/
