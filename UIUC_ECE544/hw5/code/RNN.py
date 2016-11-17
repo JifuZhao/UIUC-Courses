@@ -54,12 +54,14 @@ class RNN(object):
         b = tf.Variable(tf.truncated_normal([self.n_classes]))
 
         # reshape the input to fit the requrement of RNN
-        # according to https://github.com/tensorflow/tensorflow/blob/master/
-        # tensorflow/g3doc/api_docs/python/functions_and_classes/shard0/tf.nn.rnn.md
+        # according to
+        # [1] https://github.com/tensorflow/tensorflow/blob/master/ \
+        #     tensorflow/g3doc/api_docs/python/functions_and_classes/shard0/tf.nn.rnn.md
+        # [2] https://tensorhub.com/aymericdamien/tensorflow-rnn
         new_X = tf.transpose(X, [1, 0, 2])
         # reshaping to (n_steps * batch_size, n_input)
         new_X = tf.reshape(new_X, [-1, self.n_input])
-        # Split to get a list of 'n_steps' tensors of shape (batch_size, n_input)
+        # split to get a list of tensors of shape (batch_size, n_input)
         new_X = tf.split(0, self.n_steps, new_X)
 
         # create the basic RNN cell
@@ -68,6 +70,7 @@ class RNN(object):
         elif self.category == 'LSTM':
             cell = tf.nn.rnn_cell.BasicLSTMCell(self.n_hidden, state_is_tuple=True)
 
+        # compute the output
         outputs, states = tf.nn.rnn(cell, new_X, dtype=tf.float32)
 
         # logistic or linear activation
