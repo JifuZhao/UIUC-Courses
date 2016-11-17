@@ -58,6 +58,7 @@
 	<li> <b>Setting 1 (Sequence of Pixels): </b> It is assumed that each $28 \times 28$ image, $x$, in the MNIST dataset is a sequence of single pixels, 
 	$x(1), x(2), ... x(784)$, where $x(t)$ is a single scalar value. The network reads one pixel at a time from the top left corner of the
 	image to the bottom right of the image.
+	<b>Note:</b> If you are running out of memory, you can downsample the image to $14 \times 14$ or $7 \times 7$, just report what image size you used in the report.
 	</li>
 
 	<li> <b>Setting 2 (Sequence of Columns): </b> It is assumed that each $28 \times 28$ image, $x$, in the MNIST dataset is a sequence of vectors, 
@@ -87,7 +88,7 @@
 	<li> Results:
 	<ol>
 	<li>
-	Provide one figure with four subfigures, showing convergence plots of all four (2 settings, 2 models) classifiers (abscissa = training iteration, ordinate = training-corpus accuracy)
+	Provide one figure with four subfigures, showing convergence plots of all four (2 settings, 2 models) classifiers (abscissa = training iteration, ordinate = mini-batch training-corpus accuracy)
 	</li>	
 	<li>
 	Provide a table reporting the testing accuracies.
