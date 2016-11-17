@@ -6,9 +6,6 @@ y = deads ./ total;
 polyfit(x, y, 1)
 polyfit(x, y, 2)
 
-link = @(mu) log(mu ./ (1-mu));
-derlink = @(mu) 1 ./ (mu .* (1-mu));
-invlink = @(resp) 1 ./ (1 + exp(-resp));
-F = {link, derlink, invlink};
-b = glmfit(x, y, 'binomial', 'link', F)
+glmfit(x, y,'binomial','link','logit')
 
+glmfit(x, [deads total], 'binomial', 'logit')
