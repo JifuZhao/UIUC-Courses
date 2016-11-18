@@ -6,6 +6,8 @@ y = deads ./ total;
 polyfit(x, y, 1)
 polyfit(x, y, 2)
 
-glmfit(x, y,'binomial','link','logit')
+b = glmfit(x, y,'binomial','link','logit')
+yfit = glmval(b, x, 'logit')
+plot(x, y,'o',x, yfit,'-','LineWidth',2)
 
 glmfit(x, [deads total], 'binomial', 'logit')
