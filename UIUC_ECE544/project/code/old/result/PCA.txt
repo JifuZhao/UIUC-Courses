@@ -1,0 +1,8 @@
+PCA model
+      16 features, training accuracy is 0.851073, test accuracy is 0.855100
+      32 features, training accuracy is 0.893364, test accuracy is 0.900500
+      64 features, training accuracy is 0.911309, test accuracy is 0.915500
+     128 features, training accuracy is 0.921618, test accuracy is 0.922200
+     256 features, training accuracy is 0.928618, test accuracy is 0.923500
+     512 features, training accuracy is 0.934745, test accuracy is 0.925500
+     784 features, training accuracy is 0.935636, test accuracy is 0.924200

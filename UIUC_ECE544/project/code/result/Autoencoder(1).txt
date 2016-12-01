@@ -1,0 +1,15 @@
+(784, 128, 16, 128, 784)   training accuracy is 0.763164, test accuracy is 0.769800
+(784, 128, 32, 128, 784)   training accuracy is 0.805273, test accuracy is 0.816000
+(784, 128, 64, 128, 784)   training accuracy is 0.866582, test accuracy is 0.871000
+(784, 128, 128, 128, 784)  training accuracy is 0.900491, test accuracy is 0.905600
+(784, 128, 256, 128, 784)  training accuracy is 0.910127, test accuracy is 0.911700
+(784, 256, 16, 256, 784)   training accuracy is 0.825073, test accuracy is 0.833900
+(784, 256, 32, 256, 784)   training accuracy is 0.870145, test accuracy is 0.875800
+(784, 256, 64, 256, 784)   training accuracy is 0.890945, test accuracy is 0.893700
+(784, 256, 128, 256, 784)  training accuracy is 0.912727, test accuracy is 0.916400
+(784, 256, 256, 256, 784)  training accuracy is 0.933709, test accuracy is 0.936700
+(784, 512, 16, 512, 784)   training accuracy is 0.849655, test accuracy is 0.852400
+(784, 512, 32, 512, 784)   training accuracy is 0.874873, test accuracy is 0.877800
+(784, 512, 64, 512, 784)   training accuracy is 0.896745, test accuracy is 0.904700
+(784, 512, 128, 512, 784)  training accuracy is 0.917255, test accuracy is 0.920200
+(784, 512, 256, 512, 784)  training accuracy is 0.934309, test accuracy is 0.940900
