@@ -37,7 +37,7 @@ Unsupervised per-training methods are very important steps for many applications
 
 % ---------------------------------------------------------------------------------------
 \begin{keywords}
-Unsupervised pre-training, PCA, kernel PCA, Auto-encoder
+PCA, kernel PCA, Auto-encoder
 %PCA, kernel PCA, Auto-encoder
 \end{keywords}
 
@@ -45,17 +45,17 @@ Unsupervised pre-training, PCA, kernel PCA, Auto-encoder
 \section{Introduction}
 \label{sec:intro}
 
-As one important part of artificial intelligence (AI), machine learning has been widely used in our daily life, such as natural language processing (NLP), zip code recognition, self-driving cars and so on. Among those applications, supervised learning is the most common and perhaps the most powerful form of machine learning \cite{lecun2015deep}. For supervised learning, the choice of appropriate representations of original features is very important \cite{bengio2012deep}. For a long time, most machine learning applications require us to specify the input $\bm{x}$ and target $\bm{y}$. The choice of feature representation $\bm{x}$ is usually determined by experts. And sometimes the input $\bm{x}$ may be just the raw feature without pre-processing. 
+As one important part of artificial intelligence (AI), machine learning has been widely used in our daily lives, such as natural language processing (NLP), zip code recognition, self-driving cars and so on. Among those applications, supervised learning is the most common and perhaps the most powerful form of machine learning \cite{lecun2015deep}. For supervised learning, the choice of appropriate representations of original features is very important \cite{bengio2012deep}. For a long time, most machine learning applications require us to specify the input $\bm{x}$ and target $\bm{y}$. The choice of feature representation $\bm{x}$ is usually determined by experts. And sometimes the input $\bm{x}$ may be just the raw feature without pre-processing. 
 
-Researchers have been working on discovering the hidden structures of the data for years. In this process, several methods have been developed and found to be useful in some domains, such as PCA, Independent Component Analysis (ICA), Non-negative Matrix Factorization (NMF), restricted Boltzmann machine (RBM), Auto-encoders and so on. These methods works in a unsupervised way and the output from these methods are thought to be a transformation of the raw input features. For supervised learning, some supervised learning mechanism will be built based on the output from these pre-training methods rather than the raw features. As expected, a good representation can help the supervised learning algorithms work better.
+Researchers have been working on discovering the hidden structures of the data for years. In this process, several methods have been developed and found to be useful in some domains, such as PCA, Independent Component Analysis (ICA), Non-negative Matrix Factorization (NMF), restricted Boltzmann machine (RBM), Auto-encoders and so on. These methods works in an unsupervised way and the output from these methods are thought to be a transformation of the raw input features. For further learning, some supervised learning mechanisms will be built based on the output from these pre-training methods rather than the raw features. As expected, a good representation can help the supervised learning algorithms work better.
 
-As one of the most widely used method, PCA has proved to be a powerful technique for extracting structures from possibly high-dimension data sets \cite{scholkopf1998nonlinear}. PCA is essentially a eigendecomposition problem \cite{friedman2001elements}. As an orthogonal transformation, however, PCA doesn't work well when the latent variables of the data are non-linearly related to the original data. To extract useful information in a non-linearly way, many methods has been proposed, such as kernel PCA and auto-encoders.
+As one of the most widely used methods, PCA is a powerful technique for extracting hidden structures from possibly high-dimension data sets \cite{scholkopf1998nonlinear}. PCA is essentially an eigendecomposition problem \cite{friedman2001elements}. As an orthogonal transformation, however, PCA doesn't work well when the latent variables of the data are non-linearly related to the original data. To extract information in a non-linearly way, many methods has been proposed, such as kernel PCA and auto-encoders.
 
-Kernel PCA was proposed by Sch\"{o}lkopf {\em et~al.}\cite{scholkopf1998nonlinear}. In their work, starting from the traditional PCA algorithm, they found that, after mapping the data from original feature space $\bm{x}$ into a new feature space through some nonlinear function $\bm{\phi(\bm{x})}$, PCA algorithm requires huge amount of computations when the dimensionality of the new feature space is extremely high. Instead of solving this problem explicitly in the new feature space, they extracted the principal components through the so-called kernel matrix. In this way, this problem can be transformed into solving the eigendecomposition problem of the kernel matrix, whose dimensionality is determined by the size of the data set rather than the new feature space. This method is extremely useful when the new feature space is extremely high (for example, $10^{10}$). Using this method, the authors chose the US Postal Service database for a multicalss classification problem. Using only a subset of $3000$ training examples and a soft margin hyperplane classifier, they got a very good accuracy, which was compatible with support vector machine and convolutional neural networks \cite{scholkopf1998nonlinear}.
+Kernel PCA was proposed by Sch\"{o}lkopf {\em et~al.}\cite{scholkopf1998nonlinear}. In their work, starting from the traditional PCA algorithm, they found that, after mapping the data from original feature space $\bm{x}$ into a new feature space through some nonlinear function $\bm{\phi(\bm{x})}$, PCA algorithm requires huge amount of computations when the dimensionality of the new feature space is extremely high. Instead of solving this problem explicitly in the new feature space, they extracted the principal components through the so-called kernel matrix. In this way, this problem can be transformed into solving the eigendecomposition problem of the kernel matrix, whose dimensionality is determined by the size of the data set rather than the new feature space. This method is very useful when the new feature space is extremely high (for example, $10^{10}$). Using this method, the authors chose the US Postal Service database for a multicalss classification problem. With only a subset of $3000$ training examples and a soft margin hyperplane classifier, they got a very good accuracy, which was compatible with support vector machine and convolutional neural networks \cite{scholkopf1998nonlinear}.
 
-In addition to kernel PCA, auto-encoder is another commonly used non-linear feature extraction method. Auto-encoders use the input as the target, trying to find a reconstruction $\bm{r(\bm{x})} = \bm{g(h(\bm{x}))}$ through encoder $\bm h(\cdot)$ and decoder $\bm g(\cdot)$ \cite{bengio2012deep}. In most cases, an auto-encoder system is a multi-layer deep neural network which has a bottleneck structure. Auto-encoders can be trained through back-propagation. However, it works well only if we have a good initialization, especially when there are many hidden layers. To get a good initialization, Hinton and Salakhutdinov \cite{hinton2006reducing} then proposed an effective way which utilize a stack of RBMs for pre-training. They first built a stack of RBMs, each having only one layer of feature detectors. The learned feature representations from one RBM are used as the input for the next RBM. Since each RBM was trained separately, it was much easier than training a deep auto-encoder. After pre-training, the learned weights of the RBMs were used as the initialization for the corresponding deep auto-encoders. The auto-encoder was then trained further through back-propagation. Following the above steps, they applied this method on several data sets, including MNIST data set \cite{lecun1998gradient}, Olivetti face data set \cite{samaria1994parameterisation} and Reuters Corpora \cite{lewis2004rcv1}, which showed good results.
+In addition to kernel PCA, auto-encoder is another commonly used non-linear feature extraction method. Auto-encoders use the input as the target, trying to find a reconstruction $\bm{r(\bm{x})} = \bm{g(h(\bm{x}))}$ through encoder $\bm h(\cdot)$ and decoder $\bm g(\cdot)$ \cite{bengio2012deep}. In most cases, an auto-encoder system is a multi-layer deep neural network which has a bottleneck structure. Auto-encoders can be trained through back-propagation. However, it works well only if we have a good initialization, especially when there are many hidden layers. To get a good initialization, Hinton and Salakhutdinov \cite{hinton2006reducing} then proposed an effective way which utilize a stack of RBMs for pre-training. They first built a stack of RBMs, each having only one layer of feature detectors. The learned feature representations from one RBM were used as the input to the next RBM. Since each RBM was trained separately, it was much easier than training a deep auto-encoder. After pre-training, the learned weights of the RBMs were used as the initialization for the corresponding deep auto-encoders. The auto-encoder was then trained further through back-propagation. Following the above steps, they applied this method on several data sets, including MNIST data set \cite{lecun1998gradient}, Olivetti face data set \cite{samaria1994parameterisation} and Reuters Corpora \cite{lewis2004rcv1}, which showed good results.
 
-In this work, we focus on the comparison of several unsupervised per-training methods. More specifically, we will focus on PCA, kernel PCA and auto-encoders (with and without RBM initialization). In section \ref{sec:method}, we gave some brief review for PCA, kernel PCA and auto-encoders. In section \ref{sec:experiment}, we conducted experiments of MNIST data set using PCA kernel PCA and auto-encoder methods. Finally, in section \ref{sec:conclusion}, we gave some conclusions and potential future works.
+In this work, we focus on the comparison of several unsupervised per-training methods. More specifically, we focus on PCA, kernel PCA and auto-encoders (with and without RBM initialization). In section \ref{sec:method}, we gave some brief review for PCA, kernel PCA and auto-encoders. In section \ref{sec:experiment}, we conducted experiments on MNIST data set using PCA kernel PCA and auto-encoder. Finally, in section \ref{sec:conclusion}, we gave some conclusions and potential future works.
 
 % ---------------------------------------------------------------------------------------
 \section{Methods}
@@ -109,7 +109,7 @@ Note that $\bm v$ can be written as a linear combination of $\bm{\phi}(\bm{x}_i)
 \label{eq4}
 \bm{v} = \sum_{i=1}^n \alpha_i \bm{\phi}(\bm{x}_i)
 \end{equation}
-From equation (\ref{eq2}), (\ref{eq3})and (\ref{eq4}) 
+From equation (\ref{eq2}), (\ref{eq3}) and (\ref{eq4}) 
 \begin{equation}
 \label{eq5}
 \frac{1}{n} \sum_{i=1}^n \bm{\phi}(\bm{x}_i) \bm{\phi}(\bm{x}_i)^T  \sum_{j=1}^n \alpha_j \bm{\phi}(\bm{x}_j) = \lambda \sum_{i=1}^n \alpha_i \bm{\phi}(\bm{x}_i)
@@ -148,7 +148,7 @@ From above equations, the projection of any given data $\bm{x}$ onto the ith eig
 p_i(\bm x) = \bm{\phi(x)}^T \bm{v}_i = \sum_{j=1}^n \alpha_{ij} k(\bm{x}, \bm{x}_j)
 \end{equation}
 
-At the begining, we assume that the projected data is centered. However, there is no guarantee that the projected data set given by $\phi(\bm{x}_n)$ has zero mean, so we need manually centralize the projected data by \cite{bishop2007pattern}:
+At the begining, we assume that the projected data is centered. However, there is no guarantee that the projected data set given by $\phi(\bm{x}_n)$ has zero mean, so we need manually centralize the projected data \cite{bishop2007pattern} by:
 \begin{equation}
 \label{eq12}
 K' = K - \mathbb{I}_nK/n - K\mathbb{I}_n/n + \mathbb{I}_nK\mathbb{I}_n/n^2
@@ -213,14 +213,14 @@ Followed the back-propagation rule, the update rule can be easily derived.
 
 \subsection{Data}
 \label{data}
-In this work, we used the MNIST dataset \cite{lecun1998gradient} to compare the performance of different pre-training methods. The MNIST data set contains a huge amount of handwirtten digits, including $55000$ training examples, $5000$ validation examples and $10000$ test examples. There were $10$ classes which corresponding to digits from $0$ to $9$. Each example is a $28 \times 28$ pixel grayscale image and the pixel values range from $0$ to $1$.
+In this work, we used the MNIST dataset \cite{lecun1998gradient} to compare the performance of different pre-training methods. The MNIST data set contains a huge amount of handwirtten digits, including $55000$ training examples, $5000$ validation examples and $10000$ test examples. There are $10$ classes which correspond to digits from $0$ to $9$. Each example is a $28 \times 28$ pixel grayscale image and the pixel values range from $0$ to $1$.
 
 Since the main goal of this work was to compare different pre-training methods, in this work, we only implemented a simple 10-way multiclass logistic regression neural network for final classification.
 
 \subsection{PCA vs. kernel PCA}
 \label{pca-kpca}
 
-In this part, we focus on the comparison of PCA and kernel PCA. More specifically, we apply PCA and kernel PCA model with different polynomial kernels (as denoted in equation \ref{eq13}). Due to huge computation requirement for kernel PCA, we select a subset of $20,000$ training examples to build the kernel PCA model, then transform training and test data set according to this model. After choosing different number of transformed features, we perform multiclass classification. The test accuracy are shown in Table \ref{table:test_acc}.
+In this part, we focus on the comparison of PCA and kernel PCA. More specifically, we apply PCA and kernel PCA model with different polynomial kernels (as denoted in equation \ref{eq13}). Due to huge computation requirement for kernel PCA, we select a subset of $20,000$ training examples to build the kernel PCA model, then transform training and test data according to this model. After choosing different number of transformed features, we perform multiclass classification. The test accuracy are shown in Table \ref{table:test_acc}.
 
 %\begin{table*}[htb]
 %	\centering
@@ -249,7 +249,7 @@ In this part, we focus on the comparison of PCA and kernel PCA. More specificall
 
 \begin{table*}[htb]
 	\centering
-	\caption{Test Accuracy for Different Kernels}
+	\caption{Test Accuracy for Kernel PCA}
 	\label{table:test_acc}	
 	\begin{tabular}{c c c c c c c c c c c}
 		\hline \hline
@@ -272,13 +272,13 @@ In this part, we focus on the comparison of PCA and kernel PCA. More specificall
 	\end{tabular}
 \end{table*}
 
-With polynomial kernels, we have much more features can be chosen. As a result, the test accuracy gets improved a lot, which is shown clear in Table \ref{table:test_acc}. Our best result is with $10$-degree polynomial kernel and $16384$ features. The training accuracy and test accuracy are $0.9915$ and $0.9769$ respectively (as a comparison, the training accuracy and test accuracy is $0.9340$ and $0.9267$ respectively when classified using the original $784$ features as the input).
+With polynomial kernels, we have more features to be chosen. As a result, the test accuracy gets improved a lot, which is shown clearly in Table \ref{table:test_acc}. Our best result is with $10$-degree polynomial kernel and $16384$ features. The training accuracy and test accuracy are $0.9915$ and $0.9769$ respectively (as a comparison, the training accuracy and test accuracy is only $0.9340$ and $0.9267$ when classified using the original $784$ features as the input).
 
 % ---------------------------------------------------------------------------------------
 \subsection{PCA vs. Auto-encoder}
 \label{pca-autoencoder}
 
-In this part, we focus on bottleneck auto-encoders. More specifically, we focused on the $5$ layer structure which is shown in Figure \ref{fig:autoencoder}.
+In this part, we focus on bottleneck auto-encoders. More specifically, we focused on the $5$-layer structure which is shown in Figure \ref{fig:autoencoder}.
 
 Each MNIST example has $784$ features. Choosing $784$ features as the input, we can build the auto-encoder with different number of hidden nodes, for example, $784$-$512$-$256$-$512$-$784$, where the decoded feature representation has $256$ dimensions. Then, the decoded feature representations are used as the input into a multiclass classification neural network as described in Section \ref{data} and \ref{pca-kpca}. The test accuracy is shown in Table \ref{table:test_acc_auto}. The number of first hidden layer nodes are shown in horizontal direction while the number of second hidden layer nodes are shown in vertical direction. For comparison purpose, the results from PCA are also shown in Table \ref{table:test_acc_auto}.
 
@@ -320,7 +320,7 @@ Each MNIST example has $784$ features. Choosing $784$ features as the input, we 
 	\end{tabular}
 \end{table*}
 
-Using auto-encoders, the training and testing accuracy is sensitive to the overall structures. With the structure of $784$-$512$-$256$-$512$-$784$, we can reach $0.9437$ test accuracy, which are better than using PCA. However, when we reduce the original feature heavily, for example, using the structure of $784$-$128$-$16$-$128$-$784$, the corresponding test accuracy is only $0.7662$. So, when using auto-encoder, it is important to find an appropriate structure such as the number of hidden layers and the number of nodes for each layer.
+With auto-encoders, the training and testing accuracy is sensitive to the overall structures. With the structure of $784$-$512$-$256$-$512$-$784$, we can reach $0.9437$ test accuracy, which are better than using PCA. However, when we reduce the original feature heavily, for example, using the structure of $784$-$128$-$16$-$128$-$784$, the corresponding test accuracy is only $0.7662$. So, when using auto-encoder, it is important to find an appropriate structure such as the number of hidden layers and the number of nodes for each layer.
 
 Another important issue with auto-encoder is the initialization. A good initialization is very important for the final result. In this work, we initialize the auto-encoder with small random values and train it with back-propagation. After running it several times, we notice that the final test accuracy can be really low for several times. To solve this problem, followed the steps proposed by Hinton and Salakhutdinov \cite{hinton2006reducing}, we first train the stacked RBMs with the same number of hidden nodes and use the learned weights as the initialization for auto-encoders and the final test accuracy is also shown in Table \ref{table:test_acc_auto}.
 
@@ -338,7 +338,7 @@ From Table \ref{table:test_acc_auto}, the effect of RBM initialization is clear,
 
 This work compared several pre-training method, including PCA, kernel PCA with polynomial kernels and auto-encoders. With appropriate kernels, kernel PCA can give us a better representation as a non-linear transformation in much higher feature space, which can finally help us to get better results. However, kernel PCA requires the computation of kernel matrix, which will require huge computations when the number of samples are very large. Bottleneck auto-encoders, on the other hand, although don't increase the feature space, but it reduce the dimensionality in a non-linear way. With appropriate structures, auto-encoder can also give us better result than linear PCA. For deep auto-encoders, stacked RBMs can give us a better initialization.
 
-In this work, we focus on the comparison of PCA, kernel PCA and auto-encoders as pre-training step. It helps us get some insight on the effect of different pre-training steps. But these methods is only a small part of pre-training methods. Other methods, such as ICA, NMF, denosing auto-encoders, contractive auto-encoders and so on, are also widely used in different fields. Research on these methods and their variants are very important. In addition, initialization and training methods for neural network based methods, such as unfolding stacked RBMs for auto-encoders, are also very important for final result. Finding better initialization and training methods to avoid local minimum and overfitting problems are also important for future works.
+This work helps us get some insight on the effect of different pre-training steps. But these methods is only a small part of different pre-training methods. Other methods, such as ICA, NMF, denosing auto-encoders, contractive auto-encoders and so on, are also widely used in different fields. Research on these methods and their variants are very important. In addition, initialization and training methods for neural network based methods, such as unfolding stacked RBMs for auto-encoders, are also very important for final result. Finding better initialization and training methods to avoid local minimum and overfitting problems are also important for future works.
 
 % -------------------------------------------------------------------------
 \vfill\pagebreak
@@ -453,7 +453,7 @@ In this project, we implemented the PCA, kernel PCA, Auto-encoder and RBM, all o
 	Main part for function classification(): perform multi-class logistic regression for classification.
 \end{description}
 
-All codes are implemented in Python. The used package including: numpy, scipy, tensorflow, tflearn, matplotlib, sklearn.
+All codes are implemented in Python. The used package includes: numpy, scipy, tensorflow, tflearn, matplotlib, sklearn.
 
 
 \end{document}
