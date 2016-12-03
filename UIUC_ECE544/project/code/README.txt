@@ -21,3 +21,4 @@ To run the code (in Ubuntu 16.04 with Anaconda Python)
 
 ** Important Notice **
     This code will generate huge amount of data and use huge computation resources. You may need to modify the file path in PCA_vs_kernelPCA.py and Autoencoder_and_RBM.py in order to save files into appropriate locations.
+    The learned feature for kernel PCA and Auto-encoders has been saved locally, but the size is very big. Please reach the author jzhao59@illinois.edu for details
