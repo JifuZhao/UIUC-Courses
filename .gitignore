@@ -11,7 +11,11 @@
 *.cb
 *.cb2
 
+# Mac
+.DS_Store
+
 ## csv files:
+*.npy
 *.csv
 
 # History files
