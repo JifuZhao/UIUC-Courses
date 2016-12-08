@@ -7,12 +7,11 @@ __date__        = "12/05/2016"
 """
 
 import warnings
+import numpy as np
+import time
+
 warnings.simplefilter('ignore')
 
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import time
 
 def kMeans(X, K, tol=0.00001, random_state=None, verbose=True):
     """ function to implement the Lloyd's algorithm for k-means problem """
@@ -36,17 +35,17 @@ def kMeans(X, K, tol=0.00001, random_state=None, verbose=True):
         D = 0
         # re-compute the new centers
         for j in range(K):
-            Y[j, :] = np.mean(X[C==j, :], axis=0)
-            D += np.sum(np.sqrt(np.sum((X[C==j, :] - Y[j, :]) ** 2, axis=1)))
+            Y[j, :] = np.mean(X[C == j, :], axis=0)
+            D += np.sum(np.sqrt(np.sum((X[C == j, :] - Y[j, :]) ** 2, axis=1)))
 
         # compute the average loss
         D = D / N
         loss = abs(D - D0)
         count += 1
 
-    if verbose == True:
+    if verbose is True:
         t = np.round(time.time() - t0, 4)
-        print('K-Means is finished in ' + str(t) + 's, ' + str(count) + ' iterations')
+        print('K-Means finished in ' + str(t) + 's, ' + str(count) + ' iters')
 
     return Y, C, D
 
@@ -54,6 +53,7 @@ def kMeans(X, K, tol=0.00001, random_state=None, verbose=True):
 def main():
     """ implement the k-means algorithm on real-world data """
     print('test case !')
+
 
 if __name__ == '__main__':
     main()

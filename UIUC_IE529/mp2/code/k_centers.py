@@ -7,12 +7,11 @@ __date__        = "12/05/2016"
 """
 
 import warnings
+import numpy as np
+import time
+
 warnings.simplefilter('ignore')
 
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import time
 
 def kCenters(X, K, random_state=None, verbose=True):
     """ function to implement the greedy k-centers algorithm """
@@ -40,7 +39,7 @@ def kCenters(X, K, random_state=None, verbose=True):
         loss[:, i] = np.sqrt(np.sum((X - Q[i, :])**2, axis=1))
     D = np.max(np.min(loss, axis=1))
 
-    if verbose == True:
+    if verbose is True:
         t = np.round(time.time() - t0, 4)
         print('K-Centers is finished in ' + str(t) + 's')
 
@@ -50,6 +49,7 @@ def kCenters(X, K, random_state=None, verbose=True):
 def main():
     """ implement the greedy k-centers algorithm on real-world data """
     print('test case !')
+
 
 if __name__ == '__main__':
     main()
