@@ -24,23 +24,37 @@ def kMeans(X, K, tol=0.00001, random_state=None, verbose=True):
     C = np.zeros(N)
     D = 100
     count = 0
-    loss = 100
+    diff = 100  # difference between D1 and D0
 
-    while loss > tol:
+    while diff >= tol:
         D0 = D
         for i in range(N):
             # assign centers to ith data
             C[i] = np.argmin(np.sum((Y - X[i, :]) ** 2, axis=1))
 
+        # D = 0
+        # # re-compute the new centers
+        # for j in range(K):
+        #     Y[j, :] = np.mean(X[C == j, :], axis=0)
+        #     D += np.sum(np.sqrt(np.sum((X[C == j, :] - Y[j, :]) ** 2,
+        #                                axis=1)))
+        #
+        # # compute the average loss
+        # D = D / N
+        # loss = abs(D - D0)
+        # count += 1
+
         D = 0
         # re-compute the new centers
         for j in range(K):
             Y[j, :] = np.mean(X[C == j, :], axis=0)
-            D += np.sum(np.sqrt(np.sum((X[C == j, :] - Y[j, :]) ** 2, axis=1)))
 
-        # compute the average loss
-        D = D / N
-        loss = abs(D - D0)
+        # compute the loss
+        loss = np.zeros((N, K))
+        for i in range(K):
+            loss[:, i] = np.sqrt(np.sum((X - Y[i, :])**2, axis=1))
+        D = np.max(np.min(loss, axis=1))
+        diff = abs(D - D0)
         count += 1
 
     if verbose is True:
