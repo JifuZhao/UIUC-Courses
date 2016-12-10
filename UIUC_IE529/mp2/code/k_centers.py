@@ -6,11 +6,8 @@ __email__       = "jzhao59@illinois.edu"
 __date__        = "12/05/2016"
 """
 
-import warnings
 import numpy as np
 import time
-
-warnings.simplefilter('ignore')
 
 
 def kCenters(X, K, random_state=None, verbose=True):
@@ -38,12 +35,13 @@ def kCenters(X, K, random_state=None, verbose=True):
     for i in range(K):
         loss[:, i] = np.sqrt(np.sum((X - Q[i, :])**2, axis=1))
     D = np.max(np.min(loss, axis=1))
+    C = np.argmin(loss, axis=1)
 
     if verbose is True:
         t = np.round(time.time() - t0, 4)
         print('K-Centers is finished in ' + str(t) + 's')
 
-    return Q, D
+    return Q, C, D
 
 
 def main():

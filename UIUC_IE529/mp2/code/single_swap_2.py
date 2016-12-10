@@ -6,9 +6,12 @@ __email__       = "jzhao59@illinois.edu"
 __date__        = "12/05/2016"
 """
 
+import warnings
 import numpy as np
 import time
 from k_centers import kCenters
+
+warnings.simplefilter('ignore')
 
 
 def singleSwap(X, K, tau=0.05, random_state=None, verbose=True):
@@ -27,31 +30,27 @@ def singleSwap(X, K, tau=0.05, random_state=None, verbose=True):
 
     i = 0
     while i < K:
+        swap = False  # keep recording whether or not swaped
         min_dist = np.min(distance, axis=1)
-        print(i, cost)
-        min_cost = None
-        min_idx = None
-
         for j in range(N):
-            cur_dist = np.sqrt(np.sum((X - X[j, :])**2, axis=1))
-            tmp_cost = np.max(np.minimum(min_dist, cur_dist))
-            if min_cost is None:
-                min_cost = tmp_cost
-                min_idx = j
-            else:
-                if tmp_cost < min_cost:
-                    min_cost = tmp_cost
-                    min_idx = j
+            tmp_dist = np.sqrt(np.sum((X - X[j, :])**2, axis=1))
+            new_cost = np.max(np.minimum(min_dist, tmp_dist))
 
-        if min_cost / cost < (1 - tau):
-            Q[i, :] = X[min_idx, :]
-            distance[:, i] = np.sqrt(np.sum((X - X[min_idx, :])**2, axis=1))
-            i += 1
-            cost = min_cost
-            print(i, min_cost, cost, min_idx)
-        else:
-            i += 1
-            print(i, cost)
+            if new_cost / cost < (1 - tau):
+                Q[i, :] = X[j, :]
+                distance[:, i] = tmp_dist
+                min_dist = np.min(distance, axis=1)
+                swap = True
+                cost = new_cost
+        i += 1
+
+        if swap is False:
+            if i == K - 1:
+                break
+            else:
+                i += 1
+        elif (swap is True) and (i == K):
+            i = 0
 
     C = np.argmin(distance, axis=1)
 

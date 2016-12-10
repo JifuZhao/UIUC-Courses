@@ -6,12 +6,10 @@ __email__       = "jzhao59@illinois.edu"
 __date__        = "12/05/2016"
 """
 
-import warnings
 import numpy as np
 import time
 from k_means import kMeans
-
-warnings.simplefilter('ignore')
+from single_swap import singleSwap
 
 
 def spectralClustering(X, K, tol=10e-5, random_state=None, verbose=True):
@@ -31,13 +29,15 @@ def spectralClustering(X, K, tol=10e-5, random_state=None, verbose=True):
     U = U[:, :K]  # first K eigenvectors
 
     # call k-means for clustering
-    _, C, _ = kMeans(U, K, tol=tol, random_state=random_state, verbose=False)
+    # Y, C, D = kMeans(U, K, tol=tol, random_state=random_state, verbose=False)
+    Q, C, cost = singleSwap(U, K, tau=tol, random_state=random_state,
+                            verbose=False)
 
     if verbose is True:
         t = np.round(time.time() - t0, 4)
         print('Spectral Clustering finished in ' + str(t) + 's')
 
-    return W, U, C
+    return W, U, Q, C
 
 
 def main():

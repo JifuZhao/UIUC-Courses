@@ -6,11 +6,8 @@ __email__       = "jzhao59@illinois.edu"
 __date__        = "12/05/2016"
 """
 
-import warnings
 import numpy as np
 import time
-
-warnings.simplefilter('ignore')
 
 
 def kMeans(X, K, tol=0.00001, random_state=None, verbose=True):

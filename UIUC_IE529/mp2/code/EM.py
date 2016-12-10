@@ -6,11 +6,8 @@ __email__       = "jzhao59@illinois.edu"
 __date__        = "12/08/2016"
 """
 
-import warnings
 import numpy as np
 import time
-
-warnings.simplefilter('ignore')
 
 
 class EM(object):
