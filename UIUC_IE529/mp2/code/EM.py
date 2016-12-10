@@ -25,6 +25,8 @@ class EM(object):
         self.sigma = None
         self.gaussianProb = None
         self.logLikelihood = None
+        self.distance = None
+        self.D = None
 
     def train(self, x, verbose=False):
         """ function to perform EM algorithm on X """
@@ -40,15 +42,24 @@ class EM(object):
             self.mstep(x)
             if abs(self.logLikelihood[-1] - self.logLikelihood[-2]) \
                / abs(self.logLikelihood[-2]) < self.threshold:
+                for i in range(self.m):
+                    self.distance[:, i] = np.sqrt(np.sum((x - self.mu[i])**2,
+                                                         axis=1))
+                self.D = np.max(np.min(self.distance, axis=1))
                 t = np.round(time.time() - t0, 4)
                 print('Reach threshold at', i, 'th iters in ' + str(t) + 's')
                 return
+
+        for i in range(self.m):
+            self.distance[:, i] = np.sqrt(np.sum((x - self.mu[i])**2, axis=1))
+        self.D = np.max(np.min(self.distance, axis=1))
         t = np.round(time.time() - t0, 4)
         print('Stopped, reach the maximum iteration ' + str(t) + 's')
 
     def initialize(self, x):
         """ function to initialize the parameters """
         n, dim = x.shape  # find the dimensions
+        self.distance = np.zeros((n, self.m))
         self.w = np.ones(self.m) * (1 / self.m)
         self.gamma = np.zeros((n, self.m))
         self.gaussianProb = np.zeros((n, self.m))

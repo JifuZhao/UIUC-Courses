@@ -27,8 +27,14 @@ def singleSwap(X, K, tau=0.05, random_state=None, verbose=True):
 
     i = 0
     while i < K:
-        min_dist = np.min(distance, axis=1)
-        print(i, cost)
+        if i == 0:
+            min_dist = np.min(distance[:, 0:], axis=1)
+        elif i == (K - 1):
+            min_dist = np.min(distance[:, :-1], axis=1)
+        else:
+            min_dist = np.minimum(np.min(distance[:, :i], axis=1),
+                                  np.min(distance[:, (i + 1):], axis=1))
+        print('Initial:\t', i, cost)
         min_cost = None
         min_idx = None
 
@@ -43,12 +49,12 @@ def singleSwap(X, K, tau=0.05, random_state=None, verbose=True):
                     min_cost = tmp_cost
                     min_idx = j
 
-        if min_cost / cost < (1 - tau):
+        if min_cost / cost <= (1 - tau):
             Q[i, :] = X[min_idx, :]
             distance[:, i] = np.sqrt(np.sum((X - X[min_idx, :])**2, axis=1))
             i += 1
+            print(i, min_idx, cost, min_cost)
             cost = min_cost
-            print(i, min_cost, cost, min_idx)
         else:
             i += 1
             print(i, cost)

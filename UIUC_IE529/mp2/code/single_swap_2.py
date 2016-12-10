@@ -30,16 +30,20 @@ def singleSwap(X, K, tau=0.05, random_state=None, verbose=True):
 
     i = 0
     while i < K:
+        if i == 0:
+            min_dist = np.min(distance[:, 0:], axis=1)
+        elif i == (K - 1):
+            min_dist = np.min(distance[:, :-1], axis=1)
+        else:
+            min_dist = np.minimum(np.min(distance[:, :i], axis=1),
+                                  np.min(distance[:, (i + 1):], axis=1))
         swap = False  # keep recording whether or not swaped
-        min_dist = np.min(distance, axis=1)
         for j in range(N):
             tmp_dist = np.sqrt(np.sum((X - X[j, :])**2, axis=1))
             new_cost = np.max(np.minimum(min_dist, tmp_dist))
-
             if new_cost / cost < (1 - tau):
                 Q[i, :] = X[j, :]
                 distance[:, i] = tmp_dist
-                min_dist = np.min(distance, axis=1)
                 swap = True
                 cost = new_cost
         i += 1
