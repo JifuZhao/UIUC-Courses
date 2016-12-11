@@ -40,6 +40,7 @@
 \textwidth 6.5in
 \topmargin -0.6in
 \textheight 9.0in
+\pagenumbering{arabic}
 
 \begin{document}
 % -----------------------------------------------------------------------------
@@ -47,15 +48,38 @@
 		Fall 2016 \hspace{0.5cm} Computational Assignment 2}
 
 % -----------------------------------------------------------------------------
-\section*{\Large \Romannum{1}. Lloyd's (K-means)Algorithm}
+\section{\Large Clustering Result Comparison}
 
 \begin{description}
+% -----------------------------------------------------------------------------
+\item[\Romannum{1}.] Lloyd's (K-means)Algorithm
 
-\item{1. }
-In this part, the polynomial regression is conducted on the given dataset. The derivation is relatively simple, here we only give one simple version.
+\begin{description}
+\item{1.} In this part, with the Lloyd's algorithm for k-means clustering, we choose the best distortion D as the the objection function. The change of D versus cluster number K is shown in Fig. \ref{fig:k-means-loss}, where the result for clustering.txt is shown in Fig. \ref{fig:1a} and the result for bigClusteringData.txt is show in Fig. \ref{fig:1b}.
 
 %  -----------------------------------------------------------------------------
-\begin{figure}[htb]
+\begin{figure}[H]
+\centering
+\centering
+        \begin{subfigure}[b]{0.49\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{./figures/loss_clustering_kMeans.png}
+            \caption{clustering.txt}\label{fig:1a}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.49\textwidth}  
+            \centering 
+            \includegraphics[width=\textwidth]{./figures/loss_bigClustering_kMeans.png}
+            \caption{bigClusteringData.txt}\label{fig:1b}
+        \end{subfigure}
+\caption{Change of Distoration versus Cluster Number K for K-Means Algorithm}
+\label{fig:k-means-loss} 
+\end{figure}
+
+\item{2.} The scatter plot of the clustering result for clustering.txt is shown in Fig. \ref{fig:kmean_clustering} and the scatter plot of the clustering result for bigClusteringData.txt is shown in Fig. \ref{fig:kmean_bigCustering}. The cluster centroids are clearly marked and different clusters are denoted by different colors. 
+
+%  -----------------------------------------------------------------------------
+\begin{figure}[!h]
         \centering
         \begin{subfigure}[b]{0.475\textwidth}
             \centering
@@ -102,7 +126,7 @@ In this part, the polynomial regression is conducted on the given dataset. The d
 \end{figure}
 
 %  -----------------------------------------------------------------------------
-\begin{figure}[htb]
+\begin{figure}[!h]
         \centering
         \begin{subfigure}[b]{0.475\textwidth}
             \centering
@@ -145,30 +169,14 @@ In this part, the polynomial regression is conducted on the given dataset. The d
         \end{subfigure}
         
         \caption{Clustering Result for bigClusteringData.txt with K-Means Algorithm}
-        \label{fig:kmean_clustering}
+        \label{fig:kmean_bigCustering}
 \end{figure}
 
-%  -----------------------------------------------------------------------------
-\begin{figure}[H]
-\centering
-\centering
-        \begin{subfigure}[b]{0.49\textwidth}
-            \centering
-            \includegraphics[width=\textwidth]{./figures/loss_clustering_kMeans.png}
-            \caption{clustering.txt}\label{fig:3a}
-        \end{subfigure}
-        \hfill
-        \begin{subfigure}[b]{0.49\textwidth}  
-            \centering 
-            \includegraphics[width=\textwidth]{./figures/loss_bigClustering_kMeans.png}
-            \caption{bigClusteringData.txt}\label{fig:3b}
-        \end{subfigure}
-\caption{Change of Distoration versus Cluster Number K for K-Means Algorithm}
-\label{fig:k-means-loss} 
-\end{figure}
+\newpage
+\item{3.} The Python code used for K-Means Algorithm is shown in Listing 1.
 
 % -----------------------------------------------------------------------------
-\begin{lstlisting}[language=Python, caption=K-Means Algorithm Python Code]
+\begin{lstlisting}[language=Python, caption={K-Means Algorithm Python Code}]
 import numpy as np
 import time
 
@@ -213,11 +221,36 @@ def kMeans(X, K, tol=0.00001, random_state=None, verbose=True):
 
 \end{description}
 
+\newpage
 % -----------------------------------------------------------------------------
-\section*{\Large \Romannum{2}. Greedy K-centers Algorithm}
+\item[\Romannum{2}.] Greedy K-centers Algorithm
+
+\begin{description}
+\item{1.} In this part, with the Lloyd's algorithm for k-means clustering, we choose the best distortion D as the the objection function. The change of D versus cluster number K is shown in Fig. \ref{fig:k-centers-loss}, where the result for clustering.txt is shown in Fig. \ref{fig:4a} and the result for bigClusteringData.txt is show in Fig. \ref{fig:4b}.
 
 %  -----------------------------------------------------------------------------
-\begin{figure}[htb]
+\begin{figure}[H]
+\centering
+\centering
+        \begin{subfigure}[b]{0.49\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{./figures/loss_clustering_kCenter.png}
+            \caption{clustering.txt}\label{fig:4a}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.49\textwidth}  
+            \centering 
+            \includegraphics[width=\textwidth]{./figures/loss_bigClustering_kCenter.png}
+            \caption{bigClusteringData.txt}\label{fig:4b}
+        \end{subfigure}
+\caption{Change of Distoration versus Cluster Number K for K-Center Algorithm}
+\label{fig:k-centers-loss} 
+\end{figure}
+
+\item{2.} The scatter plot of the clustering result for clustering.txt is shown in Fig. \ref{fig:kcenter_clustering} and the scatter plot of the clustering result for bigClusteringData.txt is shown in Fig. \ref{fig:kcenter_bigClustering}. The cluster centroids are clearly marked and different clusters are denoted by different colors. 
+
+%  -----------------------------------------------------------------------------
+\begin{figure}[!h]
         \centering
         \begin{subfigure}[b]{0.475\textwidth}
             \centering
@@ -260,11 +293,11 @@ def kMeans(X, K, tol=0.00001, random_state=None, verbose=True):
         \end{subfigure}
         
         \caption{Clustering Result for clustering.txt with K-Center Algorithm}
-        \label{fig:kmean_clustering}
+        \label{fig:kcenter_clustering}
 \end{figure}
 
 %  -----------------------------------------------------------------------------
-\begin{figure}[htb]
+\begin{figure}[!h]
         \centering
         \begin{subfigure}[b]{0.475\textwidth}
             \centering
@@ -307,27 +340,11 @@ def kMeans(X, K, tol=0.00001, random_state=None, verbose=True):
         \end{subfigure}
         
         \caption{Clustering Result for bigClusteringData.txt with K-Center Algorithm}
-        \label{fig:kmean_clustering}
+        \label{fig:kcenter_bigClustering}
 \end{figure}
 
-%  -----------------------------------------------------------------------------
-\begin{figure}[H]
-\centering
-\centering
-        \begin{subfigure}[b]{0.49\textwidth}
-            \centering
-            \includegraphics[width=\textwidth]{./figures/loss_clustering_kCenter.png}
-            \caption{clustering.txt}\label{fig:6a}
-        \end{subfigure}
-        \hfill
-        \begin{subfigure}[b]{0.49\textwidth}  
-            \centering 
-            \includegraphics[width=\textwidth]{./figures/loss_bigClustering_kCenter.png}
-            \caption{bigClusteringData.txt}\label{fig:6b}
-        \end{subfigure}
-\caption{Change of Distoration versus Cluster Number K for K-Center Algorithm}
-\label{fig:k-means-loss} 
-\end{figure}
+\newpage
+\item{3.} The Python code used for K-Centers Algorithm is shown in Listing 2.
 
 % -----------------------------------------------------------------------------
 \begin{lstlisting}[language=Python, caption=K-Centers Algorithm Python Code]
@@ -370,11 +387,38 @@ def kCenters(X, K, random_state=None, verbose=True):
     return Q, C, D, idx
 \end{lstlisting}
 
+\end{description}
+
+\newpage
 % -----------------------------------------------------------------------------
-\section*{\Large \Romannum{3}. Single-Swap Algorithm}
+\item[\Romannum{3}.] Single-Swap Algorithm
+
+\begin{description}
+\item{1.} In this part, with the Lloyd's algorithm for k-means clustering, we choose the best distortion D as the the objection function. The change of D versus cluster number K is shown in Fig. \ref{fig:single-swap-loss}, where the result for clustering.txt is shown in Fig. \ref{fig:7a} and the result for bigClusteringData.txt is show in Fig. \ref{fig:7b}.
 
 %  -----------------------------------------------------------------------------
-\begin{figure}[htb]
+\begin{figure}[H]
+\centering
+\centering
+        \begin{subfigure}[b]{0.49\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{./figures/loss_clustering_singleSwap.png}
+            \caption{clustering.txt}\label{fig:7a}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.49\textwidth}  
+            \centering 
+            \includegraphics[width=\textwidth]{./figures/loss_bigClustering_singleSwap.png}
+            \caption{bigClusteringData.txt}\label{fig:7b}
+        \end{subfigure}
+\caption{Change of Distoration versus Cluster Number K for Single-Swap Algorithm}
+\label{fig:single-swap-loss} 
+\end{figure}
+
+\item{2.} The scatter plot of the clustering result for clustering.txt is shown in Fig. \ref{fig:single-swap-clusterimg} and the scatter plot of the clustering result for bigClusteringData.txt is shown in Fig. \ref{fig:single-swap-bigClustering}. The cluster centroids are clearly marked and different clusters are denoted by different colors. 
+
+%  -----------------------------------------------------------------------------
+\begin{figure}[!h]
         \centering
         \begin{subfigure}[b]{0.475\textwidth}
             \centering
@@ -417,11 +461,11 @@ def kCenters(X, K, random_state=None, verbose=True):
         \end{subfigure}
         
         \caption{Clustering Result for clustering.txt with Single-Swap Algorithm}
-        \label{fig:kmean_clustering}
+        \label{fig:single-swap-clusterimg}
 \end{figure}
 
 %  -----------------------------------------------------------------------------
-\begin{figure}[htb]
+\begin{figure}[!h]
         \centering
         \begin{subfigure}[b]{0.475\textwidth}
             \centering
@@ -464,27 +508,11 @@ def kCenters(X, K, random_state=None, verbose=True):
         \end{subfigure}
         
         \caption{Clustering Result for bigClusteringData.txt with Single-Swap Algorithm}
-        \label{fig:kmean_clustering}
+        \label{fig:single-swap-bigClustering}
 \end{figure}
 
-%  -----------------------------------------------------------------------------
-\begin{figure}[H]
-\centering
-\centering
-        \begin{subfigure}[b]{0.49\textwidth}
-            \centering
-            \includegraphics[width=\textwidth]{./figures/loss_clustering_singleSwap.png}
-            \caption{clustering.txt}\label{fig:9a}
-        \end{subfigure}
-        \hfill
-        \begin{subfigure}[b]{0.49\textwidth}  
-            \centering 
-            \includegraphics[width=\textwidth]{./figures/loss_bigClustering_singleSwap.png}
-            \caption{bigClusteringData.txt}\label{fig:9b}
-        \end{subfigure}
-\caption{Change of Distoration versus Cluster Number K for Single-Swap Algorithm}
-\label{fig:k-means-loss} 
-\end{figure}
+\newpage
+\item{3.} The Python code used for K-Centers Algorithm is shown in Listing 3.
 
 % -----------------------------------------------------------------------------
 \begin{lstlisting}[language=Python, caption=Single-Swap Algorithm Python Code]
@@ -544,11 +572,39 @@ def singleSwap(X, K, tau=0.05, random_state=None, verbose=True):
     return Q, C, cost
 \end{lstlisting}
 
+\end{description}
+
+\newpage
 % -----------------------------------------------------------------------------
-\section*{\Large \Romannum{4}. Spectral Clustering Algorithm}
+\item[\Romannum{4}.] Spectral Clustering Algorithm
+
+\begin{description}
+\item{1.} In this part, with the Lloyd's algorithm for k-means clustering, we choose the best distortion D as the the objection function. The change of D versus cluster number K is shown in Fig. \ref{fig:spectral-loss}, where the result for clustering.txt is shown in Fig. \ref{fig:10a} and the result for bigClusteringData.txt is show in Fig. \ref{fig:10b}.
 
 %  -----------------------------------------------------------------------------
-\begin{figure}[htb]
+\begin{figure}[H]
+\centering
+\centering
+        \begin{subfigure}[b]{0.49\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{./figures/loss_clustering_spectral.png}
+            \caption{clustering.txt}\label{fig:10a}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.49\textwidth}  
+            \centering 
+            \includegraphics[width=\textwidth]{./figures/loss_bigClustering_spectral.png}
+            \caption{bigClusteringData.txt}\label{fig:10b}
+        \end{subfigure}
+\caption{Change of Distoration versus Cluster Number K for Spectral Clustering}
+\label{fig:spectral-loss} 
+\end{figure}
+
+
+\item{2.} The scatter plot of the clustering result for clustering.txt is shown in Fig. \ref{fig:spectral_clustering} and the scatter plot of the clustering result for bigClusteringData.txt is shown in Fig. \ref{fig:spectral_bigClustering}. The cluster centroids are clearly marked and different clusters are denoted by different colors. 
+
+%  -----------------------------------------------------------------------------
+\begin{figure}[!h]
         \centering
         \begin{subfigure}[b]{0.475\textwidth}
             \centering
@@ -591,11 +647,11 @@ def singleSwap(X, K, tau=0.05, random_state=None, verbose=True):
         \end{subfigure}
         
         \caption{Clustering Result for clustering.txt with Spectral Clustering}
-        \label{fig:kmean_clustering}
+        \label{fig:spectral_clustering}
 \end{figure}
 
 %  -----------------------------------------------------------------------------
-\begin{figure}[htb]
+\begin{figure}[!h]
         \centering
         \begin{subfigure}[b]{0.475\textwidth}
             \centering
@@ -638,27 +694,11 @@ def singleSwap(X, K, tau=0.05, random_state=None, verbose=True):
         \end{subfigure}
         
         \caption{Clustering Result for bigClusteringData.txt with Spectral Clustering}
-        \label{fig:kmean_clustering}
+        \label{fig:spectral_bigClustering}
 \end{figure}
 
-%  -----------------------------------------------------------------------------
-\begin{figure}[H]
-\centering
-\centering
-        \begin{subfigure}[b]{0.49\textwidth}
-            \centering
-            \includegraphics[width=\textwidth]{./figures/loss_clustering_spectral.png}
-            \caption{clustering.txt}\label{fig:12a}
-        \end{subfigure}
-        \hfill
-        \begin{subfigure}[b]{0.49\textwidth}  
-            \centering 
-            \includegraphics[width=\textwidth]{./figures/loss_bigClustering_spectral.png}
-            \caption{bigClusteringData.txt}\label{fig:12b}
-        \end{subfigure}
-\caption{Change of Distoration versus Cluster Number K for Spectral Clustering}
-\label{fig:k-means-loss} 
-\end{figure}
+\newpage
+\item{3.} The Python code used for K-Centers Algorithm is shown in Listing 4.
 
 % -----------------------------------------------------------------------------
 \begin{lstlisting}[language=Python, caption=Spectral Clustering Algorithm Python Code]
@@ -699,12 +739,38 @@ def spectralClustering(X, K, random_state=None, verbose=True):
     return W, U, Q, C, D
 \end{lstlisting}
 
+\end{description}
 
+\newpage
 % -----------------------------------------------------------------------------
-\section*{\Large \Romannum{5}. Expectation Maximization (EM) Algorithm}
+\item[\Romannum{5}.] Expectation Maximization (EM) Algorithm
+
+\begin{description}
+\item{1.} In this part, with the Lloyd's algorithm for k-means clustering, we choose the best distortion D as the the objection function. The change of D versus cluster number K is shown in Fig. \ref{fig:EM-loss}, where the result for clustering.txt is shown in Fig. \ref{fig:13a} and the result for bigClusteringData.txt is show in Fig. \ref{fig:13b}.
 
 %  -----------------------------------------------------------------------------
-\begin{figure}[htb]
+\begin{figure}[H]
+\centering
+\centering
+        \begin{subfigure}[b]{0.49\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{./figures/loss_clustering_EM.png}
+            \caption{clustering.txt}\label{fig:13a}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.49\textwidth}  
+            \centering 
+            \includegraphics[width=\textwidth]{./figures/loss_bigClustering_EM.png}
+            \caption{bigClusteringData.txt}\label{fig:13b}
+        \end{subfigure}
+\caption{Change of Distoration versus Cluster Number K for EM Algorithm}
+\label{fig:EM-loss} 
+\end{figure}
+
+\item{2.} The scatter plot of the clustering result for clustering.txt is shown in Fig. \ref{fig:EM_clustering} and the scatter plot of the clustering result for bigClusteringData.txt is shown in Fig. \ref{fig:EM_bigClustering}. The cluster centroids are clearly marked and different clusters are denoted by different colors. 
+
+%  -----------------------------------------------------------------------------
+\begin{figure}[!h]
         \centering
         \begin{subfigure}[b]{0.475\textwidth}
             \centering
@@ -747,11 +813,11 @@ def spectralClustering(X, K, random_state=None, verbose=True):
         \end{subfigure}
         
         \caption{Clustering Result for clustering.txt with EM Algorithm}
-        \label{fig:kmean_clustering}
+        \label{fig:EM_clustering}
 \end{figure}
 
 %  -----------------------------------------------------------------------------
-\begin{figure}[htb]
+\begin{figure}[!h]
         \centering
         \begin{subfigure}[b]{0.475\textwidth}
             \centering
@@ -794,28 +860,11 @@ def spectralClustering(X, K, random_state=None, verbose=True):
         \end{subfigure}
         
         \caption{Clustering Result for bigClusteringData.txt with EM Algorithm}
-        \label{fig:kmean_clustering}
+        \label{fig:EM_bigClustering}
 \end{figure}
 
-%  -----------------------------------------------------------------------------
-\begin{figure}[H]
-\centering
-\centering
-        \begin{subfigure}[b]{0.49\textwidth}
-            \centering
-            \includegraphics[width=\textwidth]{./figures/loss_clustering_EM.png}
-            \caption{clustering.txt}\label{fig:15a}
-        \end{subfigure}
-        \hfill
-        \begin{subfigure}[b]{0.49\textwidth}  
-            \centering 
-            \includegraphics[width=\textwidth]{./figures/loss_bigClustering_EM.png}
-            \caption{bigClusteringData.txt}\label{fig:15b}
-        \end{subfigure}
-\caption{Change of Distoration versus Cluster Number K for EM Algorithm}
-\label{fig:k-means-loss} 
-\end{figure}
-
+\newpage
+\item{3.} The Python code used for K-Centers Algorithm is shown in Listing 5.
 
 % -----------------------------------------------------------------------------
 \begin{lstlisting}[language=Python, caption=EM Algorithm Python Code]
@@ -824,7 +873,6 @@ import time
 
 class EM(object):
     """ self-defined calss for EM algorithm """
-
     def __init__(self, m, threshold=0.01, random_state=None, maxIter=500):
         """ initialize the EM algorithm """
         self.m = m
@@ -950,7 +998,82 @@ class EM(object):
 
         return label
 \end{lstlisting}
+\end{description}
+\end{description}
 
+% -----------------------------------------------------------------------------
+\section{\Large Natural Clusters Discussion}
+
+%  -----------------------------------------------------------------------------
+\begin{figure}[H]
+\centering
+\centering
+        \begin{subfigure}[b]{0.49\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{./figures/clustering_scatter.png}
+            \caption{clustering.txt}\label{fig:16a}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.49\textwidth}  
+            \centering 
+            \includegraphics[width=\textwidth]{./figures/bigClustering_scatter.png}
+            \caption{bigClusteringData.txt}\label{fig:16b}
+        \end{subfigure}
+\caption{Scatter Plot of Original Data}
+\label{fig:clusters} 
+\end{figure}
+
+% -----------------------------------------------------------------------------
+\section{\Large K-Means Convergence Discussion}
+
+
+% -----------------------------------------------------------------------------
+\section{\Large Computational Effort Discussion}
+
+\begin{table}[H]
+	\centering
+	\caption{Computation Time Comparison for clustering.txt}
+	\label{table:time_clustering}	
+	\begin{tabular}{ c | c | c | c | c | c }
+		\hline \hline
+		K  	&	K-Means    & K-Centers    & Single-Swap    & Spectral Clustering    & EM \\[0.1cm]
+		\hline
+		3	   &	0.2673     & 0.0067   & 0.1582    & 1.5716    & 0.4412 \\[0.1cm]
+		4    &	0.2543     & 0.0010   & 0.1971    & 1.4587    & 0.5078 \\[0.1cm]
+		5    &	0.3624     & 0.0012   & 0.1895    & 1.4132    & 0.4881 \\[0.1cm]
+		6    &	0.4325     & 0.0013   & 0.2668    & 1.4840    & 0.7462 \\[0.1cm]
+		7    &	0.2837     & 0.0015   & 0.2693    & 1.4877    & 0.8227 \\[0.1cm]
+		8    &	0.1923     & 0.0019   & 0.3306    & 1.4708    & 0.9216 \\[0.1cm]
+		9    &	0.3481     & 0.0024   & 0.3012    & 1.4669    & 1.0106 \\[0.1cm]
+		10  &	0.1989     & 0.0026   & 0.3790    & 1.5053    & 1.1277 \\[0.1cm]
+		\hline	
+	\end{tabular}
+\end{table}
+{\centering Note: all measured time is in unit of seconds (s)}
+
+\begin{table}[H]
+	\centering
+	\caption{Computation Time Comparison for bigClusteringData.txt}
+	\label{table:time_bigClustering}	
+	\begin{tabular}{ c | c | c | c | c | c }
+		\hline \hline
+		K  	&	K-Means     & K-Centers    & Single-Swap    & Spectral Clustering    & EM \\[0.1cm]
+		\hline
+		3	   &	0.4725     & 0.0020   & 0.4511    & 11.1860    & 0.3412 \\[0.1cm]
+		4    &	0.8326     & 0.0019   & 0.5692    & 10.2542    & 0.2553 \\[0.1cm]
+		5    &	0.4722     & 0.0021   & 0.6445    & 10.5166    & 0.5763 \\[0.1cm]
+		6    &	1.2580     & 0.0024   & 0.8809    & 10.2167    & 0.6196 \\[0.1cm]
+		7    &	0.9619     & 0.0025   & 0.7638    & 9.8986      & 1.1591 \\[0.1cm]
+		8    &	0.7767     & 0.0034   & 0.7815    & 9.4616      & 1.3177 \\[0.1cm]
+		9    &	0.7177     & 0.0037   & 0.9010    & 9.8733      & 1.4977 \\[0.1cm]
+		10    &	1.2369     & 0.0041   & 1.0744    & 9.8636      & 1.7560 \\[0.1cm]
+		\hline	
+	\end{tabular}
+\end{table}
+{\centering Note: all measured time is in unit of seconds (s)}
+
+% -----------------------------------------------------------------------------
+\section{\Large Single-Swap Algorithm Discussion}
 
 
 % -----------------------------------------------------------------------------
