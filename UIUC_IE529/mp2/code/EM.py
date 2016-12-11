@@ -46,15 +46,18 @@ class EM(object):
                     self.distance[:, i] = np.sqrt(np.sum((x - self.mu[i])**2,
                                                          axis=1))
                 self.D = np.max(np.min(self.distance, axis=1))
-                t = np.round(time.time() - t0, 4)
-                print('Reach threshold at', i, 'th iters in ' + str(t) + 's')
+                if verbose is True:
+                    t = np.round(time.time() - t0, 4)
+                    print('Reach threshold at', i,
+                          'th iters in ' + str(t) + 's')
                 return
 
         for i in range(self.m):
             self.distance[:, i] = np.sqrt(np.sum((x - self.mu[i])**2, axis=1))
         self.D = np.max(np.min(self.distance, axis=1))
-        t = np.round(time.time() - t0, 4)
-        print('Stopped, reach the maximum iteration ' + str(t) + 's')
+        if verbose is True:
+            t = np.round(time.time() - t0, 4)
+            print('Stopped, reach the maximum iteration ' + str(t) + 's')
 
     def initialize(self, x):
         """ function to initialize the parameters """

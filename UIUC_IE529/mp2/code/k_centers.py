@@ -20,6 +20,7 @@ def kCenters(X, K, random_state=None, verbose=True):
     index = np.random.choice(range(N), size=1)
     Q = np.zeros((K, d))
     Q[0, :] = X[index, :]
+    idx = [index]
 
     i = 1
     while i < K:
@@ -28,6 +29,7 @@ def kCenters(X, K, random_state=None, verbose=True):
             distance[:, j] = np.sum((X - Q[j, :])**2, axis=1)
         min_distance = np.min(distance, axis=1)
         new_index = np.argmax(min_distance)
+        idx.append(new_index)
         Q[i, :] = X[new_index, :]
         i += 1
 
@@ -41,7 +43,7 @@ def kCenters(X, K, random_state=None, verbose=True):
         t = np.round(time.time() - t0, 4)
         print('K-Centers is finished in ' + str(t) + 's')
 
-    return Q, C, D
+    return Q, C, D, idx
 
 
 def main():

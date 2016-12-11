@@ -29,18 +29,6 @@ def kMeans(X, K, tol=0.00001, random_state=None, verbose=True):
             # assign centers to ith data
             C[i] = np.argmin(np.sum((Y - X[i, :]) ** 2, axis=1))
 
-        # D = 0
-        # # re-compute the new centers
-        # for j in range(K):
-        #     Y[j, :] = np.mean(X[C == j, :], axis=0)
-        #     D += np.sum(np.sqrt(np.sum((X[C == j, :] - Y[j, :]) ** 2,
-        #                                axis=1)))
-        #
-        # # compute the average loss
-        # D = D / N
-        # loss = abs(D - D0)
-        # count += 1
-
         D = 0
         # re-compute the new centers
         for j in range(K):
