@@ -8,7 +8,8 @@ __date__        = "12/05/2016"
 
 import numpy as np
 import time
-from k_centers import kCenters
+# from k_centers import kCenters
+from k_means import kMeans
 
 
 def spectralClustering(X, K, random_state=None, verbose=True):
@@ -26,16 +27,27 @@ def spectralClustering(X, K, random_state=None, verbose=True):
     L = D - W  # Laplacian matrix L
     L = np.identity(N) - np.dot(np.linalg.inv(D), W)
     eigvals, U = np.linalg.eigh(L)
+
     U = U[:, -K:]  # first K eigenvectors
 
-    # call k-means for clustering
-    _, C, _, idx = kCenters(U, K, random_state=random_state, verbose=False)
+    # # call k-means for clustering
+    # _, C, _, idx = kCenters(U, K, random_state=random_state, verbose=False)
+    #
+    # Q = X[idx, :]
+    # loss = np.zeros((N, K))
+    # for i in range(K):
+    #     loss[:, i] = np.sqrt(np.sum((X - Q[i, :])**2, axis=1))
+    # D = np.max(np.min(loss, axis=1))
+    #
+    # if verbose is True:
+    #     t = np.round(time.time() - t0, 4)
+    #     print('Spectral Clustering finished in ' + str(t) + 's')
+    #
+    # return W, U, Q, C, D
 
-    Q = X[idx, :]
-    loss = np.zeros((N, K))
-    for i in range(K):
-        loss[:, i] = np.sqrt(np.sum((X - Q[i, :])**2, axis=1))
-    D = np.max(np.min(loss, axis=1))
+    # call k-means for clustering
+    Q, C, D = kMeans(U, K, tol=0.00001, random_state=random_state,
+                     verbose=False)
 
     if verbose is True:
         t = np.round(time.time() - t0, 4)
