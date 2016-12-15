@@ -1134,7 +1134,7 @@ The distribution of clustering.txt and bigClusteringData.txt are shown in Fig. \
 \label{fig:clusters} 
 \end{figure}
 
-From Fig. \ref{fig:16a} and Fig. \ref{fig:16b}, the natural clusters is: 2 clusters for clustering.txt and 3 or 4 clusters for bigClusteringData.txt.\\
+From Fig. \ref{fig:16a} and Fig. \ref{fig:16b}, the natural clusters is: 2 clusters for clustering.txt and 4 clusters for bigClusteringData.txt. This is determined by personal observation. \\
 
 % -----------------------------------------------------------------------------
 \section{\Large K-Means Convergence Discussion}
@@ -1147,13 +1147,10 @@ where tol is user-defined.
 
 Reason: as the clustered data get close to the local optimum, the cost D will decrease slower and slower. Finally, it will reach the local minimum. So, the difference between new cost and previous cost should be smaller and smaller. So, $|D^{p+1} - D^{p}| < tol$ can be used as the stop criterion.\\
 
-
 % -----------------------------------------------------------------------------
 \section{\Large Computational Effort Discussion}
 
 In this part, we run those 5 algorithms on the same dataset, and report the total running time, which is shown in Table \ref{table:time_clustering} and Table \ref{table:time_bigClustering}.
-
-From Table \ref{table:time_clustering} and Table \ref{table:time_bigClustering}, the K-Centers algorithm is the fastest and Spectral Clustering is the lowest. Fero the other algorithms, they are pretty similar.
 
 \begin{table}[H]
 	\centering
@@ -1195,7 +1192,10 @@ From Table \ref{table:time_clustering} and Table \ref{table:time_bigClustering},
 		\hline	
 	\end{tabular}
 \end{table}
-{\centering Note: all measured time is in unit of seconds (s)}
+{\centering Note: all measured time is in unit of seconds (s)}\\
+
+
+From Table \ref{table:time_clustering} and Table \ref{table:time_bigClustering}, the K-Centers algorithm is the fastest and Spectral Clustering is the lowest. Fero the other algorithms, they are pretty similar. This is consistent with my analysis. For spectral clustering, since we need to compute the eigenvector, it will cost more time. For K-Centers algorithm, since we just just greedy methods to find k centers, it will be much faster. For the other method, their difference is not very clear since the dataset is not too big.
 
 % -----------------------------------------------------------------------------
 \section{\Large Single-Swap Algorithm Discussion}
@@ -1230,18 +1230,20 @@ bigClusteringData & N.A. &    4.3388 & 3.8504 & 3.4619 & 3.2156 & 2.9379 & 2.847
 	\end{tabular}
 \end{table}
 
+To perform single-swap, we use all the points as the candidates.
+
+In current version of Single-Swap algorithm, we use iterations to iterate all samples and all centers, this is not efficient. For better performance, for each swap, we can find the best candidate and the center that has largest radius, then we just need to swap them.
+
 % -----------------------------------------------------------------------------
-%\begin{figure}[H]
-%\centering
-%\includegraphics[width=0.9\textwidth]{./figures/rss.pdf}
-%\caption{\label{fig:RSS} RSS for different models}
-%\end{figure}
+\section{\Large Summary}
+
+In this report, we compare the performance of different algorithms, among all these five algorithms, K-Centers algorithm performs the fastest and Spectral Clustering performs the lowest. K-Means, Single-Swap and EM algorithm is between them. 
+
+Among those five algorithms, EM algorithm performs well when the data can be modeled by GMMs. K-Means also performs well but may need a lot of different initializations. Greedy K-Centers algorithm performs the worst since it just find K centers in greedy way.
+
+Using $D = \underset{x_i \in X}{\max}( \underset{c_j \in Q}{\min}{||x_i - c_j||_2})$ as the cost, we can find that with more clusters, $D$ will be smaller.
 
 \clearpage
-
-%\bibliographystyle{plain}
-%\bibliographystyle{unsrt}
-%\bibliography{reference.bib}
 
 \end{document}
 
