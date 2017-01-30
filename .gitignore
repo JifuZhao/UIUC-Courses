@@ -17,6 +17,9 @@
 ## csv files:
 *.npy
 *.csv
+*.sqlite
+*.dat
+*.tsv
 
 # History files
 .Rhistory
