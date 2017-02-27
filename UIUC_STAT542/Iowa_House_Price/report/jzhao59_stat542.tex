@@ -76,7 +76,7 @@ After finishing above feature processing, our feature space expands into 287 fea
 
 \subsection{Lasso Regression}
 
-\subsection{Xgoost Model}
+\subsection{Random Forest Model}
 
 
 %\begin{figure}[htb]
@@ -91,20 +91,21 @@ After finishing above feature processing, our feature space expands into 287 fea
 
 \section{Results}
 
-\begin{table}[htb]
+\begin{table}[H]
  \caption{Summary of Models} \label{result}
 \begin{center}
   \begin{tabular}{  c  c c  c }
     \hline
-    Model         & Running Time  & MSE     & std \\ \hline
-    Simple LS   & integer            & 259      & 00 \\
-    Lasso         & factor             & 1369    & 00\\
-    xgboost      & factor            & 8          & 00\\
+    Model                             & Running Time (s)              & MSE     & std \\ \hline
+    Linear Regression           & 1.3126                               & 0.0204      & 0.0032 \\
+    Lasso Regression                & 1.2413                          & 0.0175    & 0.0027 \\
+    Random Forest                  & 25.6746                          & 0.0193          & 0.0025 \\
 
     \hline
   \end{tabular}
 \end{center}
 \end{table}
+Note: MSE is calculated based on log scale.
 
 \subsection*{Acknowledgement}
 \label{sec:acknowledgement}
