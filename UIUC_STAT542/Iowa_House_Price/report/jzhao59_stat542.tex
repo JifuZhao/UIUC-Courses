@@ -2,7 +2,7 @@
 %          spconf.sty  - ICASSP/ICIP LaTeX style file, and
 %          IEEEbib.bst - IEEE bibliography style file.
 % --------------------------------------------------------------------------
-\documentclass{article}
+\documentclass[12pt]{article}
 \usepackage{spconf,amsmath,graphicx,float}
 
 % Example definitions.
@@ -16,7 +16,7 @@
 %
 % Single address.
 % ---------------
-\name{Atom Group: Jifu Zhao (jzhao59), Jinsheng Wang (**NetID**)}
+\name{Atom Group: Jifu Zhao (jzhao59), Jinsheng Wang (jwang278)}
 \address{Nuclear, Plasma, and Radiological Engineering \\
               University of Illinois at Urbana-Champaign\\
 		       Urbana, Illinois 61801, USA}
@@ -68,16 +68,18 @@ From Table \ref{table} we can see that, there are 6 features whose missing value
 
 After dropping those 6 features, for other feature that has missing values, we do the following processing: for numerical value, we replace the missing value with the median of training set, which is the same for the test set. For the categorical data which has missing value, we add a new level of NA for each categorical feature that has missing features. Then, for those categorical feature, it is not a good idea to directly transform them into numerical variables. A  better idea is to transform them into vectors using one-hot-encoding methods. 
 
-After finishing above feature processing, our feature space expands into 287 features in total. With all of these 287 features, we can apply a lot of different models. In this project, we have tried simple linear regression, Ridge regression, Lasso regression, xgboost model, random forest model and GBM model. After comparing the performance and running time of each model through cross-validation, we finally choose three models: simple linear regression, Lasso regression and xgboost model.
+After finishing above feature processing, our feature space expands into 287 features in total. With all of these 287 features, we can apply a lot of different models. In this project, we have tried linear regression, Ridge regression, Lasso regression, xgboost model, random forest model and GBM model. After comparing the performance and running time of each model through cross-validation, we finally choose three models: simple linear regression, Lasso regression and xgboost model.
 
 \section{Methods}
 
-\subsection{Simple Linear Regression}
+\subsection{Linear Regression}
+With linear regression, we fit a simple linear model that includes all the variables. During our experiment, we find that, linear regression model is easy and fast to implement. But the result is not as good as other advanced models.
 
 \subsection{Lasso Regression}
+In Lasso regression, the best choice of lambda is determined through 10-folder cross-validation and choose the lambda that minimize the cross-validation error. During our experiment, we noticed that, Lasso model perform very good.
 
 \subsection{Random Forest Model}
-
+In random forest model, we use 500 trees and the build model work fun.
 
 %\begin{figure}[htb]
 %\centering
@@ -87,28 +89,38 @@ After finishing above feature processing, our feature space expands into 287 fea
 %\end{figure}
 
 \section{Code Description}
-
+All of our code is contained in the file named mymain.R. There are basically three parts. On the first part, the code will check whether or not the required packages are already installed. The used package includes dummies, DAAG, randomForest, glmnet, moments. On the second part of the code, we first read the training and test data sets, then drop the useless variables and process the features to form the new feature space. On the third part, we mainly build our three model: linear regression, Lasso regression and random forest model. The built model will make predictions and the results are saved into local file system.
 
 \section{Results}
 
-\begin{table}[H]
+To test our model, we randomly choose 75\% of data in train.csv as the training set, then use the rest 25\% of data as the test set. This process is repeated 5 times to calculate the average running time, mean-square-error and standard deviation of MSE (MSE is calculated based on log scale). The result of 5 running is shown in Figure \ref{fig:autoencoder}.
+
+\begin{figure}[htb]
+\centering
+\includegraphics[width=0.45\textwidth]{./figures/MSE_3_methods.pdf}
+\caption{Results of different models}
+\label{fig:autoencoder}
+\end{figure}
+
+The average running time, MSE and standard deviation is shown in Table \ref{result}.
+
+\begin{table}[htb]
  \caption{Summary of Models} \label{result}
 \begin{center}
   \begin{tabular}{  c  c c  c }
     \hline
-    Model                             & Running Time (s)              & MSE     & std \\ \hline
+    Model                             & Time(s)              & MSE     & std \\ \hline
     Linear Regression           & 1.3126                               & 0.0204      & 0.0032 \\
     Lasso Regression                & 1.2413                          & 0.0175    & 0.0027 \\
     Random Forest                  & 25.6746                          & 0.0193          & 0.0025 \\
-
     \hline
   \end{tabular}
 \end{center}
 \end{table}
-Note: MSE is calculated based on log scale.
+
+From Table \ref{result}, we can find that, Lasso model performs best, and linear regression model performs worst. Lasso and linear model run very fast while random forest runs very slow. 
 
 \subsection*{Acknowledgement}
-\label{sec:acknowledgement}
 
 The authors would like to thank Xichen Huang for his tutorial notebook in Piazza.
 
