@@ -43,7 +43,7 @@ test$week = test.week
 
 start.time = Sys.time()  # get time information
 
-for (t in 1:1) {
+for (t in 1:20) {
   month = 2 + t
   year = 2011
   if (month > 12) {
@@ -56,14 +56,13 @@ for (t in 1:1) {
   
   # print useful information
   cat('Current t is:\t', t, year, month, nrow(tmp.test), nrow(train), '\n')
+  cat('Used time is:\t', t, Sys.time() - start.time, '\n')
   
   # get the length of unique store and department
   store = sort(unique(tmp.test$Store))
   n.store = length(store)
   dept = sort(unique(tmp.test$Dept))
   n.dept = length(dept)
-  
-  cat('Current Time:\t', Sys.time() - start.time, n.store, n.dept, '\n')
   
   # choose the median value from the last year, in week - 1, week, and week + 1
   for (s in 1:n.store){
