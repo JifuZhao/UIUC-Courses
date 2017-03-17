@@ -1,5 +1,6 @@
 setwd('/Users/jifu/GitHub/Courses/UIUC_Courses/UIUC_STAT542/Walmart_Store/')
 options(warn=-1)
+
 # import required library
 if (!require(lubridate)) {
     install.packages('lubridate')
@@ -15,10 +16,12 @@ library(lubridate)  # convert date information
 library(forecast)  # make forecast
 library(plyr)
 
+# ------------------------------------------
 # load the data
 train = read.csv('./train.csv')
 test = read.csv('./test.csv')
 
+# ------------------------------------------
 # transform into numerical value
 train$IsHoliday = as.numeric(train$IsHoliday)
 test$IsHoliday = as.numeric(test$IsHoliday)
@@ -50,6 +53,7 @@ test$week = test.week
 
 start.time = Sys.time()  # get time information
 
+# ------------------------------------------
 for (t in 1:20) {
     month = 2 + t
     year = 2011
@@ -57,6 +61,7 @@ for (t in 1:20) {
         month = month - 12
         year = 2011 + 1
     }
+    cat('Current t is:\t', t, '\tUsed time is:\t', end.time - start.time, '\n')
     
     # get the tmp test data
     tmp.test = test[(test$year == year) & (test$month == month), ]
@@ -76,50 +81,48 @@ for (t in 1:20) {
             
             # find the data for (store, dept) = (s, d)
             test.id = which(test$Store == store[s] & test$Dept == dept[d] &
-                                test$year == year & test$month == month)
+                            test$year == year & test$month == month)
             test.temp = test[test.id, ]
             train.id = which(train$Store == store[s] & train$Dept == dept[d])
             train.temp = train[train.id, ]
             
-            # skip
+            # skip if no test data
             if (length(test.id) == 0) {
                 next
             }
             
-            # cat(store[s], dept[d], '\n')
-            
             # ------------------------------------------
             #             model 1
             # ------------------------------------------
-            #             for (i in 1:length(test.id)){
-            #                 id.1 = which(train.temp$week == test.temp[i,]$week - 1 & 
-            #                              train.temp$year == test.temp[i,]$year - 1)
-            #                 id.2 = which(train.temp$week == test.temp[i,]$week & 
-            #                              train.temp$year == test.temp[i,]$year - 1)
-            #                 id.3 = which(train.temp$week == test.temp[i,]$week + 1 & 
-            #                              train.temp$year == test.temp[i,]$year - 1)
-            #                 id = c(id.1, id.2, id.3)
-            
-            #                 # three weeks in the last year
-            #                 tempSales = train.temp[id, 'Weekly_Sales']
-            
-            #                 if (length(tempSales) == 0){
-            #                     test$Weekly_Pred1[test.id[i]] = 0
-            #                 }else{
-            #                     test$Weekly_Pred1[test.id[i]] = median(tempSales)
-            #                 }
-            #             }
+            for (i in 1:length(test.id)){
+                id.1 = which(train.temp$week == test.temp[i,]$week - 1 & 
+                             train.temp$year == test.temp[i,]$year - 1)
+                id.2 = which(train.temp$week == test.temp[i,]$week & 
+                             train.temp$year == test.temp[i,]$year - 1)
+                id.3 = which(train.temp$week == test.temp[i,]$week + 1 & 
+                             train.temp$year == test.temp[i,]$year - 1)
+                id = c(id.1, id.2, id.3)
+                
+                # three weeks in the last year
+                tempSales = train.temp[id, 'Weekly_Sales']
+                
+                if (length(tempSales) == 0){
+                    test$Weekly_Pred1[test.id[i]] = 0
+                }else{
+                    test$Weekly_Pred1[test.id[i]] = median(tempSales)
+                }
+            }
             
             # ------------------------------------------
             #             model 2
             # ------------------------------------------
             if (length(train.id) < 50){
-                test$Weekly_Pred2[test.id] = 0
-            } else{
+                test$Weekly_Pred2[test.id] = test$Weekly_Pred1[test.id]
+            }else{
                 tmp.left = as.data.frame(Date)
                 tmp.right = train.temp[, c('Date', 'Weekly_Sales')]
                 joined = join(tmp.left, tmp.right, by='Date')
-                joined[is.na(joined)] = 0
+                joined$Weekly_Sales[which(is.na(joined))] = median(joined$Weekly_Sales)
                 tmp.ts = ts(joined$Weekly_Sales, frequency=52)
                 
                 # fit a auto arima model
@@ -152,5 +155,24 @@ for (t in 1:20) {
     train = rbind(train, newtest[, names(train)])
 }
 
+# choose the average as the thrid prediction
+test$Weekly_Pred3 = (test$Weekly_Pred1 + test$Weekly_Pred2) / 2.0
+
+# ------------------------------------------
+# helper part
 end.time = Sys.time()
-cat('Total used time is:\t', end.time - start.time, '\n')
+cat('Start time:\t', as.character(start.time))
+cat('End time:\t', as.character(end.time))
+cat('Total time:\t', end.time - start.time, '\n')
+
+# define weight w
+weight = 4 * test$IsHoliday + 1
+
+# calculate the performance of different models
+WMAE1 = sum(weight * abs(test$Weekly_Pred1 - test$Weekly_Sales)) / sum(weight)
+WMAE2 = sum(weight * abs(test$Weekly_Pred2 - test$Weekly_Sales)) / sum(weight)
+WMAE3 = sum(weight * abs(test$Weekly_Pred3 - test$Weekly_Sales)) / sum(weight)
+
+# output the performance of different models
+cat('Comparison of three models\n')
+cat(WMAE1, '\t', WMAE2, '\t', WMAE3, '\n')
