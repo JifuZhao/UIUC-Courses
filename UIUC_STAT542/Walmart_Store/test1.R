@@ -54,9 +54,9 @@ for (t in 1:20) {
   # get the tmp test data
   tmp.test = test[(test$year == year) & (test$month == month), ]
   
-  # print useful information
-  cat('Current t is:\t', t, year, month, nrow(tmp.test), nrow(train), '\n')
-  cat('Used time is:\t', t, Sys.time() - start.time, '\n')
+  # # print useful information
+  # cat('Current t is:\t', t, year, month, nrow(tmp.test), nrow(train), '\n')
+  # cat('Used time is:\t', t, Sys.time() - start.time, '\n')
   
   # get the length of unique store and department
   store = sort(unique(tmp.test$Store))
@@ -75,7 +75,6 @@ for (t in 1:20) {
       test.temp = test[test.id, ]
       train.id = which(train$Store == store[s] & train$Dept == dept[d])
       train.temp = train[train.id, ]
-      #             cat(length(test.id), dim(test.temp), dim(train.temp), '\n')
       
       for (i in 1:length(test.id)){
         id.1 = which(train.temp$week == test.temp[i,]$week - 1 & 
@@ -120,4 +119,5 @@ for (t in 1:20) {
   train$week = train.week
 }
 
-Sys.time() - start.time
+end.time = Sys.time()
+cat('Total used time is:\t', end.time - start.time)
