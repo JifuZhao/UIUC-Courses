@@ -105,7 +105,7 @@ mymodel = function(train, test, t){
         for (d in 1:n.dept){
             # find the data for (store, dept) = (s, d)
             test.id = which(test$Store == store[s] & test$Dept == dept[d] &
-                                test$year == year & test$month == month)
+                            test$year == year & test$month == month)
             test.temp = test[test.id, ]
             train.id = which(train$Store == store[s] & train$Dept == dept[d])
             train.temp = train[train.id, ]
@@ -120,11 +120,11 @@ mymodel = function(train, test, t){
             # ------------------------------------------
             for (i in 1:length(test.id)){
                 id.1 = which(train.temp$week == test.temp[i,]$week - 1 & 
-                                 train.temp$year == test.temp[i,]$year - 1)
+                             train.temp$year == test.temp[i,]$year - 1)
                 id.2 = which(train.temp$week == test.temp[i,]$week & 
-                                 train.temp$year == test.temp[i,]$year - 1)
+                             train.temp$year == test.temp[i,]$year - 1)
                 id.3 = which(train.temp$week == test.temp[i,]$week + 1 & 
-                                 train.temp$year == test.temp[i,]$year - 1)
+                             train.temp$year == test.temp[i,]$year - 1)
                 id = c(id.1, id.2, id.3)
                 
                 # three weeks in the last year

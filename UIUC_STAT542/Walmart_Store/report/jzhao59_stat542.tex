@@ -34,30 +34,31 @@
 The data set contains multiple features, including Store, Dept, Date, Weekly\_Sales, IsHolday. After some initial analysis, we find that there are 81 unique departments and 45 unique stores. In this project, we first explore the given training data set. After some pre-processing methods, we applied three different models to predict the next month's sales. More details will be described in the following sections.
 
 \section{Pre-processing}
-After exploring the training dataset, the first thing we noticed is that, there are a lot of missing values for some features, and a summary of those missing values is shown in Table.
+After exploring the training dataset, 
 
-From Table \ref{table} we can see that, there are 6 features whose missing value counted more than $15\%$ of the total training set. So, our of first step of pre-processing is to drop those 6 features, namely, LotFrontage, Alley, FireplaceQu, PoolQC, Fence and MiscFeature. 
+In our R code, we loaded three libraries to simplify our task, including lubridate, forecast, plyr.
 
-After dropping those 6 features, for other features that still have missing values, we do the following processing: for numerical values, we replace the missing values with the median of that feature in total training set, and the same procedure was applied to test set. For those categorical data which has missing values, we add a new level of NA for each categorical feature. Then, for those categorical feature, it is not a good idea to directly transform them into numerical variables. A better idea is to transform them into vectors with dummy variables using one-hot-encoding methods. 
-
-After finishing above feature processing, our feature space expands into 287 features in total. With all of these 287 features, we can apply a lot of different models. In this project, we have tried Linear regression, Ridge regression, Lasso regression, xgboost model, random forest model and GBM model. After comparing the performance and running time of each model through cross-validation, we finally choose three models: Simple Linear regression, Lasso regression and Random Forest.
-
-\section{R Library used}
-In our R code, we loaded five libraries to simplify our task. 'dummy' library was used to generate dummy variables for features with factor values. 'DAGG' was used to help with cross-validation of Linear Regression model. 'randomForest' was introduced to apply random forest technique. 'glmnet' was added to facilitated Lasso regression. Finally, 'moments' had the function that can calculate skewness of features to judge whether long tails exist and apply log transformation if necessary.
 
 \section{Methods}
 
 \subsection{Average from Nearby Weeks}
-
+In our first model, Model 1, we basically choose the nearby three weeks to make prediction. For example, for a given store and department in week w, we find the corresponding data for the same department and store from the last year, then we choose the median of the sales from w - 1, w, w + 1 as the prediction.
 
 \subsection{Time Series Forecasting}
-
+In Method 2, we choose ts() to create a time series whose frequency is 52 and auto.arima() to forecast for a give step. More specially, for a given store and department, we first extract the data from previous years that is from the same department and store. Then we use the ts() function to create a time series whose frequency is 52. Finally, through feeding the time series into auto.arima(), we make the prediction that corresponding to next month's sales.
 
 \subsection{Weighted Average of Model 1 and Model 2}
+In this model, considering the long running time, we choose the weighted average of Model 1 and Model 2 as our third model, Model 3. Through some careful study, we find the the weight should be 0.7 for Model 1 and 0.3 for Model 2. The final expression for Model 3 is shown below:
+\begin{equation}
+Model \  3 = 0.7 \times Model \  1 + 0.3 \times Model \  2
+\end{equation}
 
 
 \section{Code Description}
-\quad\ All of our code is contained in the file named mymain.R. There are basically three parts in the R file. At the very beginning, the code will automatically check whether or not the required packages/libraries are already installed. In the second part of the code, we do data preprocessing: first read the training and test data sets, then drop the useless variables and process the features to form the new feature space. For the last part, we mainly build our three model: Linear Regression, Lasso Regression and Random Forest model. These built models will make predictions and the results are saved into local file system as required by the project description.
+\quad\ All of our code is contained in the file named mymain.R. 
+
+
+There are basically three parts in the R file. At the very beginning, the code will automatically check whether or not the required packages/libraries are already installed. In the second part of the code, we do data preprocessing: first read the training and test data sets, then drop the useless variables and process the features to form the new feature space. For the last part, we mainly build our three model: Linear Regression, Lasso Regression and Random Forest model. These built models will make predictions and the results are saved into local file system as required by the project description.
 
 \section{Results}
 
