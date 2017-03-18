@@ -60,6 +60,8 @@ Model \  3 = 0.7 \times Model \  1 + 0.3 \times Model \  2
 
 There are basically three parts in the R file. At the very beginning, the code will automatically check whether or not the required packages/libraries are already installed. In the second part of the code, we do data preprocessing: first read the training and test data sets, then drop the useless variables and process the features to form the new feature space. For the last part, we mainly build our three model: Linear Regression, Lasso Regression and Random Forest model. These built models will make predictions and the results are saved into local file system as required by the project description.
 
+Due to the amount of data to be looped, the code need a lot of time to run. As tested, the total running time is around 2 hours.
+
 \section{Results}
 
 To evaluate our model, we choose the metric described on Kaggle:
@@ -76,9 +78,9 @@ where $n$ is the number of test cases, $\hat{y}_i$ is the predicted sales, $y_i$
   
     \hline
     Model          &WMAE     \\ \hline
-    Model 1         & 2000    \\ \hline
-    Model 2         & 2000    \\ \hline
-    Model 3         & 2000    \\ \hline
+    Model 1         & 2093.603    \\ \hline
+    Model 2         & 2395.633    \\ \hline
+    Model 3         & 1956.629    \\ \hline
   \end{tabular}
 \end{center}
 \end{table}

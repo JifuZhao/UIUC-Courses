@@ -158,10 +158,12 @@ mymodel = function(train, test, t){
                 fc = forecast(fit, h=length(test.id))
                 test$Weekly_Pred2[test.id] = fc$mean
             }
+            
+            # choose the average as the thrid prediction
+            test$Weekly_Pred3[test.id] = 0.7 * test$Weekly_Pred1[test.id] + 0.3 * test$Weekly_Pred2[test.id]
         }
     }
     
-    # choose the average as the thrid prediction
-    test$Weekly_Pred3[test.id] = 0.7 * test$Weekly_Pred1[test.id] + 0.3 * test$Weekly_Pred2[test.id]
+    
     return(list('train'=train, 'test'=test))
 }
