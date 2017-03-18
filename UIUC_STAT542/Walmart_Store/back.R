@@ -46,10 +46,6 @@ test$week = test.week
 
 # function to make predictions
 predict = function(){
-    # make the global variable
-    train <<- train
-    test <<- test
-    
     if (t > 1){
         # transform the date
         newtest$Date = as.Date(newtest$Date, '%Y-%m-%d')
@@ -66,20 +62,9 @@ predict = function(){
         newtest$week = tmp.week
         
         # merge together
-        train <<- rbind(train, newtest[, names(train)])
+        train = rbind(train, newtest[, names(train)])
     }
     
-    # run mymodel() to make predictions
-    result = mymodel(train, test, t)
-    train <<- result$train
-    test <<- result$test
-    
-    # helper statement
-    tmp.t = as.character(Sys.time() - start.time)
-    cat('Current t is:\t', t, '\tUsed time is:\t', tmp.t, '\t', 'Row of train:\t', nrow(train), '\n')
-}
-
-mymodel = function(train, test, t){
     # define the test year and month to be predicted
     month = 2 + t
     year = 2011
@@ -163,5 +148,8 @@ mymodel = function(train, test, t){
     
     # choose the average as the thrid prediction
     test$Weekly_Pred3[test.id] = 0.7 * test$Weekly_Pred1[test.id] + 0.3 * test$Weekly_Pred2[test.id]
-    return(list('train'=train, 'test'=test))
+    
+    # helper statement
+    tmp.t = as.character(Sys.time() - start.time)
+    cat('Current t is:\t', t, '\tUsed time is:\t', tmp.t, '\t', 'Row of train:\t', nrow(train), '\n')
 }

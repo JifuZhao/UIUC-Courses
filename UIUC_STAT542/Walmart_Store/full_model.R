@@ -1,3 +1,4 @@
+setwd('/Users/jifu/GitHub/Courses/UIUC_Courses/UIUC_STAT542/Walmart_Store/')
 options(warn=-1)
 
 # import required library
@@ -15,6 +16,12 @@ library(lubridate)  # convert date information
 library(forecast)  # make forecast
 library(plyr)
 
+# ------------------------------------------
+# load the data
+train = read.csv('./train.csv')
+test = read.csv('./test.csv')
+
+# ------------------------------------------
 # transform into numerical value
 train$IsHoliday = as.numeric(train$IsHoliday)
 test$IsHoliday = as.numeric(test$IsHoliday)
@@ -44,49 +51,17 @@ test.week = test.week / 7 + 5  # make 2010-02-05 as '5'
 test.week = as.numeric(test.week) %% 52
 test$week = test.week
 
-# function to make predictions
-predict = function(){
-    # make the global variable
-    train <<- train
-    test <<- test
-    
-    if (t > 1){
-        # transform the date
-        newtest$Date = as.Date(newtest$Date, '%Y-%m-%d')
-        
-        # get the year and month information
-        newtest$year = year(newtest$Date)
-        newtest$month = month(newtest$Date)
-        
-        # process the date
-        tmp.week = newtest$Date
-        tmp.week = tmp.week - start_date
-        tmp.week = tmp.week / 7 + 5  # make 2010-02-05 as '5'
-        tmp.week = as.numeric(tmp.week) %% 52
-        newtest$week = tmp.week
-        
-        # merge together
-        train <<- rbind(train, newtest[, names(train)])
-    }
-    
-    # run mymodel() to make predictions
-    result = mymodel(train, test, t)
-    train <<- result$train
-    test <<- result$test
-    
-    # helper statement
-    tmp.t = as.character(Sys.time() - start.time)
-    cat('Current t is:\t', t, '\tUsed time is:\t', tmp.t, '\t', 'Row of train:\t', nrow(train), '\n')
-}
+start.time = Sys.time()  # get time information
 
-mymodel = function(train, test, t){
-    # define the test year and month to be predicted
+# ------------------------------------------
+for (t in 1:20) {
     month = 2 + t
     year = 2011
     if (month > 12) {
         month = month - 12
         year = 2011 + 1
     }
+    cat('Current t is:\t', t, '\tUsed time is:\t', as.character(Sys.time() - start.time), '\n')
     
     # get the tmp test data
     tmp.test = test[(test$year == year) & (test$month == month), ]
@@ -103,9 +78,10 @@ mymodel = function(train, test, t){
     # choose the median value from the last year, in week-1, week, and week+1
     for (s in 1:n.store){
         for (d in 1:n.dept){
+            
             # find the data for (store, dept) = (s, d)
             test.id = which(test$Store == store[s] & test$Dept == dept[d] &
-                                test$year == year & test$month == month)
+                            test$year == year & test$month == month)
             test.temp = test[test.id, ]
             train.id = which(train$Store == store[s] & train$Dept == dept[d])
             train.temp = train[train.id, ]
@@ -120,11 +96,11 @@ mymodel = function(train, test, t){
             # ------------------------------------------
             for (i in 1:length(test.id)){
                 id.1 = which(train.temp$week == test.temp[i,]$week - 1 & 
-                                 train.temp$year == test.temp[i,]$year - 1)
+                             train.temp$year == test.temp[i,]$year - 1)
                 id.2 = which(train.temp$week == test.temp[i,]$week & 
-                                 train.temp$year == test.temp[i,]$year - 1)
+                             train.temp$year == test.temp[i,]$year - 1)
                 id.3 = which(train.temp$week == test.temp[i,]$week + 1 & 
-                                 train.temp$year == test.temp[i,]$year - 1)
+                             train.temp$year == test.temp[i,]$year - 1)
                 id = c(id.1, id.2, id.3)
                 
                 # three weeks in the last year
@@ -161,7 +137,46 @@ mymodel = function(train, test, t){
         }
     }
     
-    # choose the average as the thrid prediction
-    test$Weekly_Pred3[test.id] = 0.7 * test$Weekly_Pred1[test.id] + 0.3 * test$Weekly_Pred2[test.id]
-    return(list('train'=train, 'test'=test))
+    # read new input file
+    tmp.filename = paste('xxx', t, '.csv', sep='');
+    newtest = read.csv(tmp.filename)
+    
+    # transform the date
+    newtest$Date = as.Date(newtest$Date, '%Y-%m-%d')
+    
+    # get the year and month information
+    newtest$year = year(newtest$Date)
+    newtest$month = month(newtest$Date)
+    
+    # process the date
+    tmp.week = newtest$Date
+    tmp.week = tmp.week - start_date
+    tmp.week = tmp.week / 7 + 5  # make 2010-02-05 as '5'
+    tmp.week = as.numeric(tmp.week) %% 52
+    newtest$week = tmp.week
+    
+    # merge together
+    train = rbind(train, newtest[, names(train)])
 }
+
+# choose the average as the thrid prediction
+test$Weekly_Pred3 = 0.7 * test$Weekly_Pred1 + 0.3 * test$Weekly_Pred2
+
+# ------------------------------------------
+# helper part
+end.time = Sys.time()
+cat('Start time:\t', as.character(start.time))
+cat('End time:\t', as.character(end.time))
+cat('Total time:\t', end.time - start.time, '\n')
+
+# define weight w
+weight = 4 * test$IsHoliday + 1
+
+# calculate the performance of different models
+WMAE1 = sum(weight * abs(test$Weekly_Pred1 - test$Weekly_Sales)) / sum(weight)
+WMAE2 = sum(weight * abs(test$Weekly_Pred2 - test$Weekly_Sales)) / sum(weight)
+WMAE3 = sum(weight * abs(test$Weekly_Pred3 - test$Weekly_Sales)) / sum(weight)
+
+# output the performance of different models
+cat('Comparison of three models\n')
+cat(WMAE1, '\t', WMAE2, '\t', WMAE3, '\n')
