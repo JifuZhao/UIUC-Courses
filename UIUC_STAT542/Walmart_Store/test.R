@@ -7,7 +7,7 @@ test = read.csv("test.csv")
 
 source("mymain.R")
 
-for(t in 1:20){
+for(t in 1:2){
     
     # predict the weekly sales for month t, 
     # e.g., month 1 --> 2011-03, and month 20 --> 2012-10. 

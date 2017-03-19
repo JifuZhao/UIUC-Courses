@@ -73,10 +73,6 @@ predict = function(){
     result = mymodel(train, test, t)
     train <<- result$train
     test <<- result$test
-    
-    # helper statement
-    tmp.t = as.character(Sys.time() - start.time)
-    cat('Current t is:\t', t, '\tUsed time is:\t', tmp.t, '\t', 'Row of train:\t', nrow(train), '\n')
 }
 
 mymodel = function(train, test, t){
