@@ -15,30 +15,26 @@ library(lubridate)  # convert date information
 library(forecast)  # make forecast
 library(plyr)
 
-# transform into numerical value
-train$IsHoliday = as.numeric(train$IsHoliday)
-test$IsHoliday = as.numeric(test$IsHoliday)
-
 # transform the date
-train$Date = as.Date(train$Date, '%Y-%m-%d')
-test$Date = as.Date(test$Date, '%Y-%m-%d')
+train.Date = as.Date(train$Date, '%Y-%m-%d')
+test.Date = as.Date(test$Date, '%Y-%m-%d')
 
 # get the year and month information
-train$year = year(train$Date)
-test$year = year(test$Date)
+train$year = year(train.Date)
+test$year = year(test.Date)
 
-train$month = month(train$Date)
-test$month = month(test$Date)
+train$month = month(train.Date)
+test$month = month(test.Date)
 
 # get week information
-train.week = train$Date
+train.week = train.Date
 start_date = train.week[1]
 train.week = train.week - start_date  # date is now 0, 7, 14, ...
 train.week = train.week / 7 + 5  # make 2010-02-05 as '5'
 train.week = as.numeric(train.week) %% 52  ## 52 weeks in a year
 train$week = train.week
 
-test.week = test$Date
+test.week = test.Date
 test.week = test.week - start_date
 test.week = test.week / 7 + 5  # make 2010-02-05 as '5'
 test.week = as.numeric(test.week) %% 52
@@ -52,14 +48,14 @@ predict = function(){
     
     if (t > 1){
         # transform the date
-        newtest$Date = as.Date(newtest$Date, '%Y-%m-%d')
+        newtest.Date = as.Date(newtest$Date, '%Y-%m-%d')
         
         # get the year and month information
-        newtest$year = year(newtest$Date)
-        newtest$month = month(newtest$Date)
+        newtest$year = year(newtest.Date)
+        newtest$month = month(newtest.Date)
         
         # process the date
-        tmp.week = newtest$Date
+        tmp.week = newtest.Date
         tmp.week = tmp.week - start_date
         tmp.week = tmp.week / 7 + 5  # make 2010-02-05 as '5'
         tmp.week = as.numeric(tmp.week) %% 52
@@ -155,6 +151,9 @@ mymodel = function(train, test, t){
                 test$Weekly_Pred2[test.id] = fc$mean
             }
             
+            # ------------------------------------------
+            #             model 3
+            # ------------------------------------------
             # choose the average as the thrid prediction
             test$Weekly_Pred3[test.id] = 0.7 * test$Weekly_Pred1[test.id] + 0.3 * test$Weekly_Pred2[test.id]
         }
