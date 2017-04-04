@@ -29,29 +29,30 @@
 \maketitle
 
 \section{Introduction}
-\quad\ In this project, our goal is to predict the weekly sales for each department in each store for Walmart. The original training data includes the historical data from 2010 - 02 to 2011 - 02.  The test data is from 2011 - 03 to 2012 - 10, totally 20 months. In each iteration, we will be given the historical training data and the previous month's data, then we are asked to predict the sales for the next month.
-
-The data set contains multiple features, including Store, Dept, Date, Weekly\_Sales, IsHolday. After some initial analysis, we find that there are 81 unique departments and 45 unique stores. In this project, we first explore the given training data set. After some pre-processing methods, we applied three different models to predict the next month's sales. More details will be described in the following sections.
+\quad\ In this project, our goal is to build a model to predict the chance of default for a loan. The data is collected through the Lending Club. The original data set has more than 130,000 records and each record has 74 features. In this project, we first explore the given training data set. After some pre-processing methods, we applied several different models to predict the chance of default for a loan. More details will be described in the following sections.
 
 \section{Pre-processing}
-After exploring the training dataset, 
+After exploring the training dataset, we noticed that there are 74 features in total. Among these 74 features, we first notice that feature $id$ and $member\_id$ are useless. Among other features, we also notice that features $mths\_since\_last\_delinq$, $ max\_bal\_bc $, $ all\_util $, $ total\_cu\_tl $, $ mths\_since\_last\_record$, \\$ mths\_since\_last\_major\_derog $, $ annual\_inc\_joint $, $ dti\_joint $, $ open\_acc\_6m $, $ open\_il\_6m $, $ inq\_last\_12m $, $ open\_il\_12m $, $ open\_il\_24m $, $ il\_util $, $ inq\_fi $, \\$ mths\_since\_rcnt\_il $, $ total\_bal\_il $, $ open\_rv\_12m $, $ open\_rv\_24m $ contains too many missing values, so we first drop these features.
 
-In our R code, we loaded three libraries to simplify our task, including lubridate, forecast, plyr.
+In addition to these features, we also notice that some features are useless, including $emp\_title$, $issue\_d$, $pymnt\_plan$, $url$, $desc$, $title$, $zip\_code$, $addr\_state$, $earliest\_cr\_line$, $last\_pymnt\_d$, \\$next\_pymnt\_d$, $last\_credit\_pull\_d$, $application\_type$, $verification\_status\_joint$, $grade$, $policy\_code$. Besides, since the order of $sub\_grade$ make sense, we directly transform it into numerical values. Then, for missing values, we fill them with the median of the corresponding feature in the training set. And for the $loan\_staus$ feature, we transform it into 0-1 value.
+
+After the above procedures, there are 36 features left. Among these 36 features, there are 30 numerical features and 6 categorical features. For categorical features, we transform them into dummy variables. For numerical variables, for those whose skewness is above 0.75, we choose the log transformation. After all of these steps, we have prepared the data set to train some classification models.
+
+In our R code, we loaded 6 libraries to simplify our task, including xgboost, randomForest, gbm, dummies, DAAG, glmnet.
 
 
 \section{Methods}
 
-\subsection{Average from Nearby Weeks}
+\subsection{Logistic Regression}
 In our first model, Model 1, we basically choose the nearby three weeks to make prediction. For example, for a given store and department in week w, we find the corresponding data for the same department and store from the last year, then we choose the median of the sales from w - 1, w, w + 1 as the prediction.
 
-\subsection{Time Series Forecasting}
+\subsection{Random Forest}
 In Method 2, we choose ts() to create a time series whose frequency is 52 and auto.arima() to forecast for a give step. More specially, for a given store and department, we first extract the data from previous years that is from the same department and store. Then we use the ts() function to create a time series whose frequency is 52. Finally, through feeding the time series into auto.arima(), we make the prediction that corresponding to next month's sales.
 
-\subsection{Weighted Average of Model 1 and Model 2}
+\subsection{GBM}
 In this model, considering the long running time, we choose the weighted average of Model 1 and Model 2 as our third model, Model 3. Through some careful study, we find the the weight should be 0.7 for Model 1 and 0.3 for Model 2. The final expression for Model 3 is shown below:
-\begin{equation}
-Model \  3 = 0.7 \times Model \  1 + 0.3 \times Model \  2
-\end{equation}
+
+\subsection{XGBoost}
 
 
 \section{Code Description}
@@ -66,9 +67,9 @@ Due to the amount of data to be looped, the code need a lot of time to run. As t
 
 To evaluate our model, we choose the metric described on Kaggle:
 \begin{equation}
-WMAE = \frac{1}{\sum_{i=1}^n w_i} \sum_{i=1}^n w_i | y_i - \hat{y}_i |
+logloss = - \frac{1}{N} \sum_{i=1}^N \sum_{j=1}^M y_{i, j} log(p_{i, j})
 \end{equation}
-where $n$ is the number of test cases, $\hat{y}_i$ is the predicted sales, $y_i$ is the actual sales and $w_i$ is the weights. For this project, we set $w=5$ if the week is a holiday and 1 otherwise. The final WMAE for three models are shown in Table~\ref{result}.
+where $N$ is the number of test cases, $M$ is the total classification classes. To avoid the problem where $p_{i, j} = 0$, we scale $p_{i, j}$ into $10 ^ {-15}$ and $1 - 10 ^ {-15}$.
 
 \begin{table}[htb]
  \caption{Summary of Models} \label{result}
@@ -86,6 +87,9 @@ where $n$ is the number of test cases, $\hat{y}_i$ is the predicted sales, $y_i$
 \end{table}
 
 From Table~\ref{result}, one can find that, Model 1 and Model 2 performs similar to each other. Through weighted averaging, the final model, Model 3, performs better than Model 1 and Model 2.
+
+The above code is tested on our laptop, the average running time is about 6 hours. The corresponding computer system is:
+MacBook Pro, 2.6GHz Intel Core i7, 16 GB memory.  
 
 \subsection*{Acknowledgement}
 
