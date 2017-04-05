@@ -71,20 +71,39 @@ logloss = - \frac{1}{N} \sum_{i=1}^N \sum_{j=1}^M y_{i, j} log(p_{i, j})
 \end{equation}
 where $N$ is the number of test cases, $M$ is the total classification classes. To avoid the problem where $p_{i, j} = 0$, we scale $p_{i, j}$ into $10 ^ {-15}$ and $1 - 10 ^ {-15}$.
 
+
 \begin{table}[htb]
- \caption{Summary of Models} \label{result}
+ \caption{Summary of Training Loss} \label{result}
  \vspace{0.1in}
 \begin{center}
-  \begin{tabular}{  c  c  }
-  
+  \begin{tabular}{  c  c  c  c  c}
     \hline
-    Model          &WMAE     \\ \hline
-    Model 1         & 2093.603    \\ \hline
-    Model 2         & 2395.633    \\ \hline
-    Model 3         & 1956.629    \\ \hline
+    Split            & Seed        & Model 1    & Model 2    & Model 3 \\ \hline
+    Split 1         & 100    \\ \hline
+    Split 2         & 500    \\ \hline
+    Split 3         & 1000    \\ \hline
+    Split 4         & 5000    \\ \hline
+    Split 5         & 2017    \\ \hline
   \end{tabular}
 \end{center}
 \end{table}
+
+\begin{table}[htb]
+ \caption{Summary of Test Loss} \label{result}
+ \vspace{0.1in}
+\begin{center}
+  \begin{tabular}{  c  c  c  c  c}
+    \hline
+    Split            & Seed        & Model 1    & Model 2    & Model 3 \\ \hline
+    Split 1         & 100    \\ \hline
+    Split 2         & 500    \\ \hline
+    Split 3         & 1000    \\ \hline
+    Split 4         & 5000    \\ \hline
+    Split 5         & 2017    \\ \hline
+  \end{tabular}
+\end{center}
+\end{table}
+
 
 From Table~\ref{result}, one can find that, Model 1 and Model 2 performs similar to each other. Through weighted averaging, the final model, Model 3, performs better than Model 1 and Model 2.
 
