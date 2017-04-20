@@ -75,7 +75,7 @@ logloss = - \frac{1}{N} \sum_{i=1}^N \sum_{j=1}^M y_{i, j} log(p_{i, j})
 \end{equation}
 where $N$ is the number of test cases, $M$ is the total classification classes. To avoid the problem where $p_{i, j} = 0$, we scale $p_{i, j}$ into $10 ^ {-15}$ and $1 - 10 ^ {-15}$.
 
-On the below table, we change the random seed for five times, and randomly choose 75\% as training set and the rest 25\% as the test set. The training loss and test loss is shown in Table~\ref{result1} and Table~\ref{result2}. So the overall training loss for three models are: 0.07156, 0.02536 and 0.01630. The overall test loss for three models are: 0.07170, 0.02538, 0.02070.
+On the below table, we change the random seed for five times, and randomly choose 75\% as training set and the rest 25\% as the test set. The training loss and test loss is shown in Table~\ref{result1} and Table~\ref{result2}.
 
 \begin{table}[htb]
  \caption{Summary of Training Loss} \label{result1}
@@ -84,11 +84,11 @@ On the below table, we change the random seed for five times, and randomly choos
   \begin{tabular}{  c  c  c  c  c}
     \hline
     Split            & Seed        & Model 1    & Model 2    & Model 3 \\ \hline
-    Split 1         & 100    &0.0721    &0.0255    &0.0163\\ \hline
-    Split 2         & 500    &0.0714    &0.0252    &0.0161\\ \hline
-    Split 3         & 1000    &0.0713    &0.0254    &0.0165\\ \hline
-    Split 4         & 5000    &0.0718    &0.0254    &0.0165\\ \hline
-    Split 5         & 2017    &0.0712    &0.0253    &0.0161\\ \hline
+    Split 1         & 100    &0.0940    &0.378    &0.207\\ \hline
+    Split 2         & 500    &0.0937    &0.379    &0.208\\ \hline
+    Split 3         & 1000    &0.0941    &0.378    &0.209\\ \hline
+    Split 4         & 5000    &0.0942    &0.389    &0.210\\ \hline
+    Split 5         & 2017    &0.0935    &0.385    &0.207\\ \hline
   \end{tabular}
 \end{center}
 \end{table}
@@ -99,20 +99,19 @@ On the below table, we change the random seed for five times, and randomly choos
   \begin{tabular}{  c  c  c  c  c}
     \hline
     Split            & Seed        & Model 1    & Model 2    & Model 3 \\ \hline
-    Split 1         & 100    &0.0693    &0.0248    &0.0202\\ \hline
-    Split 2         & 500    &0.0724    &0.0256    &0.0212\\ \hline
-    Split 3         & 1000    &0.0729    &0.0259    &0.0211\\ \hline
-    Split 4         & 5000    &0.0709    &0.0251    &0.0202\\ \hline
-    Split 5         & 2017    &0.0730    &0.0255    &0.0208\\ \hline
+    Split 1         & 100    &0.0937    &0.379    &0.215\\ \hline
+    Split 2         & 500    &0.0945    &0.379    &0.215\\ \hline
+    Split 3         & 1000    &0.0932    &0.378    &0.215\\ \hline
+    Split 4         & 5000    &0.0931    &0.390    &0.216\\ \hline
+    Split 5         & 2017    &0.0951    &0.386    &0.214\\ \hline
   \end{tabular}
 \end{center}
 \end{table}
 
 
-From Table~\ref{result1} and Table~\ref{result2}, one can find that, model 1 (Logistic Regression) performed stable results for training and testing, but worest among all three models. Model 2 (Random Forest) gave out stable results for both training and testing, and also better than that of model 1. Model 3 (XGBoost) had the lowest training and tesing error, but the former one is kind of lower than that of the latter, suggesting possiblely slight over fitting.
+From Table~\ref{result1} and Table~\ref{result2}, one can find that, with the log-loss as the metric, model 1 (Logistic Regression) performed the best. But other complex models, such as Random Forest and XGBoost perform not as well as Logistic Regression. The reason for this can be explained by the imbalance of the data set. There are too many data that has label 0, in this case, log-loss is not a good metric. During our training process, we did notice this and change the parameters of Random Forest and XGBoost such that they work well for imbalanced data set. If we change the metric from log-loss into AUC, we will find that Random Forest and XGBoost model performs much better than Logistic Regression.
 
-
-The above code was tested on our own laptop, the average running time is about 1.5 hours. The corresponding computer system is:
+The above code was tested on our own laptop, the average running time is about 1.5 hours. The corresponding computer system is:\\
 MacBook Pro, 2.6GHz Intel Core i7, 16 GB memory.  
 
 \subsection*{Acknowledgement}
