@@ -14,11 +14,11 @@
 
 % Title.
 % ------
-\title{Lending Club Loan Status}
+\title{Movie Review Sentiment Analysis}
 %
 % Single address.
 % ---------------
-\name{Atom Group: Jifu Zhao (jzhao59), Jinsheng Wang (jwang278)}
+\name{{\bf Atom Group}: Jifu Zhao (jzhao59), Jinsheng Wang (jwang278)}
 \address{Nuclear, Plasma, and Radiological Engineering \\
               University of Illinois at Urbana-Champaign\\
 		       Urbana, Illinois 61801, USA}
@@ -43,16 +43,24 @@ In our R code, we loaded 6 libraries to simplify our task, including xgboost, ra
 
 \section{Methods}
 
-\subsection{Logistic Regression}
+\subsection{Logistic Regression with Ridge Penalty}
 In our first model, Model 1, we basically choose the nearby three weeks to make prediction. For example, for a given store and department in week w, we find the corresponding data for the same department and store from the last year, then we choose the median of the sales from w - 1, w, w + 1 as the prediction.
+
+\subsection{Logistic Regression with Lasso Penalty}
+
+\subsection{Multinomial Naive Bayes Model}
+
+\subsection{AdaBoost}
+
+\subsection{Gradient Boosting}
+In this model, considering the long running time, we choose the weighted average of Model 1 and Model 2 as our third model, Model 3. Through some careful study, we find the the weight should be 0.7 for Model 1 and 0.3 for Model 2. The final expression for Model 3 is shown below:
+
 
 \subsection{Random Forest}
 In Method 2, we choose ts() to create a time series whose frequency is 52 and auto.arima() to forecast for a give step. More specially, for a given store and department, we first extract the data from previous years that is from the same department and store. Then we use the ts() function to create a time series whose frequency is 52. Finally, through feeding the time series into auto.arima(), we make the prediction that corresponding to next month's sales.
 
-\subsection{GBM}
-In this model, considering the long running time, we choose the weighted average of Model 1 and Model 2 as our third model, Model 3. Through some careful study, we find the the weight should be 0.7 for Model 1 and 0.3 for Model 2. The final expression for Model 3 is shown below:
 
-\subsection{XGBoost}
+
 
 
 \section{Code Description}
