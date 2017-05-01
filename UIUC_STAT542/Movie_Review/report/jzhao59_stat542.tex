@@ -5,6 +5,8 @@
 \documentclass[12pt]{article}
 \usepackage{spconf, amsmath, graphicx, float}
 \usepackage{scrlayer-scrpage}
+\usepackage{subfig}
+\usepackage{balance}
 \clearpairofpagestyles
 \cfoot*{\pagemark}
 % Example definitions.
@@ -21,7 +23,7 @@
 \name{{\bf Atom Group}: Jifu Zhao (jzhao59), Jinsheng Wang (jwang278)}
 \address{Nuclear, Plasma, and Radiological Engineering \\
               University of Illinois at Urbana-Champaign\\
-		       Urbana, Illinois 61801, USA}
+              Urbana, IL 61801}
 
 \begin{document}
 %\ninept
@@ -29,107 +31,86 @@
 \maketitle
 
 \section{Introduction}
-\quad\ In this project, our goal is to build a model to predict the chance of default for a loan. The data is collected through the Lending Club. The original data set has more than 130,000 records and each record has 74 features. In this project, we first explore the given training data set. After some pre-processing methods, we applied several different models to predict the chance of default for a loan. More details will be described in the following sections.
+\quad\ In this project, our goal is to build a model to predict the sentiment of a given movie review. The data was collected through the IMDB provided on Kaggle. The original training data set has 25,000 records and each record has 2 features, movie review and movie sentiment. The test data set also has 25,000 data set but only with one feature, movie review. In this project, we first explore the given training data set. After some pre-processing methods, we applied several different models to predict the chance of being positive/negative of a given movie review. More details will be described in the following sections.
 
 \section{Pre-processing}
-After exploring the training dataset, we noticed that there are 74 features in total. Among these 74 features, we first notice that feature $id$ and $member\_id$ are useless. Among other features, we also notice that features $mths\_since\_last\_delinq$, $ max\_bal\_bc $, $ all\_util $, $ total\_cu\_tl $, $ mths\_since\_last\_record$, \\$ mths\_since\_last\_major\_derog $, $ annual\_inc\_joint $, $ dti\_joint $, $ open\_acc\_6m $, $ open\_il\_6m $, $ inq\_last\_12m $, $ open\_il\_12m $, $ open\_il\_24m $, $ il\_util $, $ inq\_fi $, \\$ mths\_since\_rcnt\_il $, $ total\_bal\_il $, $ open\_rv\_12m $, $ open\_rv\_24m $ contains too many missing values, so we first drop these features.
+\quad\ As usual, the very first step is to load the data into memory for later processing. In our code, pandas DataFrame was used to simplify this task. We found that some original movies were retrieved from websites, containing html tags, thus BeatifulSoup4 package was used to clean off these tags. Moreover, numbers, which are barely useless in predicting movie sentiment, got removed by applying regular expression onto each  movie record. Lastly, all words were transformed into lower case and joined by white space for later tf-idf vector generation.\\
 
-In addition to these features, we also notice that some features are useless, including $emp\_title$, $issue\_d$, $pymnt\_plan$, $url$, $desc$, $title$, $zip\_code$, $addr\_state$, $earliest\_cr\_line$, $last\_pymnt\_d$, \\$next\_pymnt\_d$, $last\_credit\_pull\_d$, $application\_type$, $verification\_status\_joint$, $grade$, $policy\_code$. Besides, since the order of $sub\_grade$ make sense, we directly transform it into numerical values. Then, for missing values, we fill them with the median of the corresponding feature in the training set. And for the $loan\_staus$ feature, we transform it into 0-1 value.
+Tf-idf stands for term frequency - inverse document frequency, which is a widely used natural language processing technique for sentiment analysis and topic modelling. In our model, we filter words that showed up at least 3 times, removing stop words, counting both single-word and two-consecutive-word for up to 10000 features. The generated tf-idf matrix was then feed into different classifiers to learn prediction models.
 
-After the above procedures, there are 36 features left. Among these 36 features, there are 30 numerical features and 6 categorical features. For categorical features, we transform them into dummy variables. For numerical variables, for those whose skewness is above 0.75, we choose the log transformation. After all of these steps, we have prepared the data set to train some classification models.
-
-In our R code, we loaded 6 libraries to simplify our task, including xgboost, randomForest, gbm, dummies, DAAG, glmnet.
-
+In our Python code, besides pandas, bs4, re and numpy packages for data reading, writing and cleaning, we also loaded the widely used sklearn machine learning package to build models for sentiment prediction as in the code submitted.
 
 \section{Methods}
+\quad\  In this methods section, we built 6 different models to perform prediction, and average them with different weights to find the best additive model.
 
 \subsection{Logistic Regression with Ridge Penalty}
-In our first model, Model 1, we basically choose the nearby three weeks to make prediction. For example, for a given store and department in week w, we find the corresponding data for the same department and store from the last year, then we choose the median of the sales from w - 1, w, w + 1 as the prediction.
+\quad\ In our first model, Model 1, we used logistic regression classifier with L2 ridge penalty: LogisticRegression from sklearn.linear${\_}$model class. After cross validation, we set the C, representing the inverse of regularization strength to be 2.7825549 (C must be a positive float. Like in support vector machines, smaller values specify stronger regularization). The training AUC for this method was found to be 0.988545088.
 
 \subsection{Logistic Regression with Lasso Penalty}
+\quad\ In our second model, Model 2, we used logistic regression classifier with Lasso penalty: LogisticRegression from sklearn.linear${\_}$model class. After cross validation, we also set the C, representing the inverse of regularization strength to be 2.7825549 (C must be a positive float. Like in support vector machines, smaller values specify stronger regularization). The training AUC for this method was found to be 0.9879110592.
 
 \subsection{Multinomial Naive Bayes Model}
+\quad\ In our third model, Model 3, we used Multinomial Naive Bayes model classifier MultinomialNB from sklearn.naive${\_}$bayes. After cross validation, we set the alpha, representing the additive (Laplace/Lidstone) smoothing parameter  to be 5 (alpha default to be 1, 0 for no smoothing). The training AUC for this method was found to be 0.9498812928.
 
 \subsection{AdaBoost}
+\quad\ In our forth model, Model 4, we used AdaBoost model classifier AdaBoostClassifier from sklearn.ensemble. We first split the original training data into 3:1 train to test data for cross validation. After cross validation, we set the n${\_}$estimators, representing the maximum number of estimators at which boosting is terminated to be 400 and learning rate learning${\_}$rate to be 1.0 (default value). The training AUC for this method was found to be 0.9622484224.
 
 \subsection{Gradient Boosting}
-In this model, considering the long running time, we choose the weighted average of Model 1 and Model 2 as our third model, Model 3. Through some careful study, we find the the weight should be 0.7 for Model 1 and 0.3 for Model 2. The final expression for Model 3 is shown below:
-
+\quad\ In our fifth model, Model 5, we used gradient boosting model classifier GradientBoostingClassifier from sklearn.ensemble. We also first split the original training data into 3:1 train to test data for cross validation. After cross validation, we set the n${\_}$estimators, representing the maximum number of estimators at which boosting is terminated to be 500, learning rate learning${\_}$rate to be 0.2 (0.1 as default value), subsample to be 1. Other final parameters setting can be seen in Python file. The training AUC for this method was found to be 0.9919758208.
 
 \subsection{Random Forest}
-In Method 2, we choose ts() to create a time series whose frequency is 52 and auto.arima() to forecast for a give step. More specially, for a given store and department, we first extract the data from previous years that is from the same department and store. Then we use the ts() function to create a time series whose frequency is 52. Finally, through feeding the time series into auto.arima(), we make the prediction that corresponding to next month's sales.
-
-
-
-
+\quad\ In our last model, Model 6, we used random forest model classifier RandomForestClassifier from sklearn.ensemble. We also first split the original training data into 3:1 train to test data for cross validation. After cross validation, we set the n${\_}$estimators, representing the maximum number of estimators at which boosting is terminated to be 500. Other final parameters setting can be seen in Python file. The traning AUC for this method was found to be 1.0.
 
 \section{Code Description}
-\quad\ All of our code is contained in the file named mymain.R. 
+\quad\ All of our code for part I is contained in the file named $mymain.py$. 
 
+There are basically three parts in the Python file. At the very beginning, we loaded the necessary packages. In the second part of the code, we did data preprocessing: first read in the training and test data sets, then performed necessary data cleaning and built up tf-idf matrix. For the last part, we mainly built our 6 models as above. These built models will make predictions and the results are the added with certain ratio, finally saved into local file system as required by the project description.
 
-There are basically three parts in the R file. At the very beginning, the code will automatically check whether or not the required packages/libraries are already installed. In the second part of the code, we do data preprocessing: first read the training and test data sets, then drop the useless variables and process the features to form the new feature space. For the last part, we mainly build our three model: Linear Regression, Lasso Regression and Random Forest model. These built models will make predictions and the results are saved into local file system as required by the project description.
+Due to the amount of data and number of models we trained, the code needs a lot of time to run. As tested, the total running time is around 4 hours.
 
-Due to the amount of data to be looped, the code need a lot of time to run. As tested, the total running time is around 2 hours.
-
-\section{Results}
-
-To evaluate our model, we choose the metric described on Kaggle:
+\section{Part I - Results}
+\quad\ To evaluate our model, we used the metric described below:
 \begin{equation}
-logloss = - \frac{1}{N} \sum_{i=1}^N \sum_{j=1}^M y_{i, j} log(p_{i, j})
+AUC = \sum_{i=1}^6 w_{i} \cdot {AUC}_{i}
 \end{equation}
-where $N$ is the number of test cases, $M$ is the total classification classes. To avoid the problem where $p_{i, j} = 0$, we scale $p_{i, j}$ into $10 ^ {-15}$ and $1 - 10 ^ {-15}$.
-
+where 6 is the total number of individual models, $i$ represents ith model. $ w_{i} $ is the weight of ith model to final additive model. Our final test score get from Kaggle is 0.95518.
 
 \begin{table}[htb]
- \caption{Summary of Training Loss} \label{result}
- \vspace{0.1in}
+ \caption{Summary of Training/Testing AUC} \label{result}
 \begin{center}
-  \begin{tabular}{  c  c  c  c  c}
+  \begin{tabular}{  c  c  c  c  c  c  c}
     \hline
-    Split            & Seed        & Model 1    & Model 2    & Model 3 \\ \hline
-    Split 1         & 100    \\ \hline
-    Split 2         & 500    \\ \hline
-    Split 3         & 1000    \\ \hline
-    Split 4         & 5000    \\ \hline
-    Split 5         & 2017    \\ \hline
+    w1 & w2 & w3 & w4 & w5 & w6 \\ \hline
+    2/8 & 2/8 & 1/8 & 1/8 & 1/8 & 1/8\\ \hline
   \end{tabular}
 \end{center}
 \end{table}
 
-\begin{table}[htb]
- \caption{Summary of Test Loss} \label{result}
- \vspace{0.1in}
-\begin{center}
-  \begin{tabular}{  c  c  c  c  c}
-    \hline
-    Split            & Seed        & Model 1    & Model 2    & Model 3 \\ \hline
-    Split 1         & 100    \\ \hline
-    Split 2         & 500    \\ \hline
-    Split 3         & 1000    \\ \hline
-    Split 4         & 5000    \\ \hline
-    Split 5         & 2017    \\ \hline
-  \end{tabular}
-\end{center}
-\end{table}
+\balance
+\section{Part II - Results}
 
+\quad\ All of our code for part II is contained in the file named visualization.py. 
 
-From Table~\ref{result}, one can find that, Model 1 and Model 2 performs similar to each other. Through weighted averaging, the final model, Model 3, performs better than Model 1 and Model 2.
+For this visualization part, in order to run the visualization work easy and fast, we simpliy used the average prediciton of logistic classsifier with lasso and ridge penalty. All words used were retrieved from the tf-idf vectorizer.  In order to define positive words and negative words, we first get the index by sorting feature coefficients and both lasso and ridge models, then filtered words corresponding to those index out. Then we select 200 most positive words and 200 most negative words from Lasso and Ridge model, then use the common words showed in both models as the final positive and negative words. So, finally we have 159 positive words and 155 negatives words as candidate for visualization purpose.
 
-The above code is tested on our laptop, the average running time is about 6 hours. The corresponding computer system is:
-MacBook Pro, 2.6GHz Intel Core i7, 16 GB memory.  
-
+After having our positive/negative words vocabulary, we loop over each new movie review, first predict the sentiment using the above averaged model. For this part, we set review with score higher than 0.5 as positive sentiment with 1 and vice versa. After getting sentiment prediction, for each review, we color each word in the positive vocabulary with green and negative with pink. Based on TA's code, we present our visualization result as a html file implemented in Python, with example figures as shown below.
+ 
 \subsection*{Acknowledgement}
+\quad\ The authors would like to thank Xichen Huang for his tutorial notebook on Piazza and Kaggle website for data cleaning ideas provided online.
 
-%\begin{figure}[htb]
-%\centering
-%\includegraphics[width=0.45\textwidth]{./figures/MSE_3_methods.pdf}
-%\caption{Results of different models}
-%\label{fig:autoencoder}
-%\end{figure}
+\begin{figure*}\centering
+\includegraphics[width=0.72\textwidth]{example.png}
+\caption{Visualization effect showing by two examples of positive/negative word labeling.} \label{fig:temp_dose}
+\end{figure*}
 
-\quad\ The authors would like to thank Xichen Huang for his tutorial notebook on Piazza and David Thaler for his online code.
-
-\vfill\pagebreak
+\begin{figure*}%
+    \centering
+    \subfloat[Top 30 word sorted by relative word importance from Random Forest model.]{{\includegraphics[width=0.4\linewidth]{importance.png} }}%
+    \qquad
+    \subfloat[Top 30 positive/negative words from Logistic Regression.]{{\includegraphics[width=0.4\linewidth]{top_words.png} }}%
+    \caption{Visualization result from Logistic Regression and Random Forest }%
+    \label{fig:example}%
+\end{figure*}
 
 % References should be produced using the bibtex program from suitable
 % BiBTeX files (here: strings, refs, manuals). The IEEEbib.bst bibliography
