@@ -1,4 +1,4 @@
-# Repository for UIUC STAT 542: Statistical Learning (Spring 2017)
+# UIUC STAT 542: Statistical Learning (Spring 2017)
 
 There are 6 small projects, including:
 * Predict the Housing Prices in Ames
