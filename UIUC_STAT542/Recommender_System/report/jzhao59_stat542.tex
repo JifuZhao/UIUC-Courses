@@ -14,7 +14,7 @@
 
 % Title.
 % ------
-\title{Lending Club Loan Status}
+\title{Recommender System}
 %
 % Single address.
 % ---------------
@@ -29,85 +29,50 @@
 \maketitle
 
 \section{Introduction}
-\quad\ In this project, our goal is to build a model to predict the chance of default for a loan. The data is collected through the Lending Club. The original data set has more than 130,000 records and each record has 74 features. In this project, we first explore the given training data set. After some pre-processing methods, we applied several different models to predict the chance of default for a loan. More details will be described in the following sections.
+\quad\ In this project, our goal is to build a recommender system based on the MovieLens 1M Dataset. MovieLens 1M dataset contains 1,000,209 anonymous rating of approximately 3,900 movies made my 6,040 MovieLens users who joined MovieLens in 2000. These movies can be categorized into 18 different categories. In this project, based on some well developed Python package, we compared the performance of different algorithms and finally choose 2 models as our final models. More details will be described in the following sections.
 
 \section{Pre-processing}
-After exploring the training dataset, we noticed that there are 74 features in total. Among these 74 features, we first notice that feature $id$ and $member\_id$ are useless. Among other features, we also notice that features $mths\_since\_last\_delinq$, $ max\_bal\_bc $, $ all\_util $, $ total\_cu\_tl $, $ mths\_since\_last\_record$, \\$ mths\_since\_last\_major\_derog $, $ annual\_inc\_joint $, $ dti\_joint $, $ open\_acc\_6m $, $ open\_il\_6m $, $ inq\_last\_12m $, $ open\_il\_12m $, $ open\_il\_24m $, $ il\_util $, $ inq\_fi $, \\$ mths\_since\_rcnt\_il $, $ total\_bal\_il $, $ open\_rv\_12m $, $ open\_rv\_24m $ contains too many missing values, so we first drop these features.
-
-In addition to these features, we also notice that some features are useless, including $emp\_title$, $issue\_d$, $pymnt\_plan$, $url$, $desc$, $title$, $zip\_code$, $addr\_state$, $earliest\_cr\_line$, $last\_pymnt\_d$, \\$next\_pymnt\_d$, $last\_credit\_pull\_d$, $application\_type$, $verification\_status\_joint$, $grade$, $policy\_code$. Besides, since the order of $sub\_grade$ make sense, we directly transform it into numerical values. Then, for missing values, we fill them with the median of the corresponding feature in the training set. And for the $loan\_staus$ feature, we transform it into 0-1 value.
-
-After the above procedures, there are 36 features left. Among these 36 features, there are 30 numerical features and 6 categorical features. For categorical features, we transform them into dummy variables. For numerical variables, for those whose skewness is above 0.75, we choose the log transformation. After all of these steps, we have prepared the data set to train some classification models.
-
-In our R code, we loaded 6 libraries to simplify our task, including xgboost, randomForest, gbm, dummies, DAAG, glmnet.
-
+The dataset has three files: movies.dat, ratings.data and users.dat. Among these three files, the most useful is ratings.data. Since the algorithm is pretty straight forward, there is little pre-processing steps. In this project, we compared the implementation and performance of Python and R, finally we decide to use Python. The main package we used is called surprise, which is is Python scikit package for building and analyzing recommerder systems.
 
 \section{Methods}
 
-\subsection{Logistic Regression}
-In our first model, Model 1, we basically choose the nearby three weeks to make prediction. For example, for a given store and department in week w, we find the corresponding data for the same department and store from the last year, then we choose the median of the sales from w - 1, w, w + 1 as the prediction.
+Surprise has many algorithms, such as baseline algorithms, neighbourhood methods, matrix factorization-based (SVD, PMF, SVD++, NMF) and so on. In this project we first studied the performance of 10 different algorithms (NormalPredictor, BaselineOnly, KNNBasic, KNNWithMeans, KNNBaseline, SVD, SVDpp, NMF, SlopeOne, CoClustering). Through 5 folder cross validation, we finally choose two best performed algorithm: KNN with Means and SVD algorithms.
 
-\subsection{Random Forest}
-In Method 2, we choose ts() to create a time series whose frequency is 52 and auto.arima() to forecast for a give step. More specially, for a given store and department, we first extract the data from previous years that is from the same department and store. Then we use the ts() function to create a time series whose frequency is 52. Finally, through feeding the time series into auto.arima(), we make the prediction that corresponding to next month's sales.
+\subsection{KNN with Means Algorithm}
+KNN with Means algorithm is a basic collaborative filtering algorithm. It takes into account the mean ratings of each user. Two important factors for this algorithm is whether or not it is user-based and the measurement of the similarity. Using cross validation, we choose the mean squared difference (msd) similarity and use item-based mode.
 
-\subsection{GBM}
-In this model, considering the long running time, we choose the weighted average of Model 1 and Model 2 as our third model, Model 3. Through some careful study, we find the the weight should be 0.7 for Model 1 and 0.3 for Model 2. The final expression for Model 3 is shown below:
-
-\subsection{XGBoost}
-
+\subsection{SVD Algorithm}
+The SVD algorithm is popularized by Simon Funk during the Netflix Prize. In Surprise, there are  in fact two algorithms based on SVD: SVD and SVD++. Although SVD++ performs a little bit better than naive SVD algorithm, it takes too much time to run the code. So, in this project, we only implement the SVD algorithm.
 
 \section{Code Description}
-\quad\ All of our code is contained in the file named mymain.R. 
+\quad\ All of our code is contained in the file named mymain.py. It will first read the training and test data. After build the KNN and SVD model, it will make predictions on the test dataset and save the prediction into local csv files.
 
-
-There are basically three parts in the R file. At the very beginning, the code will automatically check whether or not the required packages/libraries are already installed. In the second part of the code, we do data preprocessing: first read the training and test data sets, then drop the useless variables and process the features to form the new feature space. For the last part, we mainly build our three model: Linear Regression, Lasso Regression and Random Forest model. These built models will make predictions and the results are saved into local file system as required by the project description.
-
-Due to the amount of data to be looped, the code need a lot of time to run. As tested, the total running time is around 2 hours.
+The code runs very fast. As tested, the total running time is around 3 minutes.
 
 \section{Results}
-
-To evaluate our model, we choose the metric described on Kaggle:
-\begin{equation}
-logloss = - \frac{1}{N} \sum_{i=1}^N \sum_{j=1}^M y_{i, j} log(p_{i, j})
-\end{equation}
-where $N$ is the number of test cases, $M$ is the total classification classes. To avoid the problem where $p_{i, j} = 0$, we scale $p_{i, j}$ into $10 ^ {-15}$ and $1 - 10 ^ {-15}$.
+In this project, we use the Root-mean-square-error (RMSE) as the metric to measure the performance of different algorithms. A summary of the result of 5 folder cross validation is shown in Table~\ref{result}.
 
 
 \begin{table}[htb]
- \caption{Summary of Training Loss} \label{result}
+ \caption{Summary of Cross Validation} \label{result}
  \vspace{0.1in}
 \begin{center}
-  \begin{tabular}{  c  c  c  c  c}
+  \begin{tabular}{  c  c  c}
     \hline
-    Split            & Seed        & Model 1    & Model 2    & Model 3 \\ \hline
-    Split 1         & 100    \\ \hline
-    Split 2         & 500    \\ \hline
-    Split 3         & 1000    \\ \hline
-    Split 4         & 5000    \\ \hline
-    Split 5         & 2017    \\ \hline
+    RMSE/Model            & KNNWithMeans        & SVD     \\ \hline
+    Fold 1                    & 0.8852                    & 0.8617 \\ \hline
+    Fold 2                    & 0.8862                    & 0.8627 \\ \hline
+    Fold 3                    & 0.8873                    &0.8627 \\ \hline
+    Fold 4                    & 0.8866                    & 0.8625 \\ \hline
+    Fold 5                    & 0.8830                    & 0.8603 \\ \hline
+    Average                 & 0.8857                    &  0.8620 \\ \hline      
   \end{tabular}
 \end{center}
 \end{table}
 
-\begin{table}[htb]
- \caption{Summary of Test Loss} \label{result}
- \vspace{0.1in}
-\begin{center}
-  \begin{tabular}{  c  c  c  c  c}
-    \hline
-    Split            & Seed        & Model 1    & Model 2    & Model 3 \\ \hline
-    Split 1         & 100    \\ \hline
-    Split 2         & 500    \\ \hline
-    Split 3         & 1000    \\ \hline
-    Split 4         & 5000    \\ \hline
-    Split 5         & 2017    \\ \hline
-  \end{tabular}
-\end{center}
-\end{table}
+Note: in our cross-validation, the data is randomly split into 5 folders. But for actual test, there will be some users or movies shown only in test dataset. In that case, the performance is expected to be a little bit worse.
 
-
-From Table~\ref{result}, one can find that, Model 1 and Model 2 performs similar to each other. Through weighted averaging, the final model, Model 3, performs better than Model 1 and Model 2.
-
-The above code is tested on our laptop, the average running time is about 6 hours. The corresponding computer system is:
+The above code is tested on our laptop, the average running time is about 3 minutes. The corresponding computer system is:
 MacBook Pro, 2.6GHz Intel Core i7, 16 GB memory.  
 
 \subsection*{Acknowledgement}
@@ -119,7 +84,7 @@ MacBook Pro, 2.6GHz Intel Core i7, 16 GB memory.
 %\label{fig:autoencoder}
 %\end{figure}
 
-\quad\ The authors would like to thank Xichen Huang for his tutorial notebook on Piazza and David Thaler for his online code.
+\quad\ The authors would like to thank Xichen Huang for his tutorial notebook on Piazza.
 
 \vfill\pagebreak
 
