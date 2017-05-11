@@ -2,8 +2,6 @@
 # Project 5 Test Code #
 #######################
 
-setwd("/Users/jifu/GitHub/Courses/UIUC_Courses/UIUC_STAT542/Recommender_System")
-
 ##
 # Root Mean Square Error
 ##

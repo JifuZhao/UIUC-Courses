@@ -9,8 +9,6 @@
 # 3. trueLabel.csv
 # You should only use the train.dat and test.csv in mymain.R. 
 
-setwd("/Users/jifu/GitHub/Courses/UIUC_Courses/UIUC_STAT542/Recommender_System")
-
 # These are the parameters that you can change to test your code.
 mySeed = 100
 set.seed(mySeed)
