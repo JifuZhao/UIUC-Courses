@@ -14,7 +14,7 @@
 
 % Title.
 % ------
-\title{Recommender System}
+\title{Moive Recommender System}
 %
 % Single address.
 % ---------------
@@ -29,28 +29,28 @@
 \maketitle
 
 \section{Introduction}
-\quad\ In this project, our goal is to build a recommender system based on the MovieLens 1M Dataset. MovieLens 1M dataset contains 1,000,209 anonymous rating of approximately 3,900 movies made my 6,040 MovieLens users who joined MovieLens in 2000. These movies can be categorized into 18 different categories. In this project, based on some well developed Python package, we compared the performance of different algorithms and finally choose 2 models as our final models. More details will be described in the following sections.
+\quad\ In this project, our goal is to build a recommender system based on the MovieLens 1M Dataset. MovieLens 1M dataset contains 1,000,209 anonymous rating of approximately 3,900 movies made by 6,040 MovieLens users who joined MovieLens in 2000. These movies can be categorized into 18 different categories. In this project, based on some well developed Python package, we compared the performance of different algorithms and finally chose 2 models as our final models. More details will be described in the following sections.
 
 \section{Pre-processing}
-The dataset has three files: movies.dat, ratings.data and users.dat. Among these three files, the most useful is ratings.data. Since the algorithm is pretty straight forward, there is little pre-processing steps. In this project, we compared the implementation and performance of Python and R, finally we decide to use Python. The main package we used is called surprise, which is is Python scikit package for building and analyzing recommerder systems.
+\quad\ The dataset has three files: movies.dat, ratings.dat and users.dat. Among these three files, the most useful one is the ratings.dat. Since the algorithm is pretty straightforward, there is little pre-processing steps. In this project, we compared the implementation and performance of Python and R, but finally we decided to use Python. The main package we used is called $ \textbf{surprise} $, a widely used Python package for building and analyzing recommender systems.
 
 \section{Methods}
 
-Surprise has many algorithms, such as baseline algorithms, neighbourhood methods, matrix factorization-based (SVD, PMF, SVD++, NMF) and so on. In this project we first studied the performance of 10 different algorithms (NormalPredictor, BaselineOnly, KNNBasic, KNNWithMeans, KNNBaseline, SVD, SVDpp, NMF, SlopeOne, CoClustering). Through 5 folder cross validation, we finally choose two best performed algorithm: KNN with Means and SVD algorithms.
+\quad\ $ \textbf{Surprise} $ has many algorithms, such as baseline algorithms, neighbourhood methods, matrix factorization-based (SVD, PMF, SVD++, NMF) and so on. In this project we first studied the performance of 10 different algorithms (NormalPredictor, BaselineOnly, KNNBasic, KNNWithMeans, KNNBaseline, SVD, SVDpp, NMF, SlopeOne, CoClustering). Through 5 folder cross validation, we finally chose two best performed algorithm: KNN with Means and naive SVD algorithms.
 
 \subsection{KNN with Means Algorithm}
-KNN with Means algorithm is a basic collaborative filtering algorithm. It takes into account the mean ratings of each user. Two important factors for this algorithm is whether or not it is user-based and the measurement of the similarity. Using cross validation, we choose the mean squared difference (msd) similarity and use item-based mode.
+\quad\ KNN with Means algorithm basically is a collaborative filtering algorithm. It takes into account the mean ratings of each user. Two important factors for this algorithm are whether or not it is user-based and how to measure the similarity. With cross validation, we chose the mean squared difference (MSD) similarity and used item-based mode.
 
 \subsection{SVD Algorithm}
-The SVD algorithm is popularized by Simon Funk during the Netflix Prize. In Surprise, there are  in fact two algorithms based on SVD: SVD and SVD++. Although SVD++ performs a little bit better than naive SVD algorithm, it takes too much time to run the code. So, in this project, we only implement the SVD algorithm.
+\quad\ The SVD algorithm is popularized by Simon Funk during the Netflix Prize. In $ \textbf{Surprise} $, there are in fact two algorithms based on SVD: SVD and SVD++. Although SVD++ performs a little bit better than naive SVD algorithm, it takes too much longer time to run. So, in this project, we only implemented the naive SVD algorithm.
 
 \section{Code Description}
-\quad\ All of our code is contained in the file named mymain.py. It will first read the training and test data. After build the KNN and SVD model, it will make predictions on the test dataset and save the prediction into local csv files.
+\quad\ All of our code is contained in the file named \textit{mymain.py}. Firstly, It will read in the training and testing data. After building the KNN and SVD models, it will make predictions on the testing data set and save the prediction result into local csv files.
 
 The code runs very fast. As tested, the total running time is around 3 minutes.
 
 \section{Results}
-In this project, we use the Root-mean-square-error (RMSE) as the metric to measure the performance of different algorithms. A summary of the result of 5 folder cross validation is shown in Table~\ref{result}.
+\quad\ In this project, we use the Root-Mean-Square-Error (RMSE) as the metric to measure the performance of different algorithms. A summary of the result of 5 folder cross validation is shown in Table~\ref{result}.
 
 
 \begin{table}[htb]
@@ -70,9 +70,9 @@ In this project, we use the Root-mean-square-error (RMSE) as the metric to measu
 \end{center}
 \end{table}
 
-Note: in our cross-validation, the data is randomly split into 5 folders. But for actual test, there will be some users or movies shown only in test dataset. In that case, the performance is expected to be a little bit worse.
+Note: in our cross validation, the data was randomly splitted into 5 folders. But for actual testing, there will be some users or movies never shown up in training data set. In that case, the performance is expected to be a little bit worse.
 
-The above code is tested on our laptop, the average running time is about 3 minutes. The corresponding computer system is:
+The code descripted above was tested on our laptop, the average running time was about 3 minutes. The corresponding computer system is:
 MacBook Pro, 2.6GHz Intel Core i7, 16 GB memory.  
 
 \subsection*{Acknowledgement}
