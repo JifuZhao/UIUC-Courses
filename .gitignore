@@ -10,6 +10,7 @@
 *.fot
 *.cb
 *.cb2
+*.h5
 
 # Mac
 .DS_Store
@@ -21,6 +22,10 @@
 *.sqlite
 *.dat
 *.tsv
+*.tar.gz
+*.zip
+*triplets.txt
+
 
 # History files
 .Rhistory
