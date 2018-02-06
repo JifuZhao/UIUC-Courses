@@ -11,6 +11,7 @@
 *.cb
 *.cb2
 *.h5
+*ml-100k*
 
 # Mac
 .DS_Store
