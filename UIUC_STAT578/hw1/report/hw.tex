@@ -1,0 +1,100 @@
+\input{setting.tex}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{multicol}
+\usepackage{balance}
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{epstopdf}
+\usepackage{epsfig}
+\usepackage{makeidx}
+\usepackage{bm}
+\usepackage{pbox}
+\usepackage{pdflscape}
+\usepackage{url}
+\usepackage{framed}
+\usepackage{mathtools}
+\usepackage{adjustbox}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{subcaption}
+\usepackage{cite}
+\usepackage{amsfonts}
+
+\usepackage{graphicx, amssymb, amsmath, listings, float, mathtools}
+\usepackage{color, url}
+\lstset{language = Python}
+\lstset{breaklines}
+\lstset{extendedchars=false}
+
+\oddsidemargin 0in
+\evensidemargin 0in
+\textwidth 6.5in
+\topmargin -0.6in
+\textheight 9.0in
+
+\begin{document}
+
+\solution{\large Jifu Zhao}{\large 02/18/2018}{\bf \Large STAT 578  \hspace{0.5cm} 
+		Spring 2018 \hspace{0.5cm} Homework 1}
+
+
+\section*{(a)}
+
+\section*{(b)}
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\textwidth]{./figures/utility.pdf}
+\caption{\label{fig:utility} User-item utility matrix}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}[b]{0.5\linewidth}
+  \includegraphics[width=1.00\textwidth]{./figures/user_frequency.pdf}
+  \caption{Distribution of user's number of ratings}
+   \label{ex_without_source}
+\end{subfigure}%
+\begin{subfigure}[b]{0.5\linewidth}
+  \centering
+  \includegraphics[width=1.00\textwidth]{./figures/item_frequency.pdf}
+  \caption{Distribution of item's number of ratings}
+  \label{ex_with_source}
+\end{subfigure}%
+\raggedright
+\caption{Distribution of User's / Item's number of ratings}
+\label{fig:source_injection}
+\end{figure}
+
+
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}[b]{0.5\linewidth}
+  \includegraphics[width=1.00\textwidth]{./figures/user_mean_rating.pdf}
+  \caption{User's mean rating vs. number of ratings}
+   \label{ex_without_source}
+\end{subfigure}%
+\begin{subfigure}[b]{0.5\linewidth}
+  \centering
+  \includegraphics[width=1.00\textwidth]{./figures/item_mean_rating.pdf}
+  \caption{Item's mean rating vs. number of ratings}
+  \label{ex_with_source}
+\end{subfigure}%
+\raggedright
+\caption{Mean ratings vs. number of ratings}
+\label{fig:source_injection}
+\end{figure}
+
+\section*{(c)}
+
+
+\clearpage
+
+%\bibliographystyle{plain}
+%\bibliographystyle{unsrt}
+%\bibliography{reference.bib}
+
+\end{document}
+
