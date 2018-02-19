@@ -41,7 +41,15 @@
 
 \section*{(a)}
 
-\begin{table}[htb]
+The given dataset is Movielens 100K, which contains 943 users and 1682 movies in total. The given dataset has been splitted into 5 folders, and forms 5 different training and test set, named (u1\_base, u1\_test), (u2\_base, u2\_test), (u3\_base, u3\_test), (u4\_base, u4\_test), (u5\_base, u5\_test). In addition to the userID, itemID, rating information, we also have the information about each user as well as each item. 
+
+For the first question, I explored two models. The first model is simply linear regression. In this model, we treat each user and each item's information as the predictor, including age, gender, item category and so on, train the model using the training set, and make predictions on the test set. 
+
+In addition to the linear regression model, we also implement KNN model using the Surprise package, which is a Python package for building and analyzing recommender systems. We choose the item-based KNN algorithm. 
+
+The performance of two algorithms is shown in Table~\ref{result}
+
+\begin{table}[htbp]
  \caption{Summary of Cross Validation} \label{result}
  \vspace{0.1in}
 \begin{center}
@@ -61,12 +69,18 @@
 
 \section*{(b)}
 
+In this part, we implement a series of visualization tools to infer the behaviour of the missing ratings.
 
-\begin{figure}[H]
+Based on the user, item, and rating information, we can construct the utility matrix, where rows correspond to users, columns correspond to items, and the colors correspond to user's rating on specific item. For the missing ratings, we fill it with 0. The utility matrix is shown in Figure~\ref{fig:utility}.
+
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=1.0\textwidth]{./figures/utility.pdf}
-\caption{\label{fig:utility} User-item utility matrix}
+\caption{User-item utility matrix}
+\label{fig:utility} 
 \end{figure}
+
+From Figure~\ref{fig:utility}, we can see that, the missing ratings are not occur at random. For movies that have high ratings, there are less missing values. On the other hand, for movies that have relative low ratings, there are more missing values. 
 
 \begin{figure}[htbp]
 \centering
@@ -83,11 +97,15 @@
 \end{subfigure}%
 \raggedright
 \caption{Distribution of User's / Item's number of ratings}
-\label{fig:source_injection}
+\label{fig:source_injection1}
 \end{figure}
 
+\newpage
+To see more details, we plot the distribution of user's and item's number of ratings in Figure~\ref{fig:source_injection1}. As shown clearly, most users and most movies have low number of ratings. The distributions show long tails for high number of ratings.
 
-\begin{figure}[htbp]
+In addition to the distribution of number of ratings, we also plot the relation of user's or item's mean rating versus the number of ratings. As shown in Figure~\ref{fig:source_injection2}, for users, their mean rating are mainly normally distributed. On the other hand, for movies, the movies who have relatively higher number of ratings, tend to have relative higher mean rating.
+
+\begin{figure}[!h]
 \centering
 \begin{subfigure}[b]{0.5\linewidth}
   \includegraphics[width=1.00\textwidth]{./figures/user_mean_rating.pdf}
@@ -102,13 +120,24 @@
 \end{subfigure}%
 \raggedright
 \caption{Mean ratings vs. number of ratings}
-\label{fig:source_injection}
+\label{fig:source_injection2}
 \end{figure}
 
 \section*{(c)}
+Based on our analysis in Part (c), we can notice one clear phenomenon, for movies with relatively larger number of ratings, there tend to have relatively higher mean ratings. Based on this, we can use the number of ratings for each movie to indicate its popularity. In Figure~\ref{fig:fitted}, we fit a linear curve for mean rating and number of ratings.
 
-\begin{table}[htb]
- \caption{Summary of Cross Validation} \label{result}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{./figures/fitting_curve.pdf}
+\caption{Item's mean of ratings vs. number of ratings}
+\label{fig:fitted} 
+\end{figure}
+
+To improve the performance of the prediction, we re-build the linear regression model and the item-based KNN model. This time, for linear regression model, we add another feature corresponding to popularity (in actual code, we use the fitted mean rating to represent the popularity, instead of using the raw number of ratings). For KNN model, in addition to the prediction from KNN model, we choose the average value of KNN's prediction and the mean value from fitted curve in Figure~\ref{fig:fitted} as the final prediction. All the results are shown in Table~\ref{result2}.
+
+
+\begin{table}[htbp]
+ \caption{Summary of Cross Validation} \label{result2}
  \vspace{0.1in}
 \begin{center}
   \begin{tabular}{  c  c  c}
@@ -124,6 +153,8 @@
   \end{tabular}
 \end{center}
 \end{table}
+
+As shown clearly in Table~\ref{result2}, compared with Table~\ref{result}, both linear regression model and the KNN model give better results. More specifically, for linear regression model, the mean RMSE gets improved from 1.10785 to 1.08252, and for KNN model, the RMSE gets improved from 1.12558 to 1.09853.
 
 
 \clearpage
